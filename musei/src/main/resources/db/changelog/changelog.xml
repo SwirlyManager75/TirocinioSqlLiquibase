@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <!-- Altre modifiche di Liquibase -->
+
+
+    <changeSet id="0" author="Giovanni La Terra">
+        <!-- Creazione del database -->
+        <sql>
+            CREATE DATABASE IF NOT EXISTS musei;
+        </sql>
+    </changeSet>
+    
+    <!-- inclusione di script SQL -->
+
+    <changeSet id="1" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/001_create_citta.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="2" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/002_create_museo.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="3" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/003_create_poi.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="4" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/004_create_audio.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="5" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/005_create_abbonamento.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="6" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/006_create_biglietteria.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="7" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/007_create_abbonamento_biglietteria.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="8" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/008_create_cliente.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="9" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/009_create_dipendente.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="10" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/010_create_artista.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="11" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/011_create_cliente_abbonamento.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="12" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/012_create_biglietto.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="13" author="Giovanni La Terra">
+    <sqlFile path="../sql/ddl/013_create_opera.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="14" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/001_insert_citta.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="15" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/002_insert_museo.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="16" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/003_insert_poi.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="17" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/004_insert_audio.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="18" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/005_insert_abbonamento.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="19" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/006_insert_biglietteria.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="20" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/007_insert_abbonamento_biglietteria.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="21" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/008_insert_cliente.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="22" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/009_insert_dipendente.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="23" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/010_insert_artista.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="24" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/011_insert_cliente_abbonamento.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="25" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/012_insert_biglietto.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="26" author="Giovanni La Terra">
+    <sqlFile path="../sql/dml/013_insert_opera.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+</databaseChangeLog>
