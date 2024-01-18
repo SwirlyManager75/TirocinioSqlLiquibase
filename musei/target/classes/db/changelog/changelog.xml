@@ -6,15 +6,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
 
     <!-- Altre modifiche di Liquibase -->
-
-
-    <changeSet id="0" author="Giovanni La Terra">
-        <!-- Creazione del database -->
-        <sql>
-            CREATE DATABASE IF NOT EXISTS musei;
-        </sql>
-    </changeSet>
-    
     <!-- inclusione di script SQL -->
 
     <changeSet id="1" author="Giovanni La Terra">
