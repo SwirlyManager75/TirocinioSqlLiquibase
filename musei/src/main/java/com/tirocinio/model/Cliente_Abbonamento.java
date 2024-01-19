@@ -2,7 +2,7 @@ package com.tirocinio.model;
 
 public class Cliente_Abbonamento {
 
-    private Integer codPA;
+    private Integer codCA;
     private Integer codECli; // Codice del Cliente associato alla relazione
     private Integer codEA; // Codice dell'Abbonamento associato alla relazione
     private Cliente cliente; // Riferimento all'oggetto Cliente
@@ -18,12 +18,12 @@ public class Cliente_Abbonamento {
     }
 
     // Metodi getter e setter per ogni attributo
-    public Integer getCodPA() {
-        return codPA;
+    public Integer getCodCA() {
+        return codCA;
     }
 
-    public void setCodPA(Integer codPA) {
-        this.codPA = codPA;
+    public void setCodCA(Integer codCA) {
+        this.codCA = codCA;
     }
 
     public Integer getCodECli() {
