@@ -17,7 +17,7 @@ public class Cliente_AbbonamentoDAO {
     private static final String UPDATE_CLIENTEABBONAMENTO = "UPDATE Cliente_Abbonamento SET Cod_E_Cli = ?, Cod_E_A = ? WHERE Cod_CA = ?";
     private static final String DELETE_CLIENTEABBONAMENTO = "DELETE FROM Cliente_Abbonamento WHERE Cod_CA = ?";
 
-    public List<Cliente_Abbonamento> getAllClienteAbbonamenti(Connection connection) {
+    public List<Cliente_Abbonamento> getAllClientiAbbonamenti(Connection connection) {
         List<Cliente_Abbonamento> clienteAbbonamenti = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CLIENTEABBONAMENTI);
              ResultSet resultSet = preparedStatement.executeQuery()) {

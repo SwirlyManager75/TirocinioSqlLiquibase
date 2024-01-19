@@ -1,6 +1,6 @@
 package com.tirocinio.dao;
 
-import com.tirocinio.model.audio;
+import com.tirocinio.model.Audio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,8 +17,8 @@ public class AudioDAO {
     private static final String UPDATE_AUDIO = "UPDATE Audio SET URL = ?, Cod_E_Poi = ? WHERE Cod_Au = ?";
     private static final String DELETE_AUDIO = "DELETE FROM Audio WHERE Cod_Au = ?";
 
-    public List<audio> getAllAudios(Connection connection) {
-        List<audio> audios = new ArrayList<>();
+    public List<Audio> getAllAudios(Connection connection) {
+        List<Audio> audios = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_AUDIOS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
@@ -31,7 +31,7 @@ public class AudioDAO {
         return audios;
     }
 
-    public audio getAudioById(Connection connection, int audioId) {
+    public Audio getAudioById(Connection connection, int audioId) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUDIO_BY_ID)) {
 
             preparedStatement.setInt(1, audioId);
@@ -46,7 +46,7 @@ public class AudioDAO {
         return null;
     }
 
-    public boolean addAudio(Connection connection, audio audio) {
+    public boolean addAudio(Connection connection, Audio audio) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
@@ -60,7 +60,7 @@ public class AudioDAO {
         }
     }
 
-    public boolean updateAudio(Connection connection, audio audio) {
+    public boolean updateAudio(Connection connection, Audio audio) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
@@ -88,8 +88,8 @@ public class AudioDAO {
         }
     }
 
-    public List<audio> search(Connection connection, audio criteria) {
-        List<audio> matchingAudios = new ArrayList<>();
+    public List<Audio> search(Connection connection, Audio criteria) {
+        List<Audio> matchingAudios = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Audio WHERE 1=1");
 
         // Aggiungi i criteri alla query dinamicamente se sono presenti nella classe criteria
@@ -125,8 +125,8 @@ public class AudioDAO {
         return matchingAudios;
     }
 
-    private audio mapResultSetToAudio(ResultSet resultSet) throws SQLException {
-        audio audio = new audio();
+    private Audio mapResultSetToAudio(ResultSet resultSet) throws SQLException {
+        Audio audio = new Audio();
         audio.setCodAu(resultSet.getInt("Cod_Au"));
         audio.setUrl(resultSet.getString("URL"));
         audio.setCodEPoi(resultSet.getInt("Cod_E_Poi"));

@@ -1,6 +1,6 @@
 package com.tirocinio.model;
 
-public class audio {
+public class Audio {
 
     private Integer codAu;
     private String url;
@@ -8,10 +8,10 @@ public class audio {
     private Poi poi; // Riferimento all'oggetto Poi
 
     // Costruttore vuoto 
-    public audio() {}
+    public Audio() {}
 
     // Costruttore con parametri
-    public audio(String url, Integer codEPoi) {
+    public Audio(String url, Integer codEPoi) {
         this.url = url;
         this.codEPoi = codEPoi;
     }
