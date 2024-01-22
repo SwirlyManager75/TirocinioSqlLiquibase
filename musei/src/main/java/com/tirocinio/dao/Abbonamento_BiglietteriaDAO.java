@@ -72,6 +72,26 @@ public class Abbonamento_BiglietteriaDAO {
         }
     }
 
+    public boolean updateAbbonamentoBiglietteria(Connection connection, Abbonamento_Biglietteria abbonamentoBiglietteria) {
+        String query = "UPDATE Abbonamento_Biglietteria " +
+                       "SET Cod_Ab = ?, Cod_B = ? " +
+                       "WHERE Cod_AB = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, abbonamentoBiglietteria.getCodEA());
+            preparedStatement.setInt(2, abbonamentoBiglietteria.getCodEB());
+            preparedStatement.setInt(3, abbonamentoBiglietteria.getCodAB());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Restituisci true se almeno una riga è stata aggiornata
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato
+            return false;
+        }
+    }
+
     public List<Abbonamento_Biglietteria> search(Connection connection, Abbonamento_Biglietteria criteria) {
         List<Abbonamento_Biglietteria> matchingAbbonamentiBiglietterie = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Abbonamento_Biglietteria WHERE 1=1");

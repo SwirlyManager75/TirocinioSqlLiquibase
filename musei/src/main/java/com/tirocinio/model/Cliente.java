@@ -22,6 +22,11 @@ public class Cliente {
         this.codECi = codECi;
     }
 
+    public Cliente(String nome, String cognome) {
+        this.nome = nome;
+        this.cognome = cognome;
+    }
+
     // Metodi getter e setter per ogni attributo
     public Integer getCodCli() {
         return codCli;
