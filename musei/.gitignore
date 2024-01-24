@@ -1,0 +1,6 @@
+target
+target/**
+src/main/resources/liquibase-local.properties
+.project
+.classpath
+.settings/
