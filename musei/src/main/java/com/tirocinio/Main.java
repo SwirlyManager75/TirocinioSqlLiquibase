@@ -1,34 +1,41 @@
 package com.tirocinio;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.tirocinio.connection.ConnectionManager;
+import com.tirocinio.dao.CittaDAO;
+import com.tirocinio.model.Citta;
+import com.tirocinio.service.CreateCityService;
 public class Main {
     public static void main(String[] args) {
         //Inizializzo la connessione
-        Connection connection = ConnectionManager.getConnection();
+         try (Connection connection = ConnectionManager.getConnection()) {
+            // Esempio di inserimento di una nuova città
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            CreateCityService insertCittaService = new CreateCityService(connection);
+            System.out.println("Inserisci il nome della città da inserire nel DB");
+            String cityName= in.readLine();
+            insertCittaService.execute(new Citta(cityName,false));
 
-         try {
-            // Esempio di utilizzo della connessione
-            String query = "SELECT * FROM museo";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query);
-                 ResultSet resultSet = preparedStatement.executeQuery()) {
+            System.out.println("Inserimento città completato con successo!");
 
-                while (resultSet.next()) {
-                    // Processa i risultati
-                    String colonna1 = resultSet.getString("Nome");
-                    String colonna2 = resultSet.getString("Via");
+            // Esempio di visualizzazione di tutte le città
+            CittaDAO cittaDAO = new CittaDAO();
+            List<Citta> tutteLeCitta = cittaDAO.getAllCities(connection);
 
-                    // Fai qualcosa con i dati
-                    System.out.println("Nome " + colonna1 + ", Via " + colonna2);
-                }
+            System.out.println("Tutte le città nel database:");
+            for (Citta citta : tutteLeCitta) {
+                System.out.println("Nome: " + citta.getNome() + ", Provincia: " + citta.isProvincia());
             }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        } finally {
-            ConnectionManager.closeConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Si è verificato un errore durante l'inserimento della città o la visualizzazione delle città.");
         }
     }
 }
+
