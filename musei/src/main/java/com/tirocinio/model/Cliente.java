@@ -1,5 +1,8 @@
 package com.tirocinio.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cliente {
 
     private Integer codCli;
@@ -7,19 +10,29 @@ public class Cliente {
     private String cognome;
     private String mail;
     private String cellulare;
-    private Integer codECi; // Codice della Città associata al Cliente
+    
     private Citta citta; // Riferimento all'oggetto Citta
+    private List<Biglietto> biglietti= new ArrayList<>();
+    private List<Abbonamento> abbonamenti= new ArrayList<>();
+    
+
+    public List<Abbonamento> getAbbonamenti() {
+        return abbonamenti;
+    }
+
+    public void setAbbonamenti(List<Abbonamento> abbonamenti) {
+        this.abbonamenti = abbonamenti;
+    }
 
     // Costruttore vuoto 
     public Cliente() {}
 
     // Costruttore con parametri
-    public Cliente(String nome, String cognome, String mail, String cellulare, Integer codECi) {
+    public Cliente(String nome, String cognome, String mail, String cellulare) {
         this.nome = nome;
         this.cognome = cognome;
         this.mail = mail;
         this.cellulare = cellulare;
-        this.codECi = codECi;
     }
 
     public Cliente(String nome, String cognome) {
@@ -68,20 +81,32 @@ public class Cliente {
         this.cellulare = cellulare;
     }
 
-    public Integer getCodECi() {
-        return codECi;
-    }
-
-    public void setCodECi(Integer codECi) {
-        this.codECi = codECi;
-    }
-
     public Citta getCitta() {
         return citta;
     }
 
     public void setCitta(Citta citta) {
         this.citta = citta;
+    }
+    
+    public List<Biglietto> getBiglietti() {
+        return biglietti;
+    }
+
+    public void setBiglietti(List<Biglietto> biglietti) {
+        this.biglietti = biglietti;
+    }
+
+    public void addBiglietto(Biglietto biglietto)
+    {
+        biglietti.add(biglietto);
+        biglietto.setCliente(this);
+    }
+
+    public void removeArtista(Biglietto biglietto)
+    {
+        biglietti.remove(biglietto);
+        biglietto.setCliente(null);
     }
 
 }

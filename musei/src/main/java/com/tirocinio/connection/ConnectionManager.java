@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class ConnectionManager {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/musei";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static String URL;
+    private static String USER;
+    private static String PASSWORD;
 
     private static Connection connection;
 
@@ -16,7 +16,17 @@ public class ConnectionManager {
         // Costruttore privato per garantire la singola istanza (Singleton)
     }
 
-    public static Connection getConnection() {
+    public static Connection getConnection() 
+    {
+        
+        PropertiesManager propertiesManager = PropertiesManager.getInstance();
+
+        URL=propertiesManager.getUrl();
+        USER=propertiesManager.getUsername();
+        PASSWORD=propertiesManager.getPassword();
+
+        System.out.println("Connesso usando "+URL+"   e "+USER+"    e    "+PASSWORD);
+
         if (connection == null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");

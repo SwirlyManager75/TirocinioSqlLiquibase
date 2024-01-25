@@ -1,6 +1,8 @@
 package com.tirocinio.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Artista {
 
@@ -9,19 +11,40 @@ public class Artista {
     private String cognome;
     private Date dataNascita;
     private boolean inVita;
-    private Integer codECi; // Codice della Città associata all'Artista
+    
     private Citta citta; // Riferimento all'oggetto Citta
+    private List<Opera> opere = new ArrayList<>();
+
+    public List<Opera> getOpere() {
+        return opere;
+    }
+
+    public void setOpere(List<Opera> opere) {
+        this.opere = opere;
+    }
+
+    public void addOpera(Opera opera)
+    {
+        opere.add(opera);
+        opera.setArtista(this);
+    }
+
+    public void removeOpera(Opera opera)
+    {
+        opere.remove(opera);
+        opera.setArtista(null);
+    }
 
     // Costruttore vuoto
     public Artista() {}
 
     // Costruttore con parametri
-    public Artista(String nome, String cognome, Date dataNascita, boolean inVita, Integer codECi) {
+    public Artista(String nome, String cognome, Date dataNascita, boolean inVita) {
         this.nome = nome;
         this.cognome = cognome;
         this.dataNascita = dataNascita;
         this.inVita = inVita;
-        this.codECi = codECi;
+        
     }
 
     // Metodi getter e setter per ogni attributo
@@ -63,14 +86,6 @@ public class Artista {
 
     public void setInVita(boolean inVita) {
         this.inVita = inVita;
-    }
-
-    public Integer getCodECi() {
-        return codECi;
-    }
-
-    public void setCodECi(Integer codECi) {
-        this.codECi = codECi;
     }
 
     public Citta getCitta() {

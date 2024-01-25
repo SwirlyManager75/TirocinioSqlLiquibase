@@ -19,24 +19,20 @@ public class AssociateAudioToPoiService {
         this.connection = connection;
     }
 
-    public boolean execute(String audioURL, int poiId) {
+    public boolean execute(int codAudio, int codPoi) {
         // Cerco il Poi con l'ID fornito
-        Poi poi = poiDAO.getPoiById(connection, poiId);
+        Poi poi = poiDAO.getPoiById(connection, codPoi);
+        Audio audio = audioDAO.getAudioById(connection, codAudio);
 
-        if (poi != null) {
-            // Creo un nuovo oggetto Audio e associalo al Poi
-            Audio audio = new Audio();
-            audio.setUrl(audioURL);
-            
-            audio.setCodEPoi(poi.getCodPoi());
-
+        if (poi != null && audio != null) {
+           
             // Inserisco l'audio nel database
-            return audioDAO.addAudio(connection, audio);
+            return audioDAO.associateWithPoi(connection, audio,poi);
         } 
         else 
         {
             // Poi non trovato
-            System.out.println("Poi non trovato con ID: " + poiId);
+            System.out.println("Poi o Audio non trovato con ID: " + codPoi + " o "+ codAudio);
             return false;
         }
     }

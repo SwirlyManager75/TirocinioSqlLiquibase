@@ -19,21 +19,14 @@ public class AssociatePoiToMuseoService{
         this.connection = connection;
     }
 
-    public boolean execute(String descrizione, int museoId) {
+    public boolean execute(String descrizione, int museoId, int poiId) {
         // Cerca il Museo con l'ID fornito
         Museo museo = museoDAO.getMuseumById(connection, museoId);
-
-        if (museo != null) {
-            // Crea un nuovo oggetto Poi e associalo al Museo
-            Poi poi = new Poi();
-            poi.setDescrizione(descrizione);
-            
-            poi.setCodEM(museo.getCodM());
-
-            // altri attributi del Poi se necessario
-
-            // Inserisco il Poi nel database
-            return poiDAO.addPoi(connection, poi);
+        Poi poi = poiDAO.getPoiById(connection, poiId);
+        if (museo != null && poi != null)
+        {
+            // Aggiorno il Poi nel database
+            return poiDAO.associateWithMuseum(connection,poi,museo);
         } else {
             // Museo non trovato
             System.out.println("Museo non trovato con ID: " + museoId);

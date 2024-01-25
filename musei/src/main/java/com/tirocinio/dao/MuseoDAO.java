@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.model.Citta;
 import com.tirocinio.model.Museo;
 
 import java.sql.Connection;
@@ -13,12 +14,14 @@ public class MuseoDAO {
 
     private static final String SELECT_ALL_MUSEUMS = "SELECT * FROM Museo";
     private static final String SELECT_MUSEUM_BY_ID = "SELECT * FROM Museo WHERE Cod_M = ?";
-    private static final String INSERT_MUSEUM = "INSERT INTO Museo (Nome, Via, Cod_E_Ci) VALUES (?, ?, ?)";
-    private static final String UPDATE_MUSEUM = "UPDATE Museo SET Nome = ?, Via = ?, Cod_E_Ci = ? WHERE Cod_M = ?";
+    private static final String INSERT_MUSEUM = "INSERT INTO Museo (Nome, Via) VALUES (?, ?)";
+    private static final String UPDATE_MUSEUM = "UPDATE Museo SET Nome = ?, Via = ? WHERE Cod_M = ?";
     private static final String DELETE_MUSEUM = "DELETE FROM Museo WHERE Cod_M = ?";
+    private static final String ASSOC_MUSEUM = "UPDATE Museo SET Cod_E_Ci = ? WHERE Cod_M = ?";
 
     public List<Museo> getAllMuseums(Connection connection) {
         List<Museo> museums = new ArrayList<>();
+        
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_MUSEUMS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
@@ -51,7 +54,7 @@ public class MuseoDAO {
 
             preparedStatement.setString(1, museum.getNome());
             preparedStatement.setString(2, museum.getVia());
-            preparedStatement.setInt(3, museum.getCodECi());
+            //preparedStatement.setInt(3, museum.getCodECi());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -66,8 +69,7 @@ public class MuseoDAO {
 
             preparedStatement.setString(1, museum.getNome());
             preparedStatement.setString(2, museum.getVia());
-            preparedStatement.setInt(3, museum.getCodECi());
-            preparedStatement.setInt(4, museum.getCodM());
+            preparedStatement.setInt(3, museum.getCodM());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -90,6 +92,20 @@ public class MuseoDAO {
         }
     }
 
+    public boolean associateWithCity(Connection connection, Museo museo, Citta citta) {
+        try (PreparedStatement statement = connection.prepareStatement(ASSOC_MUSEUM)) {
+
+            statement.setInt(1, citta.getCodCi());
+            statement.setInt(2, museo.getCodM());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Museo> search(Connection connection, Museo criteria) {
         List<Museo> matchingMuseums = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Museo WHERE 1=1");
@@ -101,17 +117,24 @@ public class MuseoDAO {
         if (criteria.getVia() != null) {
             queryBuilder.append(" AND Via LIKE ?");
         }
+        if (criteria.getCitta() != null) {
+            queryBuilder.append(" AND Cod_E_Ci = ?");
+        }
         // In futuro aggiungi qui altri criteri a secondo della necessità
     
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
             int parameterIndex = 1;
     
-            // Controlla e imposta i parametri dinamici nella query
+
             if (criteria.getNome() != null) {
                 preparedStatement.setString(parameterIndex++, "%" + criteria.getNome() + "%");
             }
             if (criteria.getVia() != null) {
                 preparedStatement.setString(parameterIndex++, "%" + criteria.getVia() + "%");
+            }
+            if (criteria.getCitta() != null)
+            {
+                preparedStatement.setInt(parameterIndex++, criteria.getCitta().getCodCi());
             }
             // In futuro imposta altri parametri qui
     
@@ -132,7 +155,7 @@ public class MuseoDAO {
         museum.setCodM(resultSet.getInt("Cod_M"));
         museum.setNome(resultSet.getString("Nome"));
         museum.setVia(resultSet.getString("Via"));
-        museum.setCodECi(resultSet.getInt("Cod_E_Ci"));
+
         return museum;
     }
 }

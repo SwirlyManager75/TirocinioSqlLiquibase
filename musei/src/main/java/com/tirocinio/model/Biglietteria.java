@@ -1,6 +1,8 @@
 package com.tirocinio.model;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Biglietteria {
 
@@ -12,18 +14,21 @@ public class Biglietteria {
     private Time oraApertura;
     private Time oraChiusura;
     private ModalitaPagamento modPag;
-    private Integer codEM; // Codice del Museo associato alla biglietteria
+   
     private Museo museo; // Riferimento all'oggetto Museo
+
+    private List<Abbonamento> abbonamenti = new ArrayList<>();
+    private List<Biglietto> biglietti = new ArrayList<>();
 
     // Costruttore vuoto 
     public Biglietteria() {}
 
     // Costruttore con parametri
-    public Biglietteria(Time oraApertura, Time oraChiusura, ModalitaPagamento modPag, Integer codEM) {
+    public Biglietteria(Time oraApertura, Time oraChiusura, ModalitaPagamento modPag) {
         this.oraApertura = oraApertura;
         this.oraChiusura = oraChiusura;
         this.modPag = modPag;
-        this.codEM = codEM;
+        
     }
 
     // Metodi getter e setter per ogni attributo
@@ -59,13 +64,6 @@ public class Biglietteria {
         this.modPag = modPag;
     }
 
-    public Integer getCodEM() {
-        return codEM;
-    }
-
-    public void setCodEM(Integer codEM) {
-        this.codEM = codEM;
-    }
 
     public Museo getMuseo() {
         return museo;
@@ -73,6 +71,35 @@ public class Biglietteria {
 
     public void setMuseo(Museo museo) {
         this.museo = museo;
+    }
+
+    public void aggiungiAbbonamento(Abbonamento abbonamento) {
+        abbonamenti.add(abbonamento);
+        abbonamento.getBiglietterie().add(this);
+    }
+
+    public void rimuoviAbbonamento(Abbonamento abbonamento) {
+        abbonamenti.remove(abbonamento);
+        abbonamento.getBiglietterie().remove(this);
+    }
+
+    public List<Abbonamento> getAbbonamenti() {
+        return abbonamenti;
+    }
+
+    public void aggiungiBiglietto(Biglietto biglietto) {
+        biglietti.add(biglietto);
+        biglietto.setBiglietteria(this);
+    }
+
+    public void rimuoviBiglietto(Biglietto biglietto) {
+        biglietti.remove(biglietto);
+        biglietto.setBiglietteria(null);
+    }
+
+    public List<Biglietto> getBiglietti()
+    {
+        return biglietti;
     }
 
 }

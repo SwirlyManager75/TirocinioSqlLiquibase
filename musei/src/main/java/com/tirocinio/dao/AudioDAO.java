@@ -1,6 +1,7 @@
 package com.tirocinio.dao;
 
 import com.tirocinio.model.Audio;
+import com.tirocinio.model.Poi;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,7 @@ public class AudioDAO {
     private static final String INSERT_AUDIO = "INSERT INTO Audio (URL, Cod_E_Poi) VALUES (?, ?)";
     private static final String UPDATE_AUDIO = "UPDATE Audio SET URL = ?, Cod_E_Poi = ? WHERE Cod_Au = ?";
     private static final String DELETE_AUDIO = "DELETE FROM Audio WHERE Cod_Au = ?";
+    private static final String ASSOC_POI = "UPDATE Audio SET Cod_E_Poi = ? WHERE Cod_Au = ?";
 
     public List<Audio> getAllAudios(Connection connection) {
         List<Audio> audios = new ArrayList<>();
@@ -50,7 +52,7 @@ public class AudioDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
-            preparedStatement.setInt(2, audio.getCodEPoi());
+            
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -64,7 +66,6 @@ public class AudioDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
-            preparedStatement.setInt(2, audio.getCodEPoi());
             preparedStatement.setInt(3, audio.getCodAu());
 
             int rowsAffected = preparedStatement.executeUpdate();
@@ -83,7 +84,7 @@ public class AudioDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
+            e.printStackTrace(); // 
             return false;
         }
     }
@@ -92,13 +93,11 @@ public class AudioDAO {
         List<Audio> matchingAudios = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Audio WHERE 1=1");
 
-        // Aggiungi i criteri alla query dinamicamente se sono presenti nella classe criteria
+        
         if (criteria.getUrl() != null) {
             queryBuilder.append(" AND URL LIKE ?");
         }
-        if (criteria.getCodEPoi() != null) {
-            queryBuilder.append(" AND Cod_E_Poi = ?");
-        }
+        
         // Aggiungi altri criteri secondo necessità
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
@@ -108,9 +107,7 @@ public class AudioDAO {
             if (criteria.getUrl() != null) {
                 preparedStatement.setString(parameterIndex++, "%" + criteria.getUrl() + "%");
             }
-            if (criteria.getCodEPoi() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodEPoi());
-            }
+            
             // Imposta altri parametri secondo necessità
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -125,11 +122,26 @@ public class AudioDAO {
         return matchingAudios;
     }
 
+    public boolean associateWithPoi(Connection connection, Audio audio, Poi poi) {
+        try (PreparedStatement statement = connection.prepareStatement(ASSOC_POI)) {
+
+            statement.setInt(1, poi.getCodPoi());
+            statement.setInt(2, audio.getCodAu());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Audio mapResultSetToAudio(ResultSet resultSet) throws SQLException {
         Audio audio = new Audio();
         audio.setCodAu(resultSet.getInt("Cod_Au"));
         audio.setUrl(resultSet.getString("URL"));
-        audio.setCodEPoi(resultSet.getInt("Cod_E_Poi"));
+        
         return audio;
     }
 }

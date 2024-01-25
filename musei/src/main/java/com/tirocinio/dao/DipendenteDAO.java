@@ -1,6 +1,8 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.model.Citta;
 import com.tirocinio.model.Dipendente;
+import com.tirocinio.model.Museo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,9 +15,11 @@ public class DipendenteDAO {
 
     private static final String SELECT_ALL_DIPENDENTI = "SELECT * FROM Dipendente";
     private static final String SELECT_DIPENDENTE_BY_ID = "SELECT * FROM Dipendente WHERE Cod_D = ?";
-    private static final String INSERT_DIPENDENTE = "INSERT INTO Dipendente (Nome, Data_Nascita, CF, Cellulare, Cod_E_Ci, Cod_E_M) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_DIPENDENTE = "UPDATE Dipendente SET Nome = ?, Data_Nascita = ?, CF = ?, Cellulare = ?, Cod_E_Ci = ?, Cod_E_M = ? WHERE Cod_D = ?";
+    private static final String INSERT_DIPENDENTE = "INSERT INTO Dipendente (Nome, Data_Nascita, CF, Cellulare) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE_DIPENDENTE = "UPDATE Dipendente SET Nome = ?, Data_Nascita = ?, CF = ?, Cellulare = ? WHERE Cod_D = ?";
     private static final String DELETE_DIPENDENTE = "DELETE FROM Dipendente WHERE Cod_D = ?";
+    private static final String ASSOC_MUSEO = "UPDATE Dipendente SET Cod_E_M = ? WHERE Cod_D = ?";
+    private static final String ASSOC_CITTA = "UPDATE Dipendente SET Cod_E_Ci = ? WHERE Cod_D = ?";
 
     public List<Dipendente> getAllDipendenti(Connection connection) {
         List<Dipendente> dipendenti = new ArrayList<>();
@@ -53,8 +57,7 @@ public class DipendenteDAO {
             preparedStatement.setDate(2, dipendente.getDataNascita());
             preparedStatement.setString(3, dipendente.getCodiceFiscale());
             preparedStatement.setString(4, dipendente.getCellulare());
-            preparedStatement.setInt(5, dipendente.getCodECi());
-            preparedStatement.setInt(6, dipendente.getCodEM());
+            
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -71,9 +74,7 @@ public class DipendenteDAO {
             preparedStatement.setDate(2, dipendente.getDataNascita());
             preparedStatement.setString(3, dipendente.getCodiceFiscale());
             preparedStatement.setString(4, dipendente.getCellulare());
-            preparedStatement.setInt(5, dipendente.getCodECi());
-            preparedStatement.setInt(6, dipendente.getCodEM());
-            preparedStatement.setInt(7, dipendente.getCodD());
+            preparedStatement.setInt(5, dipendente.getCodD());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -112,12 +113,6 @@ public class DipendenteDAO {
         if (criteria.getCellulare() != null) {
             queryBuilder.append(" AND Cellulare = ?");
         }
-        if (criteria.getCodECi() != null) {
-            queryBuilder.append(" AND Cod_E_Ci = ?");
-        }
-        if (criteria.getCodEM() != null) {
-            queryBuilder.append(" AND Cod_E_M = ?");
-        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
             int parameterIndex = 1;
@@ -134,12 +129,7 @@ public class DipendenteDAO {
             if (criteria.getCellulare() != null) {
                 preparedStatement.setString(parameterIndex++, criteria.getCellulare());
             }
-            if (criteria.getCodECi() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodECi());
-            }
-            if (criteria.getCodEM() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodEM());
-            }
+            
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -153,6 +143,38 @@ public class DipendenteDAO {
         return matchingDipendenti;
     }
 
+    public boolean associateWithCity(Connection connection, Dipendente dipendente, Citta citta) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_CITTA)) {
+
+            statement.setInt(1, citta.getCodCi());
+            statement.setInt(2, dipendente.getCodD());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean associateWithMuseum(Connection connection, Dipendente dipendente, Museo museo) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_MUSEO)) {
+
+            statement.setInt(1, museo.getCodM());
+            statement.setInt(2, dipendente.getCodD());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Dipendente mapResultSetToDipendente(ResultSet resultSet) throws SQLException {
         Dipendente dipendente = new Dipendente();
         dipendente.setCodD(resultSet.getInt("Cod_D"));
@@ -160,8 +182,7 @@ public class DipendenteDAO {
         dipendente.setDataNascita(resultSet.getDate("Data_Nascita"));
         dipendente.setCodiceFiscale(resultSet.getString("CF"));
         dipendente.setCellulare(resultSet.getString("Cellulare"));
-        dipendente.setCodECi(resultSet.getInt("Cod_E_Ci"));
-        dipendente.setCodEM(resultSet.getInt("Cod_E_M"));
+        
         return dipendente;
     }
 }

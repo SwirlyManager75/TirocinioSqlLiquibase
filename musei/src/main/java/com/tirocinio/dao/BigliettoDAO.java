@@ -1,6 +1,8 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.model.Biglietteria;
 import com.tirocinio.model.Biglietto;
+import com.tirocinio.model.Cliente;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,9 +15,11 @@ public class BigliettoDAO {
 
     private static final String SELECT_ALL_BIGLIETTI = "SELECT * FROM Biglietto";
     private static final String SELECT_BIGLIETTO_BY_ID = "SELECT * FROM Biglietto WHERE Cod_Bi = ?";
-    private static final String INSERT_BIGLIETTO = "INSERT INTO Biglietto (Prezzo, Tipo, Data, Cod_E_Cli, Cod_E_B) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE_BIGLIETTO = "UPDATE Biglietto SET Prezzo = ?, Tipo = ?, Data = ?, Cod_E_Cli = ?, Cod_E_B = ? WHERE Cod_Bi = ?";
+    private static final String INSERT_BIGLIETTO = "INSERT INTO Biglietto (Prezzo, Tipo, Data) VALUES (?, ?, ?)";
+    private static final String UPDATE_BIGLIETTO = "UPDATE Biglietto SET Prezzo = ?, Tipo = ?, Data = ? WHERE Cod_Bi = ?";
     private static final String DELETE_BIGLIETTO = "DELETE FROM Biglietto WHERE Cod_Bi = ?";
+    private static final String ASSOC_CLIENTE = "UPDATE Biglietto SET Cod_E_Cli = ? WHERE Cod_Bi = ?";
+    private static final String ASSOC_BIGLIETTERIA = "UPDATE Biglietto SET Cod_E_B = ? WHERE Cod_Bi = ?";
 
     public List<Biglietto> getAllBiglietti(Connection connection) {
         List<Biglietto> biglietti = new ArrayList<>();
@@ -52,8 +56,7 @@ public class BigliettoDAO {
             preparedStatement.setFloat(1, biglietto.getPrezzo());
             preparedStatement.setString(2, biglietto.getTipo().name());
             preparedStatement.setDate(3, biglietto.getData());
-            preparedStatement.setInt(4, biglietto.getCodECli());
-            preparedStatement.setInt(5, biglietto.getCodEB());
+        
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -69,9 +72,7 @@ public class BigliettoDAO {
             preparedStatement.setFloat(1, biglietto.getPrezzo());
             preparedStatement.setString(2, biglietto.getTipo().name());
             preparedStatement.setDate(3, biglietto.getData());
-            preparedStatement.setInt(4, biglietto.getCodECli());
-            preparedStatement.setInt(5, biglietto.getCodEB());
-            preparedStatement.setInt(6, biglietto.getCodBi());
+            preparedStatement.setInt(4, biglietto.getCodBi());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -107,12 +108,7 @@ public class BigliettoDAO {
         if (criteria.getData() != null) {
             queryBuilder.append(" AND Data = ?");
         }
-        if (criteria.getCodECli() != null) {
-            queryBuilder.append(" AND Cod_E_Cli = ?");
-        }
-        if (criteria.getCodEB() != null) {
-            queryBuilder.append(" AND Cod_E_B = ?");
-        }
+        
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
             int parameterIndex = 1;
@@ -125,12 +121,6 @@ public class BigliettoDAO {
             }
             if (criteria.getData() != null) {
                 preparedStatement.setDate(parameterIndex++, criteria.getData());
-            }
-            if (criteria.getCodECli() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodECli());
-            }
-            if (criteria.getCodEB() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodEB());
             }
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -145,14 +135,45 @@ public class BigliettoDAO {
         return matchingBiglietti;
     }
 
+    public boolean associateWithClient(Connection connection, Biglietto biglietto, Cliente cliente) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_CLIENTE)) {
+
+            statement.setInt(1, cliente.getCodCli());
+            statement.setInt(2, biglietto.getCodBi());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean associateWithTicketOffice(Connection connection,Biglietto biglietto, Biglietteria biglietteria) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_BIGLIETTERIA)) {
+
+            statement.setInt(1, biglietteria.getCodB());
+            statement.setInt(2, biglietto.getCodBi());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Biglietto mapResultSetToBiglietto(ResultSet resultSet) throws SQLException {
         Biglietto biglietto = new Biglietto();
         biglietto.setCodBi(resultSet.getInt("Cod_Bi"));
         biglietto.setPrezzo(resultSet.getFloat("Prezzo"));
         biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(resultSet.getString("Tipo")));
         biglietto.setData(resultSet.getDate("Data"));
-        biglietto.setCodECli(resultSet.getInt("Cod_E_Cli"));
-        biglietto.setCodEB(resultSet.getInt("Cod_E_B"));
+        
         return biglietto;
     }
 }

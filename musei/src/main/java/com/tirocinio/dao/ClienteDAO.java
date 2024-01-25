@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.model.Citta;
 import com.tirocinio.model.Cliente;
 
 import java.sql.Connection;
@@ -13,9 +14,11 @@ public class ClienteDAO {
 
     private static final String SELECT_ALL_CLIENTI = "SELECT * FROM Cliente";
     private static final String SELECT_CLIENTE_BY_ID = "SELECT * FROM Cliente WHERE Cod_Cli = ?";
-    private static final String INSERT_CLIENTE = "INSERT INTO Cliente (Nome, Cognome, Mail, Cellulare, Cod_E_Ci) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE_CLIENTE = "UPDATE Cliente SET Nome = ?, Cognome = ?, Mail = ?, Cellulare = ?, Cod_E_Ci = ? WHERE Cod_Cli = ?";
+    private static final String INSERT_CLIENTE = "INSERT INTO Cliente (Nome, Cognome, Mail, Cellulare) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE_CLIENTE = "UPDATE Cliente SET Nome = ?, Cognome = ?, Mail = ?, Cellulare = ? WHERE Cod_Cli = ?";
     private static final String DELETE_CLIENTE = "DELETE FROM Cliente WHERE Cod_Cli = ?";
+    private static final String ASSOC_CITTA = "UPDATE Cliente SET Cod_E_Ci = ? WHERE Cod_Cli = ?";
+    //TODO AGGIUNGERE LOGICA PER LEGARE CLIENTI AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_CLIENTI)
 
     public List<Cliente> getAllClienti(Connection connection) {
         List<Cliente> clienti = new ArrayList<>();
@@ -53,7 +56,7 @@ public class ClienteDAO {
             preparedStatement.setString(2, cliente.getCognome());
             preparedStatement.setString(3, cliente.getMail());
             preparedStatement.setString(4, cliente.getCellulare());
-            preparedStatement.setInt(5, cliente.getCodECi());
+            
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -70,8 +73,8 @@ public class ClienteDAO {
             preparedStatement.setString(2, cliente.getCognome());
             preparedStatement.setString(3, cliente.getMail());
             preparedStatement.setString(4, cliente.getCellulare());
-            preparedStatement.setInt(5, cliente.getCodECi());
-            preparedStatement.setInt(6, cliente.getCodCli());
+            
+            preparedStatement.setInt(5, cliente.getCodCli());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -110,9 +113,7 @@ public class ClienteDAO {
         if (criteria.getCellulare() != null) {
             queryBuilder.append(" AND Cellulare = ?");
         }
-        if (criteria.getCodECi() != null) {
-            queryBuilder.append(" AND Cod_E_Ci = ?");
-        }
+        
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
             int parameterIndex = 1;
@@ -129,9 +130,7 @@ public class ClienteDAO {
             if (criteria.getCellulare() != null) {
                 preparedStatement.setString(parameterIndex++, criteria.getCellulare());
             }
-            if (criteria.getCodECi() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodECi());
-            }
+            
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -145,6 +144,22 @@ public class ClienteDAO {
         return matchingClienti;
     }
 
+    public boolean associateWithCity(Connection connection, Cliente cliente, Citta citta) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_CITTA)) {
+
+            statement.setInt(1, citta.getCodCi());
+            statement.setInt(2, cliente.getCodCli());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Cliente mapResultSetToCliente(ResultSet resultSet) throws SQLException {
         Cliente cliente = new Cliente();
         cliente.setCodCli(resultSet.getInt("Cod_Cli"));
@@ -152,7 +167,7 @@ public class ClienteDAO {
         cliente.setCognome(resultSet.getString("Cognome"));
         cliente.setMail(resultSet.getString("Mail"));
         cliente.setCellulare(resultSet.getString("Cellulare"));
-        cliente.setCodECi(resultSet.getInt("Cod_E_Ci"));
+        
         return cliente;
     }
 }

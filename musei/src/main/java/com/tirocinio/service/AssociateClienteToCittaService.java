@@ -19,25 +19,14 @@ public class AssociateClienteToCittaService {
         this.connection = connection;
     }
 
-    public boolean execute(String nome, String cognome, String mail, String cellulare, int codCitta) {
+    public boolean execute(int codCliente, int codCitta) {
         // Cerco la Città con il codice fornito
         Citta citta = cittaDAO.getCityById(connection, codCitta);
-
-        if (citta != null)
+        Cliente cliente = clienteDAO.getClienteById(connection, codCliente);
+        if (citta != null && cliente != null)
         {
-            // Creo un nuovo oggetto Cliente e associalo alla Città
-            Cliente cliente = new Cliente();
-            cliente.setNome(nome);
-            cliente.setCognome(cognome);
-            cliente.setMail(mail);
-            cliente.setCellulare(cellulare);
-
-            cliente.setCodECi(citta.getCodCi());
-
-            // altri attributi del Cliente se necessario
-
             // Inserisci il Cliente nel database
-            return clienteDAO.addCliente(connection, cliente);
+            return clienteDAO.associateWithCity(connection, cliente,citta);
         } else {
             // Città non trovata
             System.out.println("Città non trovata con codice: " + codCitta);

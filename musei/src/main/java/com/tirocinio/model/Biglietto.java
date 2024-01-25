@@ -12,8 +12,6 @@ public class Biglietto {
     private float prezzo;
     private TipoBiglietto tipo;
     private Date data;
-    private Integer codECli; // Codice del Cliente associato al Biglietto
-    private Integer codEB; // Codice della Biglietteria associata al Biglietto
     private Cliente cliente; // Riferimento all'oggetto Cliente
     private Biglietteria biglietteria; // Riferimento all'oggetto Biglietteria
 
@@ -21,12 +19,11 @@ public class Biglietto {
     public Biglietto() {}
 
     // Costruttore con parametri
-    public Biglietto(float prezzo, TipoBiglietto tipo, Date data, Integer codECli, Integer codEB) {
+    public Biglietto(float prezzo, TipoBiglietto tipo, Date data) {
         this.prezzo = prezzo;
         this.tipo = tipo;
         this.data = data;
-        this.codECli = codECli;
-        this.codEB = codEB;
+        
     }
 
     // Metodi getter e setter per ogni attributo
@@ -60,22 +57,6 @@ public class Biglietto {
 
     public void setData(Date data) {
         this.data = data;
-    }
-
-    public Integer getCodECli() {
-        return codECli;
-    }
-
-    public void setCodECli(Integer codECli) {
-        this.codECli = codECli;
-    }
-
-    public Integer getCodEB() {
-        return codEB;
-    }
-
-    public void setCodEB(Integer codEB) {
-        this.codEB = codEB;
     }
 
     public Cliente getCliente() {

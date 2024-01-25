@@ -1,5 +1,7 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.model.Artista;
+import com.tirocinio.model.Museo;
 import com.tirocinio.model.Opera;
 
 import java.sql.Connection;
@@ -13,9 +15,11 @@ public class OperaDAO {
 
     private static final String SELECT_ALL_OPERE = "SELECT * FROM Opera";
     private static final String SELECT_OPERA_BY_ID = "SELECT * FROM Opera WHERE Cod_O = ?";
-    private static final String INSERT_OPERA = "INSERT INTO Opera (Nome, Descrizione, Cod_E_Ar, Cod_E_M) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_OPERA = "UPDATE Opera SET Nome = ?, Descrizione = ?, Cod_E_Ar = ?, Cod_E_M = ? WHERE Cod_O = ?";
+    private static final String INSERT_OPERA = "INSERT INTO Opera (Nome, Descrizione) VALUES (?, ?)";
+    private static final String UPDATE_OPERA = "UPDATE Opera SET Nome = ?, Descrizione = ? WHERE Cod_O = ?";
     private static final String DELETE_OPERA = "DELETE FROM Opera WHERE Cod_O = ?";
+    private static final String ASSOC_ARTISTA= "UPDATE Opera SET Cod_E_Ar = ? WHERE Cod_O = ?";
+    private static final String ASSOC_MUSEO = "UPDATE Opera SET Cod_E_Ci = ? WHERE Cod_O = ?";
 
     public List<Opera> getAllOpere(Connection connection) {
         List<Opera> opere = new ArrayList<>();
@@ -51,8 +55,6 @@ public class OperaDAO {
 
             preparedStatement.setString(1, opera.getNome());
             preparedStatement.setString(2, opera.getDescrizione());
-            preparedStatement.setInt(3, opera.getCodEAr());
-            preparedStatement.setInt(4, opera.getCodEM());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -67,9 +69,7 @@ public class OperaDAO {
 
             preparedStatement.setString(1, opera.getNome());
             preparedStatement.setString(2, opera.getDescrizione());
-            preparedStatement.setInt(3, opera.getCodEAr());
-            preparedStatement.setInt(4, opera.getCodEM());
-            preparedStatement.setInt(5, opera.getCodO());
+            preparedStatement.setInt(3, opera.getCodO());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -102,12 +102,7 @@ public class OperaDAO {
         if (criteria.getDescrizione() != null) {
             queryBuilder.append(" AND Descrizione = ?");
         }
-        if (criteria.getCodEAr() != null) {
-            queryBuilder.append(" AND Cod_E_Ar = ?");
-        }
-        if (criteria.getCodEM() != null) {
-            queryBuilder.append(" AND Cod_E_M = ?");
-        }
+        
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
             int parameterIndex = 1;
@@ -118,12 +113,7 @@ public class OperaDAO {
             if (criteria.getDescrizione() != null) {
                 preparedStatement.setString(parameterIndex++, criteria.getDescrizione());
             }
-            if (criteria.getCodEAr() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodEAr());
-            }
-            if (criteria.getCodEM() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodEM());
-            }
+            
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -137,13 +127,44 @@ public class OperaDAO {
         return matchingOpere;
     }
 
+    public boolean associateWithMuseo(Connection connection, Opera opera, Museo museo) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_MUSEO)) {
+
+            statement.setInt(1, museo.getCodM());
+            statement.setInt(2, opera.getCodO());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean associateWithArtist(Connection connection, Opera opera, Artista artista) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_ARTISTA)) {
+
+            statement.setInt(1, artista.getCodAr());
+            statement.setInt(2, opera.getCodO());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Opera mapResultSetToOpera(ResultSet resultSet) throws SQLException {
         Opera opera = new Opera();
         opera.setCodO(resultSet.getInt("Cod_O"));
         opera.setNome(resultSet.getString("Nome"));
         opera.setDescrizione(resultSet.getString("Descrizione"));
-        opera.setCodEAr(resultSet.getInt("Cod_E_Ar"));
-        opera.setCodEM(resultSet.getInt("Cod_E_M"));
+        
         return opera;
     }
 }

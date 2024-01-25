@@ -6,7 +6,6 @@ import com.tirocinio.model.Artista;
 import com.tirocinio.model.Citta;
 
 import java.sql.Connection;
-import java.sql.Date;
 
 public class AssociateArtistaToCittaService {
 
@@ -20,21 +19,12 @@ public class AssociateArtistaToCittaService {
         this.connection = connection;
     }
 
-    public boolean execute(String nome, String cognome, Date dataNascita, boolean inVita, int codCitta) {
+    public boolean execute(int codAr, int codCitta) {
         // Cerco la Città con il codice fornito
         Citta citta = cittaDAO.getCityById(connection, codCitta);
-
-        if (citta != null) {
-            // Creo un nuovo oggetto Artista e associalo alla Città
-            Artista artista = new Artista();
-            artista.setNome(nome);
-            artista.setCognome(cognome);
-            artista.setDataNascita(dataNascita);
-            artista.setInVita(inVita);
-            artista.setCodECi(citta.getCodCi());
-
-            // altri attributi dell'Artista se necessario
-
+        Artista artista = artistaDAO.getArtistaById(connection, codAr);
+        if (citta != null && artista != null) {
+            
             // Inserisco l'Artista nel database
             return artistaDAO.addArtista(connection, artista);
         } else {

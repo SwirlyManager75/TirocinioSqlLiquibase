@@ -1,5 +1,8 @@
 package com.tirocinio.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Abbonamento {
 
     public enum TipoAbbonamento {
@@ -10,6 +13,11 @@ public class Abbonamento {
     private TipoAbbonamento tipo;
     private String descrizione;
     private float prezzo;
+
+    private List<Biglietteria> biglietterie = new ArrayList<>();
+    private List<Cliente> clienti = new ArrayList<>();
+    
+    
 
     // Costruttore vuoto 
     public Abbonamento() {}
@@ -53,5 +61,38 @@ public class Abbonamento {
     public void setPrezzo(float prezzo) {
         this.prezzo = prezzo;
     }
+
+    public void aggiungiBiglietteria(Biglietteria biglietteria) {
+        biglietterie.add(biglietteria);
+        biglietteria.getAbbonamenti().add(this);
+    }
+
+    public void rimuoviBiglietteria(Biglietteria biglietteria) {
+        biglietterie.remove(biglietteria);
+        biglietteria.getAbbonamenti().remove(this);
+    }
+
+    public List<Biglietteria> getBiglietterie() {
+        return biglietterie;
+    }
+    
+    public List<Cliente> getClienti() {
+        return clienti;
+    }
+
+    public void setClienti(List<Cliente> clienti) {
+        this.clienti = clienti;
+    }
+
+    public void aggiungiCliente(Cliente cliente) {
+        clienti.add(cliente);
+        cliente.getAbbonamenti().add(this);
+    }
+
+    public void rimuoviCliente(Cliente cliente) {
+        clienti.remove(cliente);
+        cliente.getAbbonamenti().remove(this);
+    }
+
 
 }

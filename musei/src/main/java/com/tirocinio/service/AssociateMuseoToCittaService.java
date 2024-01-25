@@ -19,22 +19,13 @@ public class AssociateMuseoToCittaService {
         this.connection = connection;
     }
 
-    public boolean execute(String nomeMuseo, String viaMuseo, int codCitta) {
+    public boolean execute(int codMuseo, int codCitta) {
         // Cerco la Città con il codice fornito
         Citta citta = cittaDAO.getCityById(connection, codCitta);
-
-        if (citta != null) {
-            // Creo un nuovo oggetto Museo
-            Museo museo = new Museo();
-
-            museo.setNome(nomeMuseo);
-            museo.setVia(viaMuseo);
-            museo.setCodECi(citta.getCodCi());
-
-            // altri attributi del Museo se necessario
-
+        Museo museo = museoDAO.getMuseumById(connection, codMuseo);
+        if (citta != null && museo != null) {
             // Inserisci il Museo nel database
-            return museoDAO.addMuseum(connection, museo);
+            return museoDAO.associateWithCity(connection, museo,citta);
         } else {
             // Città non trovata
             System.out.println("Città non trovata con codice: " + codCitta);

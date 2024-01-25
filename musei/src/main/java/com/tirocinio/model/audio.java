@@ -4,16 +4,15 @@ public class Audio {
 
     private Integer codAu;
     private String url;
-    private Integer codEPoi; // Codice del Point of Interest (Poi) associato all'audio
+    
     private Poi poi; // Riferimento all'oggetto Poi
 
     // Costruttore vuoto 
     public Audio() {}
 
     // Costruttore con parametri
-    public Audio(String url, Integer codEPoi) {
+    public Audio(String url) {
         this.url = url;
-        this.codEPoi = codEPoi;
     }
 
     // Metodi getter e setter per ogni attributo
@@ -31,14 +30,6 @@ public class Audio {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Integer getCodEPoi() {
-        return codEPoi;
-    }
-
-    public void setCodEPoi(Integer codEPoi) {
-        this.codEPoi = codEPoi;
     }
 
     public Poi getPoi() {

@@ -6,7 +6,6 @@ import com.tirocinio.model.Biglietto;
 import com.tirocinio.model.Biglietteria;
 
 import java.sql.Connection;
-import java.sql.Date;
 
 public class AssociateBigliettoToBiglietteriaService {
 
@@ -20,22 +19,14 @@ public class AssociateBigliettoToBiglietteriaService {
         this.connection = connection;
     }
 
-    public boolean execute(float prezzo, String tipo, Date data, int codCliente, int codBiglietteria) {
+    public boolean execute(int codBiglietto, int codBiglietteria) {
         // Cerco la Biglietteria con il codice fornito
         Biglietteria biglietteria = biglietteriaDAO.getBiglietteriaById(connection, codBiglietteria);
+        Biglietto biglietto = bigliettoDAO.getBigliettoById(connection, codBiglietto);
 
-        if (biglietteria != null) {
-            // Creo un nuovo oggetto Biglietto e associalo alla Biglietteria
-            Biglietto biglietto = new Biglietto();
-            biglietto.setPrezzo(prezzo);
-            biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(tipo)); // Assumi che il tipo sia un'enumerazione
-            biglietto.setData(data);
-            biglietto.setBiglietteria(biglietteria);
-
-            // altri attributi del Biglietto se necessario
-
+        if (biglietteria != null && biglietto != null) {
             // Inserisco il Biglietto nel database
-            return bigliettoDAO.addBiglietto(connection, biglietto);
+            return bigliettoDAO.associateWithTicketOffice(connection, biglietto,biglietteria);
         } else {
             // Biglietteria non trovata
             System.out.println("Biglietteria non trovata con codice: " + codBiglietteria);

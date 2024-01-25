@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS Artista (
 	Cognome varchar(50) not null,
 	Data_Nascita date not null,
     In_vita bit not null,
-	Cod_E_Ci integer not null,
+	Cod_E_Ci integer ,
 	foreign key(Cod_E_Ci) references Citta(Cod_Ci) ON DELETE CASCADE
 )

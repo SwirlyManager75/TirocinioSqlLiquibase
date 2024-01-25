@@ -9,8 +9,7 @@ public class Dipendente {
     private Date dataNascita;
     private String codiceFiscale;
     private String cellulare;
-    private Integer codECi; // Codice della Città associata al Dipendente
-    private Integer codEM; // Codice del Museo associato al Dipendente
+    
     private Citta citta; // Riferimento all'oggetto Citta
     private Museo museo; // Riferimento all'oggetto Museo
 
@@ -18,13 +17,11 @@ public class Dipendente {
     public Dipendente() {}
 
     // Costruttore con parametri
-    public Dipendente(String nome, Date dataNascita, String codiceFiscale, String cellulare, Integer codECi, Integer codEM) {
+    public Dipendente(String nome, Date dataNascita, String codiceFiscale, String cellulare) {
         this.nome = nome;
         this.dataNascita = dataNascita;
         this.codiceFiscale = codiceFiscale;
         this.cellulare = cellulare;
-        this.codECi = codECi;
-        this.codEM = codEM;
     }
 
     // Metodi getter e setter per ogni attributo
@@ -66,22 +63,6 @@ public class Dipendente {
 
     public void setCellulare(String cellulare) {
         this.cellulare = cellulare;
-    }
-
-    public Integer getCodECi() {
-        return codECi;
-    }
-
-    public void setCodECi(Integer codECi) {
-        this.codECi = codECi;
-    }
-
-    public Integer getCodEM() {
-        return codEM;
-    }
-
-    public void setCodEM(Integer codEM) {
-        this.codEM = codEM;
     }
 
     public Citta getCitta() {

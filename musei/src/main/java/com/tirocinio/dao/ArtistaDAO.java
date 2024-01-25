@@ -1,6 +1,7 @@
 package com.tirocinio.dao;
 
 import com.tirocinio.model.Artista;
+import com.tirocinio.model.Citta;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,9 +14,10 @@ public class ArtistaDAO {
 
     private static final String SELECT_ALL_ARTISTI = "SELECT * FROM Artista";
     private static final String SELECT_ARTISTA_BY_ID = "SELECT * FROM Artista WHERE Cod_Ar = ?";
-    private static final String INSERT_ARTISTA = "INSERT INTO Artista (Nome, Cognome, Data_Nascita, In_vita, Cod_E_Ci) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE_ARTISTA = "UPDATE Artista SET Nome = ?, Cognome = ?, Data_Nascita = ?, In_vita = ?, Cod_E_Ci = ? WHERE Cod_Ar = ?";
+    private static final String INSERT_ARTISTA = "INSERT INTO Artista (Nome, Cognome, Data_Nascita, In_vita) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE_ARTISTA = "UPDATE Artista SET Nome = ?, Cognome = ?, Data_Nascita = ?, In_vita = ? WHERE Cod_Ar = ?";
     private static final String DELETE_ARTISTA = "DELETE FROM Artista WHERE Cod_Ar = ?";
+    private static final String ASSOC_CITTA = "UPDATE Artista SET Cod_E_Ci = ? WHERE Cod_Ar = ?";
 
     public List<Artista> getAllArtisti(Connection connection) {
         List<Artista> artisti = new ArrayList<>();
@@ -53,7 +55,6 @@ public class ArtistaDAO {
             preparedStatement.setString(2, artista.getCognome());
             preparedStatement.setDate(3, artista.getDataNascita());
             preparedStatement.setBoolean(4, artista.isInVita());
-            preparedStatement.setInt(5, artista.getCodECi());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -70,8 +71,7 @@ public class ArtistaDAO {
             preparedStatement.setString(2, artista.getCognome());
             preparedStatement.setDate(3, artista.getDataNascita());
             preparedStatement.setBoolean(4, artista.isInVita());
-            preparedStatement.setInt(5, artista.getCodECi());
-            preparedStatement.setInt(6, artista.getCodAr());
+            preparedStatement.setInt(5, artista.getCodAr());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -110,9 +110,6 @@ public class ArtistaDAO {
         if (criteria.isInVita()) {
             queryBuilder.append(" AND In_vita = ?");
         }
-        if (criteria.getCodECi() != null) {
-            queryBuilder.append(" AND Cod_E_Ci = ?");
-        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
             int parameterIndex = 1;
@@ -129,9 +126,7 @@ public class ArtistaDAO {
             if (criteria.isInVita()) {
                 preparedStatement.setBoolean(parameterIndex++, criteria.isInVita());
             }
-            if (criteria.getCodECi() != null) {
-                preparedStatement.setInt(parameterIndex++, criteria.getCodECi());
-            }
+            
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -145,6 +140,22 @@ public class ArtistaDAO {
         return matchingArtisti;
     }
 
+    public boolean associateWithCity(Connection connection, Artista artista, Citta citta) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                ASSOC_CITTA)) {
+
+            statement.setInt(1, citta.getCodCi());
+            statement.setInt(2, artista.getCodAr());
+
+            int rowsAffected =statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            // Gestisci l'eccezione
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Artista mapResultSetToArtista(ResultSet resultSet) throws SQLException {
         Artista artista = new Artista();
         artista.setCodAr(resultSet.getInt("Cod_Ar"));
@@ -152,7 +163,6 @@ public class ArtistaDAO {
         artista.setCognome(resultSet.getString("Cognome"));
         artista.setDataNascita(resultSet.getDate("Data_Nascita"));
         artista.setInVita(resultSet.getBoolean("In_vita"));
-        artista.setCodECi(resultSet.getInt("Cod_E_Ci"));
         return artista;
     }
 }
