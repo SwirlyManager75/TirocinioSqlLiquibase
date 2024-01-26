@@ -15,7 +15,7 @@ public class AudioDAO {
     private static final String SELECT_ALL_AUDIOS = "SELECT * FROM Audio";
     private static final String SELECT_AUDIO_BY_ID = "SELECT * FROM Audio WHERE Cod_Au = ?";
     private static final String INSERT_AUDIO = "INSERT INTO Audio (URL, Cod_E_Poi) VALUES (?, ?)";
-    private static final String UPDATE_AUDIO = "UPDATE Audio SET URL = ?, Cod_E_Poi = ? WHERE Cod_Au = ?";
+    private static final String UPDATE_AUDIO = "UPDATE Audio SET URL = ? WHERE Cod_Au = ?";
     private static final String DELETE_AUDIO = "DELETE FROM Audio WHERE Cod_Au = ?";
     private static final String ASSOC_POI = "UPDATE Audio SET Cod_E_Poi = ? WHERE Cod_Au = ?";
 
@@ -66,7 +66,7 @@ public class AudioDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
-            preparedStatement.setInt(3, audio.getCodAu());
+            preparedStatement.setInt(2, audio.getCodAu());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
