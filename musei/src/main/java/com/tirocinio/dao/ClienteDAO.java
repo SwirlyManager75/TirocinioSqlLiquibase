@@ -18,7 +18,7 @@ public class ClienteDAO {
     private static final String UPDATE_CLIENTE = "UPDATE Cliente SET Nome = ?, Cognome = ?, Mail = ?, Cellulare = ? WHERE Cod_Cli = ?";
     private static final String DELETE_CLIENTE = "DELETE FROM Cliente WHERE Cod_Cli = ?";
     private static final String ASSOC_CITTA = "UPDATE Cliente SET Cod_E_Ci = ? WHERE Cod_Cli = ?";
-    //TODO AGGIUNGERE LOGICA PER LEGARE CLIENTI AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_CLIENTI)
+    //TODO AGGIUNGERE LOGICA PER LEGARE CLIENTI AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_CLIENTI) CREARE UN DAO APPOSITO PER 
 
     public List<Cliente> getAllClienti(Connection connection) {
         List<Cliente> clienti = new ArrayList<>();
@@ -51,7 +51,7 @@ public class ClienteDAO {
 
     public boolean addCliente(Connection connection, Cliente cliente) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CLIENTE)) {
-
+            //TODO PRENDERE LA CHIAVE PRIMA DI INSERIRE CON MAX+1
             preparedStatement.setString(1, cliente.getNome());
             preparedStatement.setString(2, cliente.getCognome());
             preparedStatement.setString(3, cliente.getMail());

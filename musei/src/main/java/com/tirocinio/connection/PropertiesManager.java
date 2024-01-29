@@ -26,7 +26,7 @@ public class PropertiesManager {
     private void loadProperties() 
     {
         properties = new Properties();
-        try (FileInputStream input = new FileInputStream("config.properties")) 
+        try (FileInputStream input = new FileInputStream("C:\\Users\\Swirl\\OneDrive\\Desktop\\Tirocinio\\musei\\src\\main\\java\\com\\tirocinio\\connection\\config.properties")) 
         {
             properties.load(input);
         } catch (Exception e) {

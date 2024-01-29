@@ -19,7 +19,7 @@ public class AssociatePoiToMuseoService{
         this.connection = connection;
     }
 
-    public boolean execute(String descrizione, int museoId, int poiId) {
+    public boolean execute( int museoId, int poiId) {
         // Cerca il Museo con l'ID fornito
         Museo museo = museoDAO.getMuseumById(connection, museoId);
         Poi poi = poiDAO.getPoiById(connection, poiId);
