@@ -1,21 +1,43 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.PoiDAO;
 import com.tirocinio.model.Poi;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CreatePoiService {
 
     private final PoiDAO poiDAO;
-    private final Connection connection;
+   
 
-    public CreatePoiService(Connection connection) {
+    public CreatePoiService( ) {
         this.poiDAO = new PoiDAO();
-        this.connection = connection;
     }
 
-    public boolean execute(Poi poi) {
-        return poiDAO.addPoi(connection, poi);
+    public boolean execute(Poi poi) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            poiDAO.addPoi(connection, poi);           
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+         
     }
 }

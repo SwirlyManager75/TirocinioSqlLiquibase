@@ -1,20 +1,41 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ArtistaDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DeleteArtistaService {
 
     private final ArtistaDAO artistaDAO;
-    private final Connection connection;
-
-    public DeleteArtistaService(Connection connection) {
+    
+    public DeleteArtistaService( ) {
         this.artistaDAO = new ArtistaDAO();
-        this.connection = connection;
     }
 
-    public boolean execute(int artistaId) {
-        return artistaDAO.deleteArtista(connection, artistaId);
+    public boolean execute(int artistaId) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            artistaDAO.deleteArtista(connection, artistaId);           
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+         
     }
 }

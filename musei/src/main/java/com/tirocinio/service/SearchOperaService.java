@@ -1,22 +1,27 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.OperaDAO;
 import com.tirocinio.model.Opera;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class SearchOperaService {
 
     private final OperaDAO operaDAO;
-    private final Connection connection;
 
-    public SearchOperaService(Connection connection) {
+    public SearchOperaService( ) {
         this.operaDAO = new OperaDAO();
-        this.connection = connection;
     }
 
     public List<Opera> execute(Opera criteria) {
-        return operaDAO.search(connection, criteria);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return operaDAO.search(connection, criteria);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

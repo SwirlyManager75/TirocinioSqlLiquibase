@@ -1,22 +1,28 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.DipendenteDAO;
 import com.tirocinio.model.Dipendente;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class SearchDipendenteService {
 
     private final DipendenteDAO dipendenteDAO;
-    private final Connection connection;
 
-    public SearchDipendenteService(Connection connection) {
+    public SearchDipendenteService( ) {
         this.dipendenteDAO = new DipendenteDAO();
-        this.connection = connection;
+        
     }
 
     public List<Dipendente> execute(Dipendente criteria) {
-        return dipendenteDAO.search(connection, criteria);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return dipendenteDAO.search(connection, criteria);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

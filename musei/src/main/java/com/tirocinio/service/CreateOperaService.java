@@ -1,21 +1,43 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.OperaDAO;
 import com.tirocinio.model.Opera;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CreateOperaService {
 
     private final OperaDAO operaDAO;
-    private final Connection connection;
+    
 
-    public CreateOperaService(Connection connection) {
+    public CreateOperaService() {
         this.operaDAO = new OperaDAO();
-        this.connection = connection;
+        
     }
 
-    public boolean execute(Opera opera) {
-        return operaDAO.addOpera(connection, opera);
+    public boolean execute(Opera opera) throws SQLException {
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            operaDAO.addOpera(connection, opera);            
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+        
     }
 }

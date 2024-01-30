@@ -1,20 +1,43 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AbbonamentoDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DeleteAbbonamentoService {
 
     private final AbbonamentoDAO abbonamentoDAO;
-    private final Connection connection;
+    
 
-    public DeleteAbbonamentoService(Connection connection) {
+    public DeleteAbbonamentoService( ) {
         this.abbonamentoDAO = new AbbonamentoDAO();
-        this.connection = connection;
+        
     }
 
-    public boolean execute(int abbonamentoId) {
-        return abbonamentoDAO.deleteAbbonamento(connection, abbonamentoId);
+    public boolean execute(int abbonamentoId) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            abbonamentoDAO.deleteAbbonamento(connection, abbonamentoId);           
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+         
     }
 }

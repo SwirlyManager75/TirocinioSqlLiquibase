@@ -1,21 +1,44 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BiglietteriaDAO;
 import com.tirocinio.model.Biglietteria;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CreateBiglietteriaService {
 
     private final BiglietteriaDAO biglietteriaDAO;
-    private final Connection connection;
+    
 
-    public CreateBiglietteriaService(Connection connection) {
+    public CreateBiglietteriaService() {
         this.biglietteriaDAO = new BiglietteriaDAO();
-        this.connection = connection;
     }
 
-    public boolean execute(Biglietteria biglietteria) {
-        return biglietteriaDAO.addBiglietteria(connection, biglietteria);
+    public boolean execute(Biglietteria biglietteria) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            biglietteriaDAO.addBiglietteria(connection, biglietteria);            
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+        
+        
     }
 }

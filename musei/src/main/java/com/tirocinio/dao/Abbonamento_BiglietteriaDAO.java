@@ -6,46 +6,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 public class Abbonamento_BiglietteriaDAO {
 
-    private static final String SELECT_ALL_ABBONAMENTI_BIGLIETTERIE = "SELECT * FROM Abbonamento_Biglietteria";
-    private static final String SELECT_ABBONAMENTO_BIGLIETTERIA_BY_ID = "SELECT * FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
     private static final String INSERT_ABBONAMENTO_BIGLIETTERIA = "INSERT INTO Abbonamento_Biglietteria (Cod_E_A, Cod_E_B) VALUES (?, ?)";
     private static final String DELETE_ABBONAMENTO_BIGLIETTERIA = "DELETE FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
-    //TODO INVECE DI RITORNARE IL MODEL VECCHIO BISOGNA TORNARE UNA MAP <INT,INT>
-   /*  public List<Abbonamento_Biglietteria> getAllAbbonamentiBiglietterie(Connection connection) {
-        List<Abbonamento_Biglietteria> abbonamentiBiglietterie = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_ABBONAMENTI_BIGLIETTERIE);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            while (resultSet.next()) {
-                abbonamentiBiglietterie.add(mapResultSetToAbbonamentoBiglietteria(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return abbonamentiBiglietterie;
-    }*/
-
-   /*  public Abbonamento_Biglietteria getAbbonamentoBiglietteriaById(Connection connection, int abbonamentoBiglietteriaId) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ABBONAMENTO_BIGLIETTERIA_BY_ID)) {
-
-            preparedStatement.setInt(1, abbonamentoBiglietteriaId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapResultSetToAbbonamentoBiglietteria(resultSet);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
 
     public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO_BIGLIETTERIA)) {
@@ -94,38 +62,56 @@ public class Abbonamento_BiglietteriaDAO {
         }
     }
 
-    public Map<Integer,Integer> search(Connection connection, Integer Cod_E_A, Integer Cod_E_B) {
-        Map<Integer,Integer> matchingAbbonamentiBiglietterie = new HashMap();
-        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Abbonamento_Biglietteria WHERE 1=1");
+    public Map<Integer, Integer> leggiBiglietteriePerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException {
+        Map<Integer, Integer> result = new HashMap<>();
+        String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
+                       "WHERE ab.Cod_E_A = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, codiceAbbonamento);
 
-        if (Cod_E_A != null) {
-            queryBuilder.append(" AND Cod_E_A = ?");
-        }
-        if (Cod_E_B != null) {
-            queryBuilder.append(" AND Cod_E_B = ?");
-        }
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString())) {
-            int parameterIndex = 1;
-
-            if (Cod_E_A != null) {
-                preparedStatement.setInt(parameterIndex++, Cod_E_A);
-            }
-            if (Cod_E_B != null) {
-                preparedStatement.setInt(parameterIndex++, Cod_E_B);
-            }
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    matchingAbbonamentiBiglietterie.put(resultSet.getInt("Cod_E_B"),resultSet.getInt("Cod_E_A"));
+                    int codAb = resultSet.getInt("Cod_Abbonamento");
+                    int codBi = resultSet.getInt("Cod_Biglietteria");
+                    result.put(codAb, codBi);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        return matchingAbbonamentiBiglietterie;
+        return result;
     }
+
+    public Map<Integer, Integer> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceAbbonamento) throws SQLException {
+        Map<Integer, Integer> result = new HashMap<>();
+        String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
+                       "WHERE ab.Cod_E_B = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, codiceAbbonamento);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int codAb = resultSet.getInt("Cod_Abbonamento");
+                    int codBi = resultSet.getInt("Cod_Biglietteria");
+                    result.put(codAb, codBi);
+                }
+            }
+        }
+        return result;
+    }
+
+    public Map<Integer, Integer> getAllAbbonementiBiglietterie(Connection connection) throws SQLException {
+        Map<Integer, Integer> result = new HashMap<>();
+        String query = "SELECT Cod_Abbonamento, Cod_Biglietteria FROM Abbonamento_Biglietteria";
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery(query)) {
+            while (resultSet.next()) {
+                int codiceAbbonamento = resultSet.getInt("Cod_Abbonamento");
+                int codiceBiglietteria = resultSet.getInt("Cod_Biglietteria");
+                result.put(codiceAbbonamento, codiceBiglietteria);
+            }
+        }
+        return result;
+    }
+
 
     
 }

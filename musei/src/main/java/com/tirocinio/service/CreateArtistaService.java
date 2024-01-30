@@ -1,21 +1,35 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ArtistaDAO;
 import com.tirocinio.model.Artista;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CreateArtistaService {
 
     private final ArtistaDAO artistaDAO;
-    private final Connection connection;
+    
 
-    public CreateArtistaService(Connection connection) {
+    public CreateArtistaService() {
         this.artistaDAO = new ArtistaDAO();
-        this.connection = connection;
     }
 
-    public boolean execute(Artista artista) {
+    public boolean execute(Artista artista) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            artistaDAO.addArtista(connection, artista);
+            connection.commit();
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+        } 
         return artistaDAO.addArtista(connection, artista);
     }
 }

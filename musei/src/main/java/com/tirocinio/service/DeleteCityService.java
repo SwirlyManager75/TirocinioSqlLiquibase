@@ -1,20 +1,43 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.CittaDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DeleteCityService {
 
     private final CittaDAO cittaDAO;
-    private final Connection connection;
+   
 
-    public DeleteCityService(Connection connection) {
+    public DeleteCityService() {
         this.cittaDAO = new CittaDAO();
-        this.connection = connection;
+
     }
 
-    public boolean execute(int cityId) {
-        return cittaDAO.deleteCity(connection, cityId);
+    public boolean execute(int cityId) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            cittaDAO.deleteCity(connection, cityId);           
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+         
     }
 }

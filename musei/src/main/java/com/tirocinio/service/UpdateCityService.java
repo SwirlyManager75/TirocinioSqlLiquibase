@@ -1,21 +1,26 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.CittaDAO;
 import com.tirocinio.model.Citta;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class UpdateCityService {
 
     private final CittaDAO cittaDAO;
-    private final Connection connection;
 
-    public UpdateCityService(Connection connection) {
+    public UpdateCityService( ) {
         this.cittaDAO = new CittaDAO();
-        this.connection = connection;
     }
 
     public boolean execute(Citta city) {
-        return cittaDAO.updateCity(connection, city);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return cittaDAO.updateCity(connection, city);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

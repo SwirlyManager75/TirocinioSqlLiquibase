@@ -1,22 +1,28 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.PoiDAO;
 import com.tirocinio.model.Poi;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class GetAllPoisService {
 
     private final PoiDAO poiDAO;
-    private final Connection connection;
 
-    public GetAllPoisService(Connection connection) {
+    public GetAllPoisService( ) {
         this.poiDAO = new PoiDAO();
-        this.connection = connection;
     }
 
     public List<Poi> execute() {
-        return poiDAO.getAllPois(connection);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return poiDAO.getAllPois(connection);
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            return null;
+        }
     }
 }

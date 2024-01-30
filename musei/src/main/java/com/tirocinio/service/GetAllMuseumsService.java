@@ -1,22 +1,29 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.MuseoDAO;
 import com.tirocinio.model.Museo;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class GetAllMuseumsService {
 
     private final MuseoDAO museoDAO;
-    private final Connection connection;
+    
 
-    public GetAllMuseumsService(Connection connection) {
+    public GetAllMuseumsService() {
         this.museoDAO = new MuseoDAO();
-        this.connection = connection;
+        
     }
 
     public List<Museo> execute() {
-        return museoDAO.getAllMuseums(connection);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return museoDAO.getAllMuseums(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

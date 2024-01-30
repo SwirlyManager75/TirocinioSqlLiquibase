@@ -1,22 +1,28 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ClienteDAO;
 import com.tirocinio.model.Cliente;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class SearchClienteService {
 
     private final ClienteDAO clienteDAO;
-    private final Connection connection;
 
-    public SearchClienteService(Connection connection) {
+    public SearchClienteService( ) {
         this.clienteDAO = new ClienteDAO();
-        this.connection = connection;
     }
 
     public List<Cliente> execute(Cliente criteria) {
-        return clienteDAO.search(connection, criteria);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return clienteDAO.search(connection, criteria);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        
     }
 }

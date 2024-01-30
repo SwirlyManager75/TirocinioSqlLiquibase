@@ -1,20 +1,42 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BigliettoDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DeleteBigliettoService {
 
     private final BigliettoDAO bigliettoDAO;
-    private final Connection connection;
+    
 
-    public DeleteBigliettoService(Connection connection) {
+    public DeleteBigliettoService( ) {
         this.bigliettoDAO = new BigliettoDAO();
-        this.connection = connection;
+     
     }
 
-    public boolean execute(int bigliettoId) {
-        return bigliettoDAO.deleteBiglietto(connection, bigliettoId);
+    public boolean execute(int bigliettoId) throws SQLException {
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            bigliettoDAO.deleteBiglietto(connection, bigliettoId);          
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+         
     }
 }

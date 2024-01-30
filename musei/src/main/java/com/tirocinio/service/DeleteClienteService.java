@@ -1,20 +1,43 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ClienteDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DeleteClienteService {
 
     private final ClienteDAO clienteDAO;
-    private final Connection connection;
+    
 
-    public DeleteClienteService(Connection connection) {
+    public DeleteClienteService( ) {
         this.clienteDAO = new ClienteDAO();
-        this.connection = connection;
+        
     }
 
-    public boolean execute(int clienteId) {
-        return clienteDAO.deleteCliente(connection, clienteId);
+    public boolean execute(int clienteId) throws SQLException {
+
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            clienteDAO.deleteCliente(connection, clienteId);            
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+         
     }
 }

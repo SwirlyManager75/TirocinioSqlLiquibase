@@ -1,21 +1,26 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BigliettoDAO;
 import com.tirocinio.model.Biglietto;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class UpdateBigliettoService {
 
     private final BigliettoDAO bigliettoDAO;
-    private final Connection connection;
 
-    public UpdateBigliettoService(Connection connection) {
+    public UpdateBigliettoService( ) {
         this.bigliettoDAO = new BigliettoDAO();
-        this.connection = connection;
     }
 
     public boolean execute(Biglietto biglietto) {
-        return bigliettoDAO.updateBiglietto(connection, biglietto);
+        try (Connection connection = ConnectionManager.getConnection()) {
+            return bigliettoDAO.updateBiglietto(connection, biglietto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -1,20 +1,42 @@
 package com.tirocinio.service;
 
+import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.OperaDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DeleteOperaService {
 
     private final OperaDAO operaDAO;
-    private final Connection connection;
+    
 
-    public DeleteOperaService(Connection connection) {
+    public DeleteOperaService() {
         this.operaDAO = new OperaDAO();
-        this.connection = connection;
+       
     }
 
-    public boolean execute(int operaId) {
-        return operaDAO.deleteOpera(connection, operaId);
+    public boolean execute(int operaId) throws SQLException {
+        Connection connection = ConnectionManager.getConnection();
+
+        try 
+        {
+            connection.setAutoCommit(false);
+            operaDAO.deleteOpera(connection, operaId);           
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            connection.rollback();
+            
+        }
+        finally
+        {
+            connection.close();
+        }
+        
+        return false;
+        
     }
 }

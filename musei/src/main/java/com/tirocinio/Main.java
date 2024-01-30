@@ -94,6 +94,7 @@ public class Main
         //Inizializzo la connessione
         Connection connection = ConnectionManager.getConnection();// TODO SPOSTARE APERTURA E CHIUSURA DELLA CONNESSIONE NEI SERVICE
         connection.setAutoCommit(false); //TODO GESTIRE LE TRANSAZIONI, RIVEDERE TUTTE LE OPERAZIONI DB
+        
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 
@@ -145,7 +146,7 @@ public class Main
                                         System.out.println("Inserisci la URL dell'audio");
                                         audio.setUrl(in.readLine());
 
-                                        CreateAudioService cr= new CreateAudioService(connection);
+                                        CreateAudioService cr= new CreateAudioService();
 
                                         cr.execute(audio);
 
@@ -158,7 +159,7 @@ public class Main
                                         System.out.println("Inserisci il codice dell'audio per la ricerca");
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
-                                        UpdateAudioService up= new UpdateAudioService(connection);
+                                        UpdateAudioService up= new UpdateAudioService();
                                         up.execute(audio);
 
                                     break;
@@ -168,7 +169,7 @@ public class Main
                                         System.out.println("Inserisci il codice dell'audio per la cancellazione");
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
-                                        DeleteAudioService dl= new DeleteAudioService(connection);
+                                        DeleteAudioService dl= new DeleteAudioService();
                                         dl.execute(audio.getCodAu());
 
                                     break;
@@ -182,7 +183,7 @@ public class Main
                                     break;
 
                                     case 5:
-                                        GetAllAudiosService allAudiosService = new GetAllAudiosService(connection);
+                                        GetAllAudiosService allAudiosService = new GetAllAudiosService();
                                         
                                         audioList=allAudiosService.execute();
 
@@ -193,7 +194,7 @@ public class Main
                                     break;
 
                                     case 6:
-                                        SearchAudioService searchAudioService = new SearchAudioService(connection);
+                                        SearchAudioService searchAudioService = new SearchAudioService();
                                         
                                         System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la URL)");
                                         audio.setUrl(in.readLine());
@@ -235,7 +236,7 @@ public class Main
                                         System.out.println("Inserisci la descriozione dell'POI");
                                         poi.setDescrizione(in.readLine());
 
-                                        CreatePoiService createPoiService = new CreatePoiService(connection);
+                                        CreatePoiService createPoiService = new CreatePoiService();
 
                                         createPoiService.execute(poi);
                                     break;
@@ -246,7 +247,7 @@ public class Main
                                         System.out.println("Inserisci il codice del POI per la ricerca");
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
-                                        UpdatePoiService updatePoiService = new UpdatePoiService(connection);
+                                        UpdatePoiService updatePoiService = new UpdatePoiService();
                                         updatePoiService.execute(poi);
                                     break;
 
@@ -254,7 +255,7 @@ public class Main
                                         System.out.println("Inserisci il codice del POI per la cancellazione");
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
-                                        DeletePoiService deletePoiService = new DeletePoiService(connection);
+                                        DeletePoiService deletePoiService = new DeletePoiService();
                                         deletePoiService.execute(poi.getCodPoi());
                                     break;
 
@@ -266,7 +267,7 @@ public class Main
                                     break;
 
                                     case 5:
-                                        GetAllPoisService getAllPoisService = new GetAllPoisService(connection);
+                                        GetAllPoisService getAllPoisService = new GetAllPoisService();
 
                                         poiList = getAllPoisService.execute();
 
@@ -278,7 +279,7 @@ public class Main
                                     break;
 
                                     case 6:
-                                        SearchPoiService searchPoiService = new SearchPoiService(connection);
+                                        SearchPoiService searchPoiService = new SearchPoiService();
                                         System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la Descrizione)");
 
                                         poi.setDescrizione(in.readLine());
@@ -323,7 +324,7 @@ public class Main
                                         System.out.println("Inserisci la via del Museo se ne sei a conoscenza");
                                         museo.setVia(in.readLine());
 
-                                        CreateMuseumService createMuseumService = new CreateMuseumService(connection);
+                                        CreateMuseumService createMuseumService = new CreateMuseumService();
                                         createMuseumService.execute(museo);
                                     break;
 
@@ -333,7 +334,7 @@ public class Main
                                         System.out.println("Inserisci la via sostituitiva del Museo se ne sei a conoscenza");
                                         museo.setVia(in.readLine());
 
-                                        UpdateMuseumService updateMuseumService = new UpdateMuseumService(connection);
+                                        UpdateMuseumService updateMuseumService = new UpdateMuseumService();
                                         updateMuseumService.execute(museo);
                                     break;
 
@@ -341,7 +342,7 @@ public class Main
                                         System.out.println("Inserisci il codice del Museo per la cancellazione");
                                         museo.setCodM(Integer.parseInt(in.readLine()));
 
-                                        DeleteMuseumService deleteMuseumService = new DeleteMuseumService(connection);
+                                        DeleteMuseumService deleteMuseumService = new DeleteMuseumService();
                                         deleteMuseumService.execute(museo.getCodM());
                                     break;
 
@@ -354,7 +355,7 @@ public class Main
                                     break;
 
                                     case 5:
-                                        GetAllMuseumsService getAllMuseumsService = new GetAllMuseumsService(connection);
+                                        GetAllMuseumsService getAllMuseumsService = new GetAllMuseumsService();
 
                                         museoList = getAllMuseumsService.execute();
 
@@ -366,7 +367,7 @@ public class Main
                                     break;
 
                                     case 6:
-                                        SearchMuseumService searchMuseumService = new SearchMuseumService(connection);
+                                        SearchMuseumService searchMuseumService = new SearchMuseumService();
                                         System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro il Nome)");
                                         museo.setNome(in.readLine());
                                         System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la Via)");
@@ -412,7 +413,7 @@ public class Main
                                             System.out.println("Inserisci true se la citta è una provincia");
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine())); //inserire true nella stringa
     
-                                            CreateCityService createCityService = new CreateCityService(connection);
+                                            CreateCityService createCityService = new CreateCityService();
                                             createCityService.execute(citta);
                                         break;
     
@@ -422,7 +423,7 @@ public class Main
                                             System.out.println("Inserisci true se la Città è una provincia");
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine())); //inserire true nella stringa
 
-                                            UpdateCityService updateCityService = new UpdateCityService(connection);
+                                            UpdateCityService updateCityService = new UpdateCityService();
                                             updateCityService.execute(citta);
                                         break;
     
@@ -430,7 +431,7 @@ public class Main
                                             System.out.println("Inserisci il codice della Città per la cancellazione");
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
-                                            DeleteCityService deleteCityService = new DeleteCityService(connection);
+                                            DeleteCityService deleteCityService = new DeleteCityService();
                                             deleteCityService.execute(citta.getCodCi());
                                         break;
     
@@ -438,12 +439,12 @@ public class Main
                                             System.out.println("Inserisci il codice della Città per la ricerca");
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
-                                            cittaDAO.getCityById(connection, citta.getCodCi());
+                                            cittaDAO.getCityById(connection, citta.getCodCi()); //TODO CREARE SERVICE
                                             System.out.println("Citta.CodCi:" + citta.getCodCi()+"Citta.Nome:"+citta.getNome()+"Citta.Provincia:"+citta.isProvincia());
                                         break;
     
                                         case 5:
-                                            GetAllCitiesService getAllCitiesService = new GetAllCitiesService(connection);
+                                            GetAllCitiesService getAllCitiesService = new GetAllCitiesService();
     
                                             cittaList = getAllCitiesService.execute();
     
@@ -455,7 +456,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchCityService searchCityService = new SearchCityService(connection);
+                                            SearchCityService searchCityService = new SearchCityService();
 
                                             System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro il Nome)");
                                             citta.setNome(in.readLine());
@@ -506,7 +507,7 @@ public class Main
                                             System.out.println("Inserisci la mail del Cliente se pervenuta");
                                             cliente.setMail(in.readLine());
                                             
-                                            CreateClienteService createClienteService = new CreateClienteService(connection);
+                                            CreateClienteService createClienteService = new CreateClienteService();
                                             createClienteService.execute(cliente);
                                         break;
     
@@ -520,7 +521,7 @@ public class Main
                                             System.out.println("Inserisci la mail sostituitiva del Cliente se pervenuta");
                                             cliente.setMail(in.readLine());
                                             
-                                            UpdateClienteService updateClienteService = new UpdateClienteService(connection);
+                                            UpdateClienteService updateClienteService = new UpdateClienteService();
                                             updateClienteService.execute(cliente);
                                         break;
     
@@ -528,7 +529,7 @@ public class Main
                                             System.out.println("Inserisci il codice del Cliente per la cancellazione");
                                             cliente.setCodCli(Integer.parseInt(in.readLine()));
     
-                                            DeleteClienteService deleteClienteService = new DeleteClienteService(connection);
+                                            DeleteClienteService deleteClienteService = new DeleteClienteService();
                                             deleteClienteService.execute(cliente.getCodCli());
                                         break;
     
@@ -542,7 +543,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllClientiService getAllClientiService = new GetAllClientiService(connection);
+                                            GetAllClientiService getAllClientiService = new GetAllClientiService();
     
                                             clientList = getAllClientiService.execute();
     
@@ -554,7 +555,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchClienteService searchClienteService = new SearchClienteService(connection);
+                                            SearchClienteService searchClienteService = new SearchClienteService();
 
                                             System.out.println("Inserimento Criteri di ricerca");
                                             System.out.println("Inserisci il nome del Cliente");
@@ -610,7 +611,7 @@ public class Main
                                             System.out.println("Inserisci la data di nascita nel formato 'yyyy-MM-dd' del Dipendente");
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            CreateDipendenteService createDipendenteService = new CreateDipendenteService(connection);
+                                            CreateDipendenteService createDipendenteService = new CreateDipendenteService();
                                             createDipendenteService.execute(dipendente);
                                         break;
     
@@ -625,7 +626,7 @@ public class Main
                                             System.out.println("Inserisci la data di nascita sostituitiva nel formato 'yyyy-MM-dd' del Dipendente se pervenuta");
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            UpdateDipendenteService updetaDipendenteService = new UpdateDipendenteService(connection);
+                                            UpdateDipendenteService updetaDipendenteService = new UpdateDipendenteService();
                                             updetaDipendenteService.execute(dipendente);
                                         break;
     
@@ -633,7 +634,7 @@ public class Main
                                             System.out.println("Inserisci il codice del Dipendente per la cancellazione");
                                             dipendente.setCodD(Integer.parseInt(in.readLine()));
     
-                                            DeleteDipendenteService deleteDipendenteService = new DeleteDipendenteService(connection);
+                                            DeleteDipendenteService deleteDipendenteService = new DeleteDipendenteService();
                                             deleteDipendenteService.execute(dipendente.getCodD());
                                         break;
     
@@ -648,7 +649,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllDipendentiService getAllDipendentiService = new GetAllDipendentiService(connection);
+                                            GetAllDipendentiService getAllDipendentiService = new GetAllDipendentiService();
     
                                             dipList = getAllDipendentiService.execute();
     
@@ -660,7 +661,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchDipendenteService searchDipendenteService = new SearchDipendenteService(connection);
+                                            SearchDipendenteService searchDipendenteService = new SearchDipendenteService();
 
                                             System.out.println("Inserimento Criteri di ricerca");
                                             System.out.println("Inserisci il nome del Dipendente");
@@ -717,7 +718,7 @@ public class Main
                                             System.out.println("Inserisci la data di nascita del Artista se pervenuta");
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            CreateArtistaService createArtistaService = new CreateArtistaService(connection);
+                                            CreateArtistaService createArtistaService = new CreateArtistaService();
                                             createArtistaService.execute(artista);
                                         break;
     
@@ -731,7 +732,7 @@ public class Main
                                             System.out.println("Inserisci la data di nascita sostituitiva del Artista se pervenuta");
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            UpdateArtistaService updateArtistaService = new UpdateArtistaService(connection);
+                                            UpdateArtistaService updateArtistaService = new UpdateArtistaService();
                                             updateArtistaService.execute(artista);
                                         break;
     
@@ -739,7 +740,7 @@ public class Main
                                             System.out.println("Inserisci il codice del Artista per la cancellazione");
                                             artista.setCodAr(Integer.parseInt(in.readLine()));
     
-                                            DeleteArtistaService deleteArtistaService = new DeleteArtistaService(connection);
+                                            DeleteArtistaService deleteArtistaService = new DeleteArtistaService();
                                             deleteArtistaService.execute(artista.getCodAr());
                                         break;
     
@@ -753,7 +754,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllArtistiService getAllArtistiService = new GetAllArtistiService(connection);
+                                            GetAllArtistiService getAllArtistiService = new GetAllArtistiService();
     
                                             artList = getAllArtistiService.execute();
                                             for(Artista art : artList)
@@ -764,7 +765,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchArtistaService searchArtistaService = new SearchArtistaService(connection);
+                                            SearchArtistaService searchArtistaService = new SearchArtistaService();
                                             System.out.println("Inserisci il nome del Artista");
                                             artista.setNome(in.readLine());
                                             System.out.println("Inserisci il cognome del Artista");
@@ -817,7 +818,7 @@ public class Main
                                             System.out.println("Inserisci la descrizione dell'Opera");
                                             opera.setDescrizione(in.readLine());
                                             
-                                            CreateOperaService createOperaService = new CreateOperaService(connection);
+                                            CreateOperaService createOperaService = new CreateOperaService();
                                             createOperaService.execute(opera);
 
                                         break;
@@ -829,7 +830,7 @@ public class Main
                                             System.out.println("Inserisci la descrizione sostituitiva dell'Opera");
                                             opera.setDescrizione(in.readLine());
                                             
-                                            UpdateOperaService updateOperaService = new UpdateOperaService(connection);
+                                            UpdateOperaService updateOperaService = new UpdateOperaService();
                                             updateOperaService.execute(opera);
 
                                         break;
@@ -838,7 +839,7 @@ public class Main
                                             System.out.println("Inserisci il codice dell'Opera  per la cancellazione");
                                             opera.setCodO(Integer.parseInt(in.readLine()));
     
-                                            DeleteOperaService deleteOperaService = new DeleteOperaService(connection);
+                                            DeleteOperaService deleteOperaService = new DeleteOperaService();
                                             deleteOperaService.execute(opera.getCodO());
                                         break;
     
@@ -852,7 +853,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllOpereService getAllOpereService = new GetAllOpereService(connection);
+                                            GetAllOpereService getAllOpereService = new GetAllOpereService();
     
                                             operList = getAllOpereService.execute();
                                             for(Opera oper : operList)
@@ -863,7 +864,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchOperaService searchOperaService = new SearchOperaService(connection);
+                                            SearchOperaService searchOperaService = new SearchOperaService();
 
                                             System.out.println("Inserisci il nome dell'Opera");
                                             opera.setNome(in.readLine());
@@ -914,7 +915,7 @@ public class Main
                                             System.out.println("Inserisci l'orario di chiusura della Biglietteria in hh-mm-ss");
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
                                             
-                                            CreateBiglietteriaService createBiglietteriaService = new CreateBiglietteriaService(connection);
+                                            CreateBiglietteriaService createBiglietteriaService = new CreateBiglietteriaService();
                                             createBiglietteriaService.execute(biglietteria);
 
                                         break;
@@ -928,7 +929,7 @@ public class Main
                                             System.out.println("Inserisci l'orario di chiusura sostituitiva della Biglietteria in hh-mm-ss");
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
                                             
-                                            UpdateBiglietteriaService updateBiglietteriaService = new UpdateBiglietteriaService(connection);
+                                            UpdateBiglietteriaService updateBiglietteriaService = new UpdateBiglietteriaService();
                                             updateBiglietteriaService.execute(biglietteria);
 
                                         break;
@@ -937,7 +938,7 @@ public class Main
                                             System.out.println("Inserisci il codice della Biglietteria per la cancellazione");
                                             biglietteria.setCodB(Integer.parseInt(in.readLine()));
     
-                                            DeleteBiglietteriaService deleteBiglietteriaService = new DeleteBiglietteriaService(connection);
+                                            DeleteBiglietteriaService deleteBiglietteriaService = new DeleteBiglietteriaService();
                                             deleteBiglietteriaService.execute(biglietteria.getCodB());
                                         break;
     
@@ -951,7 +952,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllBiglietterieService getAllBiglietterieService = new GetAllBiglietterieService(connection);
+                                            GetAllBiglietterieService getAllBiglietterieService = new GetAllBiglietterieService();
     
                                             biglietteriaList = getAllBiglietterieService.execute();
                                             for(Biglietteria bigl : biglietteriaList)
@@ -962,7 +963,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchBiglietteriaService searchBiglietteriaService = new SearchBiglietteriaService(connection);
+                                            SearchBiglietteriaService searchBiglietteriaService = new SearchBiglietteriaService();
 
                                             System.out.println("Inserisci la modalita di pagamento della Biglietteria");
                                             biglietteria.setModPag(Biglietteria.ModalitaPagamento.valueOf(in.readLine()));
@@ -1016,7 +1017,7 @@ public class Main
                                             System.out.println("Inserisci il tipo del biglietto "); //inserire i tipi disponibili per ricordare
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
                                             
-                                            CreateBigliettoService createBigliettoService = new CreateBigliettoService(connection);
+                                            CreateBigliettoService createBigliettoService = new CreateBigliettoService();
                                             createBigliettoService.execute(biglietto);
 
                                         break;
@@ -1030,7 +1031,7 @@ public class Main
                                             System.out.println("Inserisci il tipo sostituitivo del biglietto "); //inserire i tipi disponibili per ricordare
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
                                             
-                                            UpdateBigliettoService updateBigliettoService = new UpdateBigliettoService(connection);
+                                            UpdateBigliettoService updateBigliettoService = new UpdateBigliettoService();
                                             updateBigliettoService.execute(biglietto);
 
                                         break;
@@ -1039,7 +1040,7 @@ public class Main
                                             System.out.println("Inserisci il codice del Biglietto ");
                                             biglietto.setCodBi(Integer.parseInt(in.readLine()));
     
-                                            DeleteBigliettoService deleteBigliettoService = new DeleteBigliettoService(connection);
+                                            DeleteBigliettoService deleteBigliettoService = new DeleteBigliettoService();
                                             deleteBigliettoService.execute(biglietto.getCodBi());
                                         break;
     
@@ -1053,7 +1054,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllBigliettiService getAllBigliettiService = new GetAllBigliettiService(connection);
+                                            GetAllBigliettiService getAllBigliettiService = new GetAllBigliettiService();
     
                                             biglList = getAllBigliettiService.execute();
                                             for(Biglietto bigl : biglList)
@@ -1064,7 +1065,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchBigliettoService searchBigliettoService = new SearchBigliettoService(connection);
+                                            SearchBigliettoService searchBigliettoService = new SearchBigliettoService();
 
                                             System.out.println("Inserisci la data di acquisto del Biglietto");
                                             biglietto.setData(Date.valueOf(in.readLine()));
@@ -1118,7 +1119,7 @@ public class Main
                                             System.out.println("Inserisci il prezzo dell'Abbonamento "); //inserire i tipi disponibili per ricordare
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
                                             
-                                            CreateAbbonamentoService createAbbonamentoService = new CreateAbbonamentoService(connection);
+                                            CreateAbbonamentoService createAbbonamentoService = new CreateAbbonamentoService();
                                             createAbbonamentoService.execute(abbonamento);
 
                                         break;
@@ -1132,7 +1133,7 @@ public class Main
                                             System.out.println("Inserisci il prezzo sostituitivo dell'Abbonamento "); //inserire i tipi disponibili per ricordare
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
                                                 
-                                            UpdateAbbonamentoService updateAbbonamentoService = new UpdateAbbonamentoService(connection);
+                                            UpdateAbbonamentoService updateAbbonamentoService = new UpdateAbbonamentoService();
                                             updateAbbonamentoService.execute(abbonamento);
 
                                         break;
@@ -1141,7 +1142,7 @@ public class Main
                                             System.out.println("Inserisci il codice dell'Abbonamento per la cancellazione");
                                             abbonamento.setCodAb(Integer.parseInt(in.readLine()));
     
-                                            DeleteAbbonamentoService deleteAbbonamentoService = new DeleteAbbonamentoService(connection);
+                                            DeleteAbbonamentoService deleteAbbonamentoService = new DeleteAbbonamentoService();
                                             deleteAbbonamentoService.execute(abbonamento.getCodAb());
                                         break;
     
@@ -1155,7 +1156,7 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllAbbonamentiService getAllAbbonamentiService = new GetAllAbbonamentiService(connection);
+                                            GetAllAbbonamentiService getAllAbbonamentiService = new GetAllAbbonamentiService();
     
                                             abbList = getAllAbbonamentiService.execute();
                                             for(Abbonamento abb : abbList)
@@ -1166,7 +1167,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchAbbonamentoService searchAbbonamentoService = new SearchAbbonamentoService(connection);
+                                            SearchAbbonamentoService searchAbbonamentoService = new SearchAbbonamentoService();
 
                                             System.out.println("Inserisci il tipo dell'Abbonamento");
                                             abbonamento.setTipo(Abbonamento.TipoAbbonamento.valueOf(in.readLine()));
