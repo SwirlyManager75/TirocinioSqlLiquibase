@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 import com.tirocinio.model.Museo;
 
@@ -19,7 +20,7 @@ public class MuseoDAO {
     private static final String DELETE_MUSEUM = "DELETE FROM Museo WHERE Cod_M = ?";
     private static final String ASSOC_MUSEUM = "UPDATE Museo SET Cod_E_Ci = ? WHERE Cod_M = ?";
 
-    public List<Museo> getAllMuseums(Connection connection) {
+    public List<Museo> getAllMuseums(Connection connection) throws DAOException {
         List<Museo> museums = new ArrayList<>();
         
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_MUSEUMS);
@@ -29,12 +30,13 @@ public class MuseoDAO {
                 museums.add(mapResultSetToMuseum(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace(); //Gestisco eccezione 
+            throw new DAOException(SELECT_ALL_MUSEUMS, null);
+            //return false;
         }
         return museums;
     }
 
-    public Museo getMuseumById(Connection connection, int museumId) {
+    public Museo getMuseumById(Connection connection, int museumId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_MUSEUM_BY_ID)) {
 
             preparedStatement.setInt(1, museumId);
@@ -44,12 +46,13 @@ public class MuseoDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco eccezione  
-        }
+                throw new DAOException(SELECT_MUSEUM_BY_ID, null);
+                //return false;
+            }
         return null;
     }
 
-    public boolean addMuseum(Connection connection, Museo museum) {
+    public boolean addMuseum(Connection connection, Museo museum) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_MUSEUM)) {
 
             preparedStatement.setString(1, museum.getNome());
@@ -59,12 +62,12 @@ public class MuseoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); //Gestisco eccezione 
-            return false;
+            throw new DAOException(INSERT_MUSEUM, null);
+            //return false;
         }
     }
 
-    public boolean updateMuseum(Connection connection, Museo museum) {
+    public boolean updateMuseum(Connection connection, Museo museum) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_MUSEUM)) {
 
             preparedStatement.setString(1, museum.getNome());
@@ -74,12 +77,12 @@ public class MuseoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco eccezione 
-            return false;
+            throw new DAOException(UPDATE_MUSEUM, null);
+            //return false;
         }
     }
 
-    public boolean deleteMuseum(Connection connection, int museumId) {
+    public boolean deleteMuseum(Connection connection, int museumId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_MUSEUM)) {
 
             preparedStatement.setInt(1, museumId);
@@ -87,12 +90,12 @@ public class MuseoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco eccezione 
-            return false;
+            throw new DAOException(DELETE_MUSEUM, null);
+            //return false;
         }
     }
 
-    public boolean associateWithCity(Connection connection, Museo museo, Citta citta) {
+    public boolean associateWithCity(Connection connection, Museo museo, Citta citta) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(ASSOC_MUSEUM)) {
 
             statement.setInt(1, citta.getCodCi());
@@ -101,12 +104,12 @@ public class MuseoDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_MUSEUM, null);
+            //return false;
         }
     }
 
-    public List<Museo> search(Connection connection, Museo criteria) {
+    public List<Museo> search(Connection connection, Museo criteria) throws DAOException {
         List<Museo> matchingMuseums = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Museo WHERE 1=1");
     
@@ -143,8 +146,13 @@ public class MuseoDAO {
                     matchingMuseums.add(mapResultSetToMuseum(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco eccezione 
+            throw new DAOException("DAO Exception search", null);
+            //return false;
         }
     
         return matchingMuseums;

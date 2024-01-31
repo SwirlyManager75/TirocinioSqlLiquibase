@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Museo;
 import com.tirocinio.model.Opera;
@@ -21,7 +22,7 @@ public class OperaDAO {
     private static final String ASSOC_ARTISTA= "UPDATE Opera SET Cod_E_Ar = ? WHERE Cod_O = ?";
     private static final String ASSOC_MUSEO = "UPDATE Opera SET Cod_E_Ci = ? WHERE Cod_O = ?";
 
-    public List<Opera> getAllOpere(Connection connection) {
+    public List<Opera> getAllOpere(Connection connection) throws DAOException {
         List<Opera> opere = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_OPERE);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -30,12 +31,13 @@ public class OperaDAO {
                 opere.add(mapResultSetToOpera(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+                throw new DAOException(SELECT_ALL_OPERE, null);
+                //return false;
         }
         return opere;
     }
 
-    public Opera getOperaById(Connection connection, int operaId) {
+    public Opera getOperaById(Connection connection, int operaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_OPERA_BY_ID)) {
 
             preparedStatement.setInt(1, operaId);
@@ -45,12 +47,13 @@ public class OperaDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_OPERA_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addOpera(Connection connection, Opera opera) {
+    public boolean addOpera(Connection connection, Opera opera) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_OPERA)) {
 
             preparedStatement.setString(1, opera.getNome());
@@ -59,12 +62,12 @@ public class OperaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_OPERA, null);
+            //return false;
         }
     }
 
-    public boolean updateOpera(Connection connection, Opera opera) {
+    public boolean updateOpera(Connection connection, Opera opera) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_OPERA)) {
 
             preparedStatement.setString(1, opera.getNome());
@@ -74,25 +77,25 @@ public class OperaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_OPERA, null);
+            //return false;
         }
     }
 
-    public boolean deleteOpera(Connection connection, int operaId) {
+    public boolean deleteOpera(Connection connection, int operaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_OPERA)) {
 
             preparedStatement.setInt(1, operaId);
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        }catch (SQLException e) {
+            throw new DAOException(DELETE_OPERA, null);
+            //return false;
         }
     }
 
-    public List<Opera> search(Connection connection, Opera criteria) {
+    public List<Opera> search(Connection connection, Opera criteria) throws DAOException {
         List<Opera> matchingOpere = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Opera WHERE 1=1");
 
@@ -120,14 +123,19 @@ public class OperaDAO {
                     matchingOpere.add(mapResultSetToOpera(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException("DAO Exception search", null);
+            //return false;
         }
 
         return matchingOpere;
     }
 
-    public boolean associateWithMuseo(Connection connection, Opera opera, Museo museo) {
+    public boolean associateWithMuseo(Connection connection, Opera opera, Museo museo) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_MUSEO)) {
 
@@ -137,13 +145,12 @@ public class OperaDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_MUSEO, null);
+            //return false;
         }
     }
 
-    public boolean associateWithArtist(Connection connection, Opera opera, Artista artista) {
+    public boolean associateWithArtist(Connection connection, Opera opera, Artista artista) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_ARTISTA)) {
 
@@ -152,10 +159,9 @@ public class OperaDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+        }catch (SQLException e) {
+            throw new DAOException(ASSOC_ARTISTA, null);
+            //return false;
         }
     }
 

@@ -10,12 +10,14 @@ import java.util.HashMap;
 
 import java.util.Map;
 
+import com.tirocinio.exceptions.DAOException;
+
 public class Abbonamento_BiglietteriaDAO {
 
     private static final String INSERT_ABBONAMENTO_BIGLIETTERIA = "INSERT INTO Abbonamento_Biglietteria (Cod_E_A, Cod_E_B) VALUES (?, ?)";
     private static final String DELETE_ABBONAMENTO_BIGLIETTERIA = "DELETE FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
 
-    public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) {
+    public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO_BIGLIETTERIA)) {
 
             preparedStatement.setInt(1, Cod_Ab);
@@ -24,12 +26,12 @@ public class Abbonamento_BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_ABBONAMENTO_BIGLIETTERIA, null);
+            //return false;
         }
     }
 
-    public boolean deleteAbbonamentoBiglietteria(Connection connection, int abbonamentoBiglietteriaId) {
+    public boolean deleteAbbonamentoBiglietteria(Connection connection, int abbonamentoBiglietteriaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ABBONAMENTO_BIGLIETTERIA)) {
 
             preparedStatement.setInt(1, abbonamentoBiglietteriaId);
@@ -37,12 +39,12 @@ public class Abbonamento_BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_ABBONAMENTO_BIGLIETTERIA, null);
+            //return false;
         }
     }
 
-    public boolean updateAbbonamentoBiglietteria(Connection connection, Integer Cod_E_A,Integer Cod_E_B, Integer Cod_AB ) {
+    public boolean updateAbbonamentoBiglietteria(Connection connection, Integer Cod_E_A,Integer Cod_E_B, Integer Cod_AB ) throws DAOException {
         String query = "UPDATE Abbonamento_Biglietteria " +
                        "SET Cod_E_A = ?, Cod_E_B = ? " +
                        "WHERE Cod_AB = ?";
@@ -57,12 +59,12 @@ public class Abbonamento_BiglietteriaDAO {
             // Restituisci true se almeno una riga è stata aggiornata
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato
-            return false;
+            throw new DAOException(query, null);
+            //return false;
         }
     }
 
-    public Map<Integer, Integer> leggiBiglietteriePerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException {
+    public Map<Integer, Integer> leggiBiglietteriePerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
         Map<Integer, Integer> result = new HashMap<>();
         String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
                        "WHERE ab.Cod_E_A = ?";
@@ -76,11 +78,21 @@ public class Abbonamento_BiglietteriaDAO {
                     result.put(codAb, codBi);
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(query, null);
+                //return false;
+            }
         }
+        catch (SQLException e) {
+            throw new DAOException(query, null);
+            //return false;
+        }
+        
+        
         return result;
     }
 
-    public Map<Integer, Integer> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceAbbonamento) throws SQLException {
+    public Map<Integer, Integer> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
         Map<Integer, Integer> result = new HashMap<>();
         String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
                        "WHERE ab.Cod_E_B = ?";
@@ -94,11 +106,19 @@ public class Abbonamento_BiglietteriaDAO {
                     result.put(codAb, codBi);
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(query, null);
+                //return false;
+            }
+        }
+        catch (SQLException e) {
+            throw new DAOException(query, null);
+            //return false;
         }
         return result;
     }
 
-    public Map<Integer, Integer> getAllAbbonementiBiglietterie(Connection connection) throws SQLException {
+    public Map<Integer, Integer> getAllAbbonementiBiglietterie(Connection connection) throws SQLException, DAOException {
         Map<Integer, Integer> result = new HashMap<>();
         String query = "SELECT Cod_Abbonamento, Cod_Biglietteria FROM Abbonamento_Biglietteria";
         try (PreparedStatement statement = connection.prepareStatement(query);
@@ -108,6 +128,10 @@ public class Abbonamento_BiglietteriaDAO {
                 int codiceBiglietteria = resultSet.getInt("Cod_Biglietteria");
                 result.put(codiceAbbonamento, codiceBiglietteria);
             }
+        }
+        catch (SQLException e) {
+            throw new DAOException(query, null);
+            //return false;
         }
         return result;
     }

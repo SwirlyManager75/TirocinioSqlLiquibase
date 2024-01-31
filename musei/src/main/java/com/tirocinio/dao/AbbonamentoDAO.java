@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
 
 import java.sql.Connection;
@@ -19,7 +20,7 @@ public class AbbonamentoDAO {
     //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
     //TODO AGGIUNGERE LOGICA PER LEGARE ABBONAMENTI A CLIENTI(SI USA LA TABELLA CLIENTI_ABBONAMENTI)
 
-    public List<Abbonamento> getAllAbbonamenti(Connection connection) {
+    public List<Abbonamento> getAllAbbonamenti(Connection connection) throws DAOException {
         List<Abbonamento> abbonamenti = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_ABBONAMENTI);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -28,12 +29,13 @@ public class AbbonamentoDAO {
                 abbonamenti.add(mapResultSetToAbbonamento(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+                throw new DAOException(SELECT_ALL_ABBONAMENTI, null);
+                //return false;
         }
         return abbonamenti;
     }
 
-    public Abbonamento getAbbonamentoById(Connection connection, int abbonamentoId) {
+    public Abbonamento getAbbonamentoById(Connection connection, int abbonamentoId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ABBONAMENTO_BY_ID)) {
 
             preparedStatement.setInt(1, abbonamentoId);
@@ -43,12 +45,13 @@ public class AbbonamentoDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_ABBONAMENTO_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addAbbonamento(Connection connection, Abbonamento abbonamento) {
+    public boolean addAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO)) {
 
             preparedStatement.setString(1, convertTipoToDatabase(abbonamento.getTipo()));
@@ -58,12 +61,12 @@ public class AbbonamentoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_ABBONAMENTO, null);
+            //return false;
         }
     }
 
-    public boolean updateAbbonamento(Connection connection, Abbonamento abbonamento) {
+    public boolean updateAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ABBONAMENTO)) {
 
             preparedStatement.setString(1, convertTipoToDatabase(abbonamento.getTipo()));
@@ -74,12 +77,12 @@ public class AbbonamentoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_ABBONAMENTO, null);
+            //return false;
         }
     }
 
-    public boolean deleteAbbonamento(Connection connection, int abbonamentoId) {
+    public boolean deleteAbbonamento(Connection connection, int abbonamentoId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ABBONAMENTO)) {
 
             preparedStatement.setInt(1, abbonamentoId);
@@ -87,12 +90,12 @@ public class AbbonamentoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_ABBONAMENTO, null);
+            //return false;
         }
     }
 
-    public List<Abbonamento> search(Connection connection, Abbonamento criteria) {
+    public List<Abbonamento> search(Connection connection, Abbonamento criteria) throws DAOException {
         List<Abbonamento> matchingAbbonamenti = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Abbonamento WHERE 1=1");
 
@@ -125,7 +128,8 @@ public class AbbonamentoDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(queryBuilder.toString(), null);
+            //return false;
         }
 
         return matchingAbbonamenti;

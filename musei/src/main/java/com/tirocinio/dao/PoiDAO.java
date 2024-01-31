@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Museo;
 import com.tirocinio.model.Poi;
 
@@ -19,7 +20,7 @@ public class PoiDAO {
     private static final String DELETE_POI = "DELETE FROM Poi WHERE Cod_Poi = ?";
     private static final String ASSOC_MUSEO =  "UPDATE Poi SET Cod_E_M = ? WHERE Cod_Poi = ?";
 
-    public List<Poi> getAllPois(Connection connection) {
+    public List<Poi> getAllPois(Connection connection) throws DAOException {
         List<Poi> pois = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_POIS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -28,12 +29,13 @@ public class PoiDAO {
                 pois.add(mapResultSetToPoi(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco l'eccezione 
+            throw new DAOException(SELECT_ALL_POIS, null);
+            //return false;
         }
         return pois;
     }
 
-    public Poi getPoiById(Connection connection, int poiId) {
+    public Poi getPoiById(Connection connection, int poiId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_POI_BY_ID)) {
 
             preparedStatement.setInt(1, poiId);
@@ -43,12 +45,13 @@ public class PoiDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco l'eccezione 
+            throw new DAOException(SELECT_POI_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addPoi(Connection connection, Poi poi) {
+    public boolean addPoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
@@ -56,12 +59,12 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco l'eccezione 
-            return false;
+            throw new DAOException(INSERT_POI, null);
+            //return false;
         }
     }
 
-    public boolean updatePoi(Connection connection, Poi poi) {
+    public boolean updatePoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
@@ -71,12 +74,12 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco l'eccezione 
-            return false;
+            throw new DAOException(UPDATE_POI, null);
+            //return false;
         }
     }
 
-    public boolean deletePoi(Connection connection, int poiId) {
+    public boolean deletePoi(Connection connection, int poiId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_POI)) {
 
             preparedStatement.setInt(1, poiId);
@@ -84,12 +87,12 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); //Gestisco l'eccezione 
-            return false;
-        }
+            throw new DAOException(DELETE_POI, null);
+            //return false;
+    }
     }
 
-    public List<Poi> search(Connection connection, Poi criteria) {
+    public List<Poi> search(Connection connection, Poi criteria) throws DAOException {
         List<Poi> matchingPois = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Poi WHERE 1=1");
 
@@ -115,14 +118,19 @@ public class PoiDAO {
                     matchingPois.add(mapResultSetToPoi(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
+        }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisco l'eccezione 
+            throw new DAOException("DAO Exception search", null);
+            //return false;
         }
 
         return matchingPois;
     }
 
-    public boolean associateWithMuseum(Connection connection, Poi poi, Museo museo) {
+    public boolean associateWithMuseum(Connection connection, Poi poi, Museo museo) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(ASSOC_MUSEO)) {
 
             statement.setInt(1, museo.getCodM());
@@ -131,9 +139,8 @@ public class PoiDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+                throw new DAOException(ASSOC_MUSEO, null);
+                //return false;
         }
     }
 

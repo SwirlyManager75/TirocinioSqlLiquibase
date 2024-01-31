@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
 import com.tirocinio.model.Biglietto;
 import com.tirocinio.model.Cliente;
@@ -21,7 +22,7 @@ public class BigliettoDAO {
     private static final String ASSOC_CLIENTE = "UPDATE Biglietto SET Cod_E_Cli = ? WHERE Cod_Bi = ?";
     private static final String ASSOC_BIGLIETTERIA = "UPDATE Biglietto SET Cod_E_B = ? WHERE Cod_Bi = ?";
 
-    public List<Biglietto> getAllBiglietti(Connection connection) {
+    public List<Biglietto> getAllBiglietti(Connection connection) throws DAOException {
         List<Biglietto> biglietti = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_BIGLIETTI);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -30,12 +31,13 @@ public class BigliettoDAO {
                 biglietti.add(mapResultSetToBiglietto(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_ALL_BIGLIETTI, null);
+            //return false;
         }
         return biglietti;
     }
 
-    public Biglietto getBigliettoById(Connection connection, int bigliettoId) {
+    public Biglietto getBigliettoById(Connection connection, int bigliettoId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BIGLIETTO_BY_ID)) {
 
             preparedStatement.setInt(1, bigliettoId);
@@ -45,12 +47,13 @@ public class BigliettoDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_BIGLIETTO_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addBiglietto(Connection connection, Biglietto biglietto) {
+    public boolean addBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BIGLIETTO)) {
 
             preparedStatement.setFloat(1, biglietto.getPrezzo());
@@ -61,12 +64,12 @@ public class BigliettoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_BIGLIETTO, null);
+            //return false;
         }
     }
 
-    public boolean updateBiglietto(Connection connection, Biglietto biglietto) {
+    public boolean updateBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BIGLIETTO)) {
 
             preparedStatement.setFloat(1, biglietto.getPrezzo());
@@ -77,12 +80,12 @@ public class BigliettoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_BIGLIETTO, null);
+            //return false;
         }
     }
 
-    public boolean deleteBiglietto(Connection connection, int bigliettoId) {
+    public boolean deleteBiglietto(Connection connection, int bigliettoId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BIGLIETTO)) {
 
             preparedStatement.setInt(1, bigliettoId);
@@ -90,12 +93,12 @@ public class BigliettoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_BIGLIETTO, null);
+            //return false;
         }
     }
 
-    public List<Biglietto> search(Connection connection, Biglietto criteria) {
+    public List<Biglietto> search(Connection connection, Biglietto criteria) throws DAOException {
         List<Biglietto> matchingBiglietti = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Biglietto WHERE 1=1");
 
@@ -128,14 +131,19 @@ public class BigliettoDAO {
                     matchingBiglietti.add(mapResultSetToBiglietto(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(queryBuilder.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(queryBuilder.toString(), null);
+            //return false;
         }
 
         return matchingBiglietti;
     }
 
-    public boolean associateWithClient(Connection connection, Biglietto biglietto, Cliente cliente) {
+    public boolean associateWithClient(Connection connection, Biglietto biglietto, Cliente cliente) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_CLIENTE)) {
 
@@ -145,13 +153,12 @@ public class BigliettoDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
-        }
+                throw new DAOException(ASSOC_CLIENTE, null);
+                //return false;
+            }
     }
 
-    public boolean associateWithTicketOffice(Connection connection,Biglietto biglietto, Biglietteria biglietteria) {
+    public boolean associateWithTicketOffice(Connection connection,Biglietto biglietto, Biglietteria biglietteria) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_BIGLIETTERIA)) {
 
@@ -161,9 +168,8 @@ public class BigliettoDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_BIGLIETTERIA, null);
+            //return false;
         }
     }
 

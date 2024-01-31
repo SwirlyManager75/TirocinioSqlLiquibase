@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 import com.tirocinio.model.Cliente;
 
@@ -20,7 +21,7 @@ public class ClienteDAO {
     private static final String ASSOC_CITTA = "UPDATE Cliente SET Cod_E_Ci = ? WHERE Cod_Cli = ?";
     //TODO AGGIUNGERE LOGICA PER LEGARE CLIENTI AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_CLIENTI) CREARE UN DAO APPOSITO PER 
 
-    public List<Cliente> getAllClienti(Connection connection) {
+    public List<Cliente> getAllClienti(Connection connection) throws DAOException {
         List<Cliente> clienti = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CLIENTI);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -29,12 +30,13 @@ public class ClienteDAO {
                 clienti.add(mapResultSetToCliente(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_ALL_CLIENTI, null);
+            //return false;
         }
         return clienti;
     }
 
-    public Cliente getClienteById(Connection connection, int clienteId) {
+    public Cliente getClienteById(Connection connection, int clienteId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CLIENTE_BY_ID)) {
 
             preparedStatement.setInt(1, clienteId);
@@ -44,12 +46,13 @@ public class ClienteDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_CLIENTE_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addCliente(Connection connection, Cliente cliente) {
+    public boolean addCliente(Connection connection, Cliente cliente) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CLIENTE)) {
             //TODO PRENDERE LA CHIAVE PRIMA DI INSERIRE CON MAX+1
             preparedStatement.setString(1, cliente.getNome());
@@ -61,12 +64,12 @@ public class ClienteDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_CLIENTE, null);
+            //return false;
         }
     }
 
-    public boolean updateCliente(Connection connection, Cliente cliente) {
+    public boolean updateCliente(Connection connection, Cliente cliente) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CLIENTE)) {
 
             preparedStatement.setString(1, cliente.getNome());
@@ -79,12 +82,12 @@ public class ClienteDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_CLIENTE, null);
+            //return false;
         }
     }
 
-    public boolean deleteCliente(Connection connection, int clienteId) {
+    public boolean deleteCliente(Connection connection, int clienteId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CLIENTE)) {
 
             preparedStatement.setInt(1, clienteId);
@@ -92,12 +95,12 @@ public class ClienteDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_CLIENTE, null);
+            //return false;
         }
     }
 
-    public List<Cliente> search(Connection connection, Cliente criteria) {
+    public List<Cliente> search(Connection connection, Cliente criteria) throws DAOException {
         List<Cliente> matchingClienti = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Cliente WHERE 1=1");
 
@@ -136,15 +139,19 @@ public class ClienteDAO {
                 while (resultSet.next()) {
                     matchingClienti.add(mapResultSetToCliente(resultSet));
                 }
+            }catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException("DAO Exception search", null);
+            //return false;
         }
 
         return matchingClienti;
     }
 
-    public boolean associateWithCity(Connection connection, Cliente cliente, Citta citta) {
+    public boolean associateWithCity(Connection connection, Cliente cliente, Citta citta) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_CITTA)) {
 
@@ -153,11 +160,10 @@ public class ClienteDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
-        }
+        }catch (SQLException e) {
+                throw new DAOException(ASSOC_CITTA, null);
+                //return false;
+            }
     }
 
     private Cliente mapResultSetToCliente(ResultSet resultSet) throws SQLException {

@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Citta;
 
@@ -19,7 +20,7 @@ public class ArtistaDAO {
     private static final String DELETE_ARTISTA = "DELETE FROM Artista WHERE Cod_Ar = ?";
     private static final String ASSOC_CITTA = "UPDATE Artista SET Cod_E_Ci = ? WHERE Cod_Ar = ?";
 
-    public List<Artista> getAllArtisti(Connection connection) {
+    public List<Artista> getAllArtisti(Connection connection) throws DAOException {
         List<Artista> artisti = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_ARTISTI);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -28,12 +29,13 @@ public class ArtistaDAO {
                 artisti.add(mapResultSetToArtista(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
+                throw new DAOException(SELECT_ALL_ARTISTI, null);
+                //return false;
+            }
         return artisti;
     }
 
-    public Artista getArtistaById(Connection connection, int artistaId) {
+    public Artista getArtistaById(Connection connection, int artistaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ARTISTA_BY_ID)) {
 
             preparedStatement.setInt(1, artistaId);
@@ -43,12 +45,13 @@ public class ArtistaDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_ARTISTA_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addArtista(Connection connection, Artista artista) {
+    public boolean addArtista(Connection connection, Artista artista) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTISTA)) {
 
             preparedStatement.setString(1, artista.getNome());
@@ -59,12 +62,12 @@ public class ArtistaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_ARTISTA, null);
+            //return false;
         }
     }
 
-    public boolean updateArtista(Connection connection, Artista artista) {
+    public boolean updateArtista(Connection connection, Artista artista) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ARTISTA)) {
 
             preparedStatement.setString(1, artista.getNome());
@@ -76,12 +79,12 @@ public class ArtistaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_ARTISTA, null);
+            //return false;
         }
     }
 
-    public boolean deleteArtista(Connection connection, int artistaId) {
+    public boolean deleteArtista(Connection connection, int artistaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ARTISTA)) {
 
             preparedStatement.setInt(1, artistaId);
@@ -89,12 +92,12 @@ public class ArtistaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_ARTISTA, null);
+            //return false;
         }
     }
 
-    public List<Artista> search(Connection connection, Artista criteria) {
+    public List<Artista> search(Connection connection, Artista criteria) throws DAOException {
         List<Artista> matchingArtisti = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Artista WHERE 1=1");
 
@@ -134,13 +137,14 @@ public class ArtistaDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(queryBuilder.toString(), null);
+            //return false;
         }
 
         return matchingArtisti;
     }
 
-    public boolean associateWithCity(Connection connection, Artista artista, Citta citta) {
+    public boolean associateWithCity(Connection connection, Artista artista, Citta citta) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_CITTA)) {
 
@@ -150,9 +154,8 @@ public class ArtistaDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_CITTA, null);
+            //return false;
         }
     }
 

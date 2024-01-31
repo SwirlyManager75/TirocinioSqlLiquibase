@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Audio;
 import com.tirocinio.model.Poi;
 
@@ -19,7 +20,7 @@ public class AudioDAO {
     private static final String DELETE_AUDIO = "DELETE FROM Audio WHERE Cod_Au = ?";
     private static final String ASSOC_POI = "UPDATE Audio SET Cod_E_Poi = ? WHERE Cod_Au = ?";
 
-    public List<Audio> getAllAudios(Connection connection) {
+    public List<Audio> getAllAudios(Connection connection) throws DAOException {
         List<Audio> audios = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_AUDIOS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -28,12 +29,13 @@ public class AudioDAO {
                 audios.add(mapResultSetToAudio(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
+            throw new DAOException(SELECT_ALL_AUDIOS, null);
+            //return false;
         }
         return audios;
     }
 
-    public Audio getAudioById(Connection connection, int audioId) {
+    public Audio getAudioById(Connection connection, int audioId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUDIO_BY_ID)) {
 
             preparedStatement.setInt(1, audioId);
@@ -43,12 +45,13 @@ public class AudioDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
+            throw new DAOException(SELECT_AUDIO_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addAudio(Connection connection, Audio audio) {
+    public boolean addAudio(Connection connection, Audio audio) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
@@ -57,12 +60,12 @@ public class AudioDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
-            return false;
+            throw new DAOException(INSERT_AUDIO, null);
+            //return false;
         }
     }
 
-    public boolean updateAudio(Connection connection, Audio audio) {
+    public boolean updateAudio(Connection connection, Audio audio) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
@@ -71,12 +74,12 @@ public class AudioDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
-            return false;
+            throw new DAOException(UPDATE_AUDIO, null);
+            //return false;
         }
     }
 
-    public boolean deleteAudio(Connection connection, int audioId) {
+    public boolean deleteAudio(Connection connection, int audioId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_AUDIO)) {
 
             preparedStatement.setInt(1, audioId);
@@ -84,12 +87,12 @@ public class AudioDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // 
-            return false;
-        }
+                throw new DAOException(DELETE_AUDIO, null);
+                //return false;
+            }
     }
 
-    public List<Audio> search(Connection connection, Audio criteria) {
+    public List<Audio> search(Connection connection, Audio criteria) throws DAOException {
         List<Audio> matchingAudios = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Audio WHERE 1=1");
 
@@ -115,14 +118,19 @@ public class AudioDAO {
                     matchingAudios.add(mapResultSetToAudio(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
+            throw new DAOException("Prepared Statement error", null);
+            //return false;
         }
 
         return matchingAudios;
     }
 
-    public boolean associateWithPoi(Connection connection, Audio audio, Poi poi) {
+    public boolean associateWithPoi(Connection connection, Audio audio, Poi poi) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(ASSOC_POI)) {
 
             statement.setInt(1, poi.getCodPoi());
@@ -131,9 +139,8 @@ public class AudioDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_POI, null);
+            //return false;
         }
     }
 

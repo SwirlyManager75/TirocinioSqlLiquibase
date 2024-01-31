@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 import com.tirocinio.model.Dipendente;
 import com.tirocinio.model.Museo;
@@ -21,7 +22,7 @@ public class DipendenteDAO {
     private static final String ASSOC_MUSEO = "UPDATE Dipendente SET Cod_E_M = ? WHERE Cod_D = ?";
     private static final String ASSOC_CITTA = "UPDATE Dipendente SET Cod_E_Ci = ? WHERE Cod_D = ?";
 
-    public List<Dipendente> getAllDipendenti(Connection connection) {
+    public List<Dipendente> getAllDipendenti(Connection connection) throws DAOException {
         List<Dipendente> dipendenti = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_DIPENDENTI);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -30,12 +31,13 @@ public class DipendenteDAO {
                 dipendenti.add(mapResultSetToDipendente(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_ALL_DIPENDENTI, null);
+            //return false;
         }
         return dipendenti;
     }
 
-    public Dipendente getDipendenteById(Connection connection, int dipendenteId) {
+    public Dipendente getDipendenteById(Connection connection, int dipendenteId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_DIPENDENTE_BY_ID)) {
 
             preparedStatement.setInt(1, dipendenteId);
@@ -45,12 +47,13 @@ public class DipendenteDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_DIPENDENTE_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addDipendente(Connection connection, Dipendente dipendente) {
+    public boolean addDipendente(Connection connection, Dipendente dipendente) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DIPENDENTE)) {
 
             preparedStatement.setString(1, dipendente.getNome());
@@ -62,12 +65,12 @@ public class DipendenteDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_DIPENDENTE, null);
+            //return false;
         }
     }
 
-    public boolean updateDipendente(Connection connection, Dipendente dipendente) {
+    public boolean updateDipendente(Connection connection, Dipendente dipendente) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DIPENDENTE)) {
 
             preparedStatement.setString(1, dipendente.getNome());
@@ -79,12 +82,12 @@ public class DipendenteDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_DIPENDENTE, null);
+            //return false;
         }
     }
 
-    public boolean deleteDipendente(Connection connection, int dipendenteId) {
+    public boolean deleteDipendente(Connection connection, int dipendenteId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_DIPENDENTE)) {
 
             preparedStatement.setInt(1, dipendenteId);
@@ -92,12 +95,12 @@ public class DipendenteDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_DIPENDENTE, null);
+            //return false;
         }
     }
 
-    public List<Dipendente> search(Connection connection, Dipendente criteria) {
+    public List<Dipendente> search(Connection connection, Dipendente criteria) throws DAOException {
         List<Dipendente> matchingDipendenti = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Dipendente WHERE 1=1");
 
@@ -136,14 +139,19 @@ public class DipendenteDAO {
                     matchingDipendenti.add(mapResultSetToDipendente(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException("DAO Exception search", null);
+            //return false;
         }
 
         return matchingDipendenti;
     }
 
-    public boolean associateWithCity(Connection connection, Dipendente dipendente, Citta citta) {
+    public boolean associateWithCity(Connection connection, Dipendente dipendente, Citta citta) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_CITTA)) {
 
@@ -153,13 +161,12 @@ public class DipendenteDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
-        }
+                throw new DAOException(ASSOC_CITTA, null);
+                //return false;
+            }
     }
 
-    public boolean associateWithMuseum(Connection connection, Dipendente dipendente, Museo museo) {
+    public boolean associateWithMuseum(Connection connection, Dipendente dipendente, Museo museo) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_MUSEO)) {
 
@@ -169,9 +176,8 @@ public class DipendenteDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_MUSEO, null);
+            //return false;
         }
     }
 

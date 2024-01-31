@@ -31,6 +31,7 @@ public class ConnectionManager {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                connection.setAutoCommit(false);
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace(); //  Gestire eccezione 
             }

@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 
 import java.sql.Connection;
@@ -17,7 +18,7 @@ public class CittaDAO {
     private static final String UPDATE_CITY = "UPDATE Citta SET Nome = ?, Provincia = ? WHERE Cod_Ci = ?";
     private static final String DELETE_CITY = "DELETE FROM Citta WHERE Cod_Ci = ?";
 
-    public List<Citta> getAllCities(Connection connection) {
+    public List<Citta> getAllCities(Connection connection) throws DAOException {
         List<Citta> cities = new ArrayList<>();
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CITIES);
@@ -27,12 +28,13 @@ public class CittaDAO {
                 cities.add(mapResultSetToCity(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestione eccezione 
+            throw new DAOException(SELECT_ALL_CITIES, null);
+            //return false;
         }
         return cities;
     }
 
-    public Citta getCityById(Connection connection,int cityId) {
+    public Citta getCityById(Connection connection,int cityId) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CITY_BY_ID)) {
 
@@ -43,12 +45,13 @@ public class CittaDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestione eccezione
+            throw new DAOException(SELECT_CITY_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addCity(Connection connection,Citta city) {
+    public boolean addCity(Connection connection,Citta city) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CITY)) {
 
@@ -58,12 +61,12 @@ public class CittaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestione eccezione
-            return false;
+            throw new DAOException(INSERT_CITY, null);
+            //return false;
         }
     }
 
-    public boolean updateCity(Connection connection,Citta city) {
+    public boolean updateCity(Connection connection,Citta city) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CITY)) {
 
@@ -74,12 +77,12 @@ public class CittaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); //Gestione eccezione
-            return false;
+            throw new DAOException(UPDATE_CITY, null);
+            //return false;
         }
     }
 
-    public boolean deleteCity(Connection connection,int cityId) {
+    public boolean deleteCity(Connection connection,int cityId) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CITY)) {
 
@@ -88,12 +91,12 @@ public class CittaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestione eccezione
-            return false;
+            throw new DAOException(DELETE_CITY, null);
+            //return false;
         }
     }
 
-    public List<Citta> search(Connection connection, Citta criteria) {
+    public List<Citta> search(Connection connection, Citta criteria) throws DAOException {
         List<Citta> matchingCities = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Citta WHERE 1=1");
     
@@ -123,9 +126,14 @@ public class CittaDAO {
                     matchingCities.add(mapResultSetToCity(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(preparedStatement.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato per la tua applicazione
-        }
+                throw new DAOException("DAO Exception in search", null);
+                //return false;
+            }
     
         return matchingCities;
     }

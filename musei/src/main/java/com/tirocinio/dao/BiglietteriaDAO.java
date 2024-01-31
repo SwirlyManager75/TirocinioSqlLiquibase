@@ -1,5 +1,6 @@
 package com.tirocinio.dao;
 
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
 import com.tirocinio.model.Museo;
 
@@ -21,7 +22,7 @@ public class BiglietteriaDAO {
     //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
     
 
-    public List<Biglietteria> getAllBiglietterie(Connection connection) {
+    public List<Biglietteria> getAllBiglietterie(Connection connection) throws DAOException {
         List<Biglietteria> biglietterie = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_BIGLIETTERIE);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -29,13 +30,14 @@ public class BiglietteriaDAO {
             while (resultSet.next()) {
                 biglietterie.add(mapResultSetToBiglietteria(resultSet));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        }catch (SQLException e) {
+                throw new DAOException(SELECT_ALL_BIGLIETTERIE, null);
+                //return false;
+            }
         return biglietterie;
     }
 
-    public Biglietteria getBiglietteriaById(Connection connection, int biglietteriaId) {
+    public Biglietteria getBiglietteriaById(Connection connection, int biglietteriaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BIGLIETTERIA_BY_ID)) {
 
             preparedStatement.setInt(1, biglietteriaId);
@@ -45,12 +47,13 @@ public class BiglietteriaDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(SELECT_BIGLIETTERIA_BY_ID, null);
+            //return false;
         }
         return null;
     }
 
-    public boolean addBiglietteria(Connection connection, Biglietteria biglietteria) {
+    public boolean addBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BIGLIETTERIA)) {
 
             preparedStatement.setTime(1, biglietteria.getOraApertura());
@@ -61,12 +64,12 @@ public class BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(INSERT_BIGLIETTERIA, null);
+            //return false;
         }
     }
 
-    public boolean updateBiglietteria(Connection connection, Biglietteria biglietteria) {
+    public boolean updateBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BIGLIETTERIA)) {
 
             preparedStatement.setTime(1, biglietteria.getOraApertura());
@@ -78,12 +81,12 @@ public class BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(UPDATE_BIGLIETTERIA, null);
+            //return false;
         }
     }
 
-    public boolean deleteBiglietteria(Connection connection, int biglietteriaId) {
+    public boolean deleteBiglietteria(Connection connection, int biglietteriaId) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BIGLIETTERIA)) {
 
             preparedStatement.setInt(1, biglietteriaId);
@@ -91,12 +94,12 @@ public class BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DAOException(DELETE_BIGLIETTERIA, null);
+            //return false;
         }
     }
 
-    public List<Biglietteria> search(Connection connection, Biglietteria criteria) {
+    public List<Biglietteria> search(Connection connection, Biglietteria criteria) throws DAOException {
         List<Biglietteria> matchingBiglietterie = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Biglietteria WHERE 1=1");
 
@@ -130,14 +133,19 @@ public class BiglietteriaDAO {
                     matchingBiglietterie.add(mapResultSetToBiglietteria(resultSet));
                 }
             }
+            catch (SQLException e) {
+                throw new DAOException(queryBuilder.toString(), null);
+                //return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(queryBuilder.toString(), null);
+            //return false;
         }
 
         return matchingBiglietterie;
     }
 
-    public boolean associateWithMuseum(Connection connection, Biglietteria biglietteria, Museo museo) {
+    public boolean associateWithMuseum(Connection connection, Biglietteria biglietteria, Museo museo) throws DAOException {
         try (PreparedStatement statement = connection.prepareStatement(
                 ASSOC_MUSEO)) {
 
@@ -147,9 +155,8 @@ public class BiglietteriaDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            // Gestisci l'eccezione
-            e.printStackTrace();
-            return false;
+            throw new DAOException(ASSOC_MUSEO, null);
+            //return false;
         }
     }
 
