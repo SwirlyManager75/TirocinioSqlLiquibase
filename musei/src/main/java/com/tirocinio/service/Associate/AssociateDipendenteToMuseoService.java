@@ -1,9 +1,10 @@
 package com.tirocinio.service.Associate;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.DipendenteDAO;
 import com.tirocinio.dao.MuseoDAO;
-
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Dipendente;
 import com.tirocinio.model.Museo;
 
@@ -23,8 +24,10 @@ public class AssociateDipendenteToMuseoService {
         this.museoDAO = new MuseoDAO();
     }
 
-    public boolean execute(int codDipendente, int codMuseo) throws SQLException {
+    public boolean execute(int codDipendente, int codMuseo) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
+        boolean ret;
+
         try 
         {
 
@@ -34,23 +37,38 @@ public class AssociateDipendenteToMuseoService {
             if ( museo != null && dipendente != null) {
 
                 // Inserisco il Dipendente nel database
-                 dipendenteDAO.associateWithMuseum(connection, dipendente,museo);
+                ret=dipendenteDAO.associateWithMuseum(connection, dipendente,museo);
                  connection.commit();
-                return true;
+                return ret;
 
             } else {
                 // Città o Museo non trovato
                 System.out.println(" Dipendete o Museo non trovato con codice: " + codDipendente + " o " + codMuseo);
                 return false;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            connection.rollback();
-            return false;
+        }catch (SQLException | DAOException e) 
+        {
+            
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
+            
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

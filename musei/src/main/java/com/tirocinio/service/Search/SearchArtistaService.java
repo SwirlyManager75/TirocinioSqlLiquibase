@@ -1,7 +1,9 @@
 package com.tirocinio.service.Search;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ArtistaDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 
 import java.sql.Connection;
@@ -16,12 +18,12 @@ public class SearchArtistaService {
         this.artistaDAO = new ArtistaDAO();
     }
 
-    public List<Artista> execute(Artista criteria) {
+    public List<Artista> execute(Artista criteria) throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return artistaDAO.search(connection, criteria);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        }catch (SQLException | DAOException e) 
+        {
+            throw new ServiceException("In execute - DAOException ");
         }
     }
 }

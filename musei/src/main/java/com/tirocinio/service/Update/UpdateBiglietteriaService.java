@@ -1,7 +1,9 @@
 package com.tirocinio.service.Update;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BiglietteriaDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
 
 import java.sql.Connection;
@@ -15,7 +17,7 @@ public class UpdateBiglietteriaService {
         this.biglietteriaDAO = new BiglietteriaDAO();
     }
 
-    public boolean execute(Biglietteria biglietteria) throws SQLException {
+    public boolean execute(Biglietteria biglietteria) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
 
@@ -23,14 +25,29 @@ public class UpdateBiglietteriaService {
             ret = biglietteriaDAO.updateBiglietteria(connection, biglietteria);
             connection.commit();
             return ret; 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            connection.rollback();
-            return false;
+        }catch (SQLException | DAOException e) 
+        {
+            
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
+            
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

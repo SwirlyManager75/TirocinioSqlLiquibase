@@ -1,6 +1,8 @@
 package com.tirocinio.service.Associate;
 
 import com.tirocinio.dao.OperaDAO;
+import com.tirocinio.exceptions.DAOException;
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ArtistaDAO;
 import com.tirocinio.model.Opera;
@@ -19,8 +21,10 @@ public class AssociateOperaToMuseoService {
         this.artistaDAO= new ArtistaDAO();
     }
 
-    public boolean execute(int codOp,int codAr) throws SQLException {
+    public boolean execute(int codOp,int codAr) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
+        boolean ret;
+
         try  {
 
             Opera opera = operaDAO.getOperaById(connection, codOp);
@@ -29,23 +33,38 @@ public class AssociateOperaToMuseoService {
             if (artista != null && opera != null) {
 
                 // Inserisci l'Opera nel database
-                 operaDAO.associateWithArtist(connection, opera,artista);
+                ret=operaDAO.associateWithArtist(connection, opera,artista);
                  connection.commit();
-                return true;
+                return ret;
 
             } else {
                 // Museo non trovato, gestisci la situazione di conseguenza
                 System.out.println("Artista o Opera non trovato con codice: " + codAr+" o "+codOp);
                 return false;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            connection.rollback();
-            return false;
+        }catch (SQLException | DAOException e) 
+        {
+            
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
+            
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

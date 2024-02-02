@@ -1,7 +1,9 @@
 package com.tirocinio.service.Update;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.DipendenteDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Dipendente;
 
 import java.sql.Connection;
@@ -15,21 +17,36 @@ public class UpdateDipendenteService {
         this.dipendenteDAO = new DipendenteDAO();
     }
 
-    public boolean execute(Dipendente dipendente) throws SQLException {
+    public boolean execute(Dipendente dipendente) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
         try {
             ret= dipendenteDAO.updateDipendente(connection, dipendente);
             connection.commit();
             return ret;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            connection.rollback();
-            return false;
+        }catch (SQLException | DAOException e) 
+        {
+            
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
+            
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.tirocinio.service.GetAll;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ArtistaDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 
 import java.sql.Connection;
@@ -17,13 +19,12 @@ public class GetAllArtistiService {
         
     }
 
-    public List<Artista> execute() {
+    public List<Artista> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return artistaDAO.getAllArtisti(connection);
-        } catch (SQLException e) {
-            
-            e.printStackTrace();
-            return null;
+        }catch (SQLException | DAOException e) 
+        {
+            throw new ServiceException("In execute - DAOException ");
         }
     }
 }

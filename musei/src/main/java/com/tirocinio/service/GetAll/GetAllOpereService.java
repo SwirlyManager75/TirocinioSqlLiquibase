@@ -1,7 +1,9 @@
 package com.tirocinio.service.GetAll;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.OperaDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Opera;
 
 import java.sql.Connection;
@@ -16,12 +18,12 @@ public class GetAllOpereService {
         this.operaDAO = new OperaDAO();
     }
 
-    public List<Opera> execute() {
+    public List<Opera> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return operaDAO.getAllOpere(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        }catch (SQLException | DAOException e) 
+        {
+            throw new ServiceException("In execute - DAOException ");
         }
     }
 }

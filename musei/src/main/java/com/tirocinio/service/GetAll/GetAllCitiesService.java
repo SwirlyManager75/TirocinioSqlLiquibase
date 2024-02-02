@@ -1,7 +1,9 @@
 package com.tirocinio.service.GetAll;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.CittaDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 
 import java.sql.Connection;
@@ -16,15 +18,14 @@ public class GetAllCitiesService {
         this.cittaDAO = new CittaDAO();
     }
 
-    public List<Citta> execute() {
+    public List<Citta> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) 
         {
             return cittaDAO.getAllCities(connection);
         } 
-        catch (SQLException e) 
+        catch (SQLException | DAOException e) 
         {
-            e.printStackTrace();
-            return null;
+            throw new ServiceException("In execute - DAOException ");
         }
     }
 }

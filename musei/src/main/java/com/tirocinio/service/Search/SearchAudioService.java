@@ -1,7 +1,9 @@
 package com.tirocinio.service.Search;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AudioDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Audio;
 
 import java.sql.Connection;
@@ -16,12 +18,12 @@ public class SearchAudioService {
         this.audioDAO = new AudioDAO();
     }
 
-    public List<Audio> execute(Audio criteria) {
+    public List<Audio> execute(Audio criteria) throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return audioDAO.search(connection, criteria);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        } catch (SQLException | DAOException e) 
+        {
+            throw new ServiceException("In execute - DAOException ");
         }
     }
 }

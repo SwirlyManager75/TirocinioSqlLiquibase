@@ -1,7 +1,9 @@
 package com.tirocinio.service.Update;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ClienteDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Cliente;
 
 import java.sql.Connection;
@@ -15,7 +17,7 @@ public class UpdateClienteService {
         this.clienteDAO = new ClienteDAO();
     }
 
-    public boolean execute(Cliente cliente) throws SQLException {
+    public boolean execute(Cliente cliente) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
         try  {
@@ -23,14 +25,29 @@ public class UpdateClienteService {
             connection.commit();
             return ret;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            connection.rollback();
-            return false;
+        }catch (SQLException | DAOException e) 
+        {
+            
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
+            
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.tirocinio.service.GetAll;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BigliettoDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietto;
 
 import java.sql.Connection;
@@ -16,12 +18,12 @@ public class GetAllBigliettiService {
         this.bigliettoDAO = new BigliettoDAO();
     }
 
-    public List<Biglietto> execute() {
+    public List<Biglietto> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return bigliettoDAO.getAllBiglietti(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        }catch (SQLException | DAOException e) 
+        {
+            throw new ServiceException("In execute - DAOException ");
         }
     }
 }

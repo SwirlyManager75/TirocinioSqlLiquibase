@@ -1,7 +1,9 @@
 package com.tirocinio.service.GetAll;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AbbonamentoDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
 
 import java.sql.Connection;
@@ -17,12 +19,12 @@ public class GetAllAbbonamentiService {
         this.abbonamentoDAO = new AbbonamentoDAO();
     }
 
-    public List<Abbonamento> execute() {
+    public List<Abbonamento> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return abbonamentoDAO.getAllAbbonamenti(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        }catch (SQLException | DAOException e) 
+        {
+            throw new ServiceException("In execute - DAOException ");
         }
         
         

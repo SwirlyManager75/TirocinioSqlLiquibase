@@ -1,7 +1,9 @@
 package com.tirocinio.service.Delete;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BiglietteriaDAO;
+import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,27 +18,41 @@ public class DeleteBiglietteriaService {
        
     }
 
-    public boolean execute(int biglietteriaId) throws SQLException {
+    public boolean execute(int biglietteriaId) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
+        boolean ret;
 
         try 
         {
-            biglietteriaDAO.deleteBiglietteria(connection, biglietteriaId);            
+            ret=biglietteriaDAO.deleteBiglietteria(connection, biglietteriaId);            
             connection.commit();
-            return true;
-        } catch (SQLException e) {
+            return ret;
+        }catch (SQLException | DAOException e) 
+        {
             
-            e.printStackTrace();
-            connection.rollback();
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
             
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         
-        return false;
          
     }
 }

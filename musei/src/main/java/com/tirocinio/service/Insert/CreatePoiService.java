@@ -1,7 +1,9 @@
 package com.tirocinio.service.Insert;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.PoiDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Poi;
 
 import java.sql.Connection;
@@ -16,27 +18,39 @@ public class CreatePoiService {
         this.poiDAO = new PoiDAO();
     }
 
-    public boolean execute(Poi poi) throws SQLException {
+    public boolean execute(Poi poi) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-
+        boolean ret;
         try 
         {
-            poiDAO.addPoi(connection, poi);           
+            ret=poiDAO.addPoi(connection, poi);           
             connection.commit();
-            return true;
-        } catch (SQLException e) {
+            return ret;
+        }catch (SQLException | DAOException e) 
+        {
             
-            e.printStackTrace();
-            connection.rollback();
+            try {
+                connection.rollback();
+            } 
+            catch (SQLException e1) 
+            {
+                e1.printStackTrace();
+            } 
+            throw new ServiceException("In execute - DAOException ");
             
         }
         finally
         {
-            connection.close();
+            try 
+            {
+                connection.close();
+            } catch (SQLException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
-        
-        return false;
-         
+                 
     }
 }

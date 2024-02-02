@@ -9,6 +9,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AbbonamentoDAO;
 import com.tirocinio.dao.ArtistaDAO;
@@ -21,6 +22,7 @@ import com.tirocinio.dao.DipendenteDAO;
 import com.tirocinio.dao.MuseoDAO;
 import com.tirocinio.dao.OperaDAO;
 import com.tirocinio.dao.PoiDAO;
+import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Audio;
@@ -91,9 +93,10 @@ public class Main
 {
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException 
     {
+        //TODO GESTIRE LE EXCEPTION, INTEGRARE GESTIONE LOG4J 
         //Inizializzo la connessione
-        Connection connection = ConnectionManager.getConnection();// TODO SPOSTARE APERTURA E CHIUSURA DELLA CONNESSIONE NEI SERVICE
-        connection.setAutoCommit(false); //TODO GESTIRE LE TRANSAZIONI, RIVEDERE TUTTE LE OPERAZIONI DB
+        Connection connection = ConnectionManager.getConnection();
+        connection.setAutoCommit(false); 
         
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -148,7 +151,12 @@ public class Main
 
                                         CreateAudioService cr= new CreateAudioService();
 
-                                        cr.execute(audio);
+                                        try {
+                                            cr.execute(audio);
+                                        } catch ( ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                     break;
 
@@ -160,7 +168,12 @@ public class Main
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
                                         UpdateAudioService up= new UpdateAudioService();
-                                        up.execute(audio);
+                                        try {
+                                            up.execute(audio);
+                                        } catch ( ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                     break;
 
@@ -170,7 +183,12 @@ public class Main
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
                                         DeleteAudioService dl= new DeleteAudioService();
-                                        dl.execute(audio.getCodAu());
+                                        try {
+                                            dl.execute(audio.getCodAu());
+                                        } catch ( ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                     break;
 
@@ -178,14 +196,25 @@ public class Main
                                         System.out.println("Inserisci il codice dell'audio per la ricerca");
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
-                                        audio= audioDAO.getAudioById(connection,audio.getCodAu());
+                                        try {
+                                            audio= audioDAO.getAudioById(connection,audio.getCodAu());
+                                        } catch (DAOException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+
                                         System.out.println("Audio.URL: " + audio.getUrl());
                                     break;
 
                                     case 5:
                                         GetAllAudiosService allAudiosService = new GetAllAudiosService();
                                         
-                                        audioList=allAudiosService.execute();
+                                        try {
+                                            audioList=allAudiosService.execute();
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                         for(Audio aud : audioList)
                                         {
@@ -198,7 +227,12 @@ public class Main
                                         
                                         System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la URL)");
                                         audio.setUrl(in.readLine());
-                                        audioList= searchAudioService.execute(audio);
+                                        try {
+                                            audioList= searchAudioService.execute(audio);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                         for(Audio aud : audioList)
                                         {
@@ -238,7 +272,12 @@ public class Main
 
                                         CreatePoiService createPoiService = new CreatePoiService();
 
-                                        createPoiService.execute(poi);
+                                        try {
+                                            createPoiService.execute(poi);
+                                        } catch ( ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 2:
@@ -248,7 +287,12 @@ public class Main
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
                                         UpdatePoiService updatePoiService = new UpdatePoiService();
-                                        updatePoiService.execute(poi);
+                                        try {
+                                            updatePoiService.execute(poi);
+                                        } catch ( ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 3:
@@ -256,20 +300,35 @@ public class Main
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
                                         DeletePoiService deletePoiService = new DeletePoiService();
-                                        deletePoiService.execute(poi.getCodPoi());
+                                        try {
+                                            deletePoiService.execute(poi.getCodPoi());
+                                        } catch ( ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 4:
                                         System.out.println("Inserisci il codice del POI per la ricerca");
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
-                                        poiDao.getPoiById(connection, poi.getCodPoi());
+                                        try {
+                                            poiDao.getPoiById(connection, poi.getCodPoi());
+                                        } catch (DAOException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 5:
                                         GetAllPoisService getAllPoisService = new GetAllPoisService();
 
-                                        poiList = getAllPoisService.execute();
+                                        try {
+                                            poiList = getAllPoisService.execute();
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                         for(Poi poi2 : poiList)
                                         {
@@ -284,7 +343,12 @@ public class Main
 
                                         poi.setDescrizione(in.readLine());
 
-                                        poiList= searchPoiService.execute(poi);
+                                        try {
+                                            poiList= searchPoiService.execute(poi);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                         for(Poi poi2 : poiList)
                                         {
@@ -325,7 +389,12 @@ public class Main
                                         museo.setVia(in.readLine());
 
                                         CreateMuseumService createMuseumService = new CreateMuseumService();
-                                        createMuseumService.execute(museo);
+                                        try {
+                                            createMuseumService.execute(museo);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 2:
@@ -335,7 +404,12 @@ public class Main
                                         museo.setVia(in.readLine());
 
                                         UpdateMuseumService updateMuseumService = new UpdateMuseumService();
-                                        updateMuseumService.execute(museo);
+                                        try {
+                                            updateMuseumService.execute(museo);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 3:
@@ -343,21 +417,36 @@ public class Main
                                         museo.setCodM(Integer.parseInt(in.readLine()));
 
                                         DeleteMuseumService deleteMuseumService = new DeleteMuseumService();
-                                        deleteMuseumService.execute(museo.getCodM());
+                                        try {
+                                            deleteMuseumService.execute(museo.getCodM());
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                     break;
 
                                     case 4:
                                         System.out.println("Inserisci il codice del Museo per la ricerca");
                                         museo.setCodM(Integer.parseInt(in.readLine()));
 
-                                        museoDAO.getMuseumById(connection, museo.getCodM());
+                                        try {
+                                            museoDAO.getMuseumById(connection, museo.getCodM());
+                                        } catch (DAOException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                         System.out.println("Museo.CodM:" + museo.getCodM()+"Museo.Nome:"+museo.getNome()+"Museo.Via:"+museo.getVia());
                                     break;
 
                                     case 5:
                                         GetAllMuseumsService getAllMuseumsService = new GetAllMuseumsService();
 
-                                        museoList = getAllMuseumsService.execute();
+                                        try {
+                                            museoList = getAllMuseumsService.execute();
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                         for(Museo museo2  : museoList)
                                         {
@@ -373,7 +462,12 @@ public class Main
                                         System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la Via)");
                                         museo.setVia(in.readLine());
 
-                                        museoList = searchMuseumService.execute(museo);
+                                        try {
+                                            museoList = searchMuseumService.execute(museo);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
 
                                         for(Museo museo2  : museoList)
                                         {
@@ -414,7 +508,12 @@ public class Main
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine())); //inserire true nella stringa
     
                                             CreateCityService createCityService = new CreateCityService();
-                                            createCityService.execute(citta);
+                                            try {
+                                                createCityService.execute(citta);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 2:
@@ -424,7 +523,12 @@ public class Main
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine())); //inserire true nella stringa
 
                                             UpdateCityService updateCityService = new UpdateCityService();
-                                            updateCityService.execute(citta);
+                                            try {
+                                                updateCityService.execute(citta);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 3:
@@ -432,21 +536,36 @@ public class Main
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
                                             DeleteCityService deleteCityService = new DeleteCityService();
-                                            deleteCityService.execute(citta.getCodCi());
+                                            try {
+                                                deleteCityService.execute(citta.getCodCi());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice della Città per la ricerca");
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
-                                            cittaDAO.getCityById(connection, citta.getCodCi()); //TODO CREARE SERVICE
+                                            try {
+                                                cittaDAO.getCityById(connection, citta.getCodCi());
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            } //TODO CREARE SERVICE
                                             System.out.println("Citta.CodCi:" + citta.getCodCi()+"Citta.Nome:"+citta.getNome()+"Citta.Provincia:"+citta.isProvincia());
                                         break;
     
                                         case 5:
                                             GetAllCitiesService getAllCitiesService = new GetAllCitiesService();
     
-                                            cittaList = getAllCitiesService.execute();
+                                            try {
+                                                cittaList = getAllCitiesService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Citta citta2  : cittaList)
                                             {
@@ -463,7 +582,12 @@ public class Main
                                             System.out.println("Inserisci se la Città è una provincia (si cerca l'occorrenza della stringa dentro la Via)");
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine()));
     
-                                            cittaList = searchCityService.execute(citta);
+                                            try {
+                                                cittaList = searchCityService.execute(citta);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Citta citta2  : cittaList)
                                             {
@@ -508,7 +632,12 @@ public class Main
                                             cliente.setMail(in.readLine());
                                             
                                             CreateClienteService createClienteService = new CreateClienteService();
-                                            createClienteService.execute(cliente);
+                                            try {
+                                                createClienteService.execute(cliente);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 2:
@@ -522,7 +651,12 @@ public class Main
                                             cliente.setMail(in.readLine());
                                             
                                             UpdateClienteService updateClienteService = new UpdateClienteService();
-                                            updateClienteService.execute(cliente);
+                                            try {
+                                                updateClienteService.execute(cliente);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 3:
@@ -530,14 +664,24 @@ public class Main
                                             cliente.setCodCli(Integer.parseInt(in.readLine()));
     
                                             DeleteClienteService deleteClienteService = new DeleteClienteService();
-                                            deleteClienteService.execute(cliente.getCodCli());
+                                            try {
+                                                deleteClienteService.execute(cliente.getCodCli());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice del Cliente per la ricerca");
                                             cliente.setCodCli(Integer.parseInt(in.readLine()));
 
-                                            cliente = clienteDAO.getClienteById(connection, subscleta);
+                                            try {
+                                                cliente = clienteDAO.getClienteById(connection, subscleta);
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             
                                             System.out.println("Cliente.CodCli:" + cliente.getCodCli()+" Cliente.Nome:"+cliente.getNome()+" Cliente.Cognome:"+cliente.getCognome()+"Cliente.Cellulare:"+cliente.getCellulare()+"Cliente.Mail:"+cliente.getMail());
                                         break;
@@ -545,7 +689,12 @@ public class Main
                                         case 5:
                                             GetAllClientiService getAllClientiService = new GetAllClientiService();
     
-                                            clientList = getAllClientiService.execute();
+                                            try {
+                                                clientList = getAllClientiService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Cliente cliente2  : clientList)
                                             {
@@ -567,7 +716,12 @@ public class Main
                                             System.out.println("Inserisci la mail del Cliente se pervenuta");
                                             cliente.setMail(in.readLine());
     
-                                            clientList = searchClienteService.execute(cliente);
+                                            try {
+                                                clientList = searchClienteService.execute(cliente);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Cliente cliente2  : clientList)
                                             {
@@ -612,7 +766,12 @@ public class Main
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
                                             
                                             CreateDipendenteService createDipendenteService = new CreateDipendenteService();
-                                            createDipendenteService.execute(dipendente);
+                                            try {
+                                                createDipendenteService.execute(dipendente);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 2:
@@ -627,7 +786,12 @@ public class Main
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
                                             
                                             UpdateDipendenteService updetaDipendenteService = new UpdateDipendenteService();
-                                            updetaDipendenteService.execute(dipendente);
+                                            try {
+                                                updetaDipendenteService.execute(dipendente);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 3:
@@ -635,14 +799,24 @@ public class Main
                                             dipendente.setCodD(Integer.parseInt(in.readLine()));
     
                                             DeleteDipendenteService deleteDipendenteService = new DeleteDipendenteService();
-                                            deleteDipendenteService.execute(dipendente.getCodD());
+                                            try {
+                                                deleteDipendenteService.execute(dipendente.getCodD());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice del Dipendente");
                                             dipendente.setCodD(Integer.parseInt(in.readLine()));
 
-                                            dipendente = dipendenteDAO.getDipendenteById(connection, subscleta);
+                                            try {
+                                                dipendente = dipendenteDAO.getDipendenteById(connection, subscleta);
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             
                                             System.out.println("Dipedente.CodCli:" + dipendente.getCodD()+" Dipedente.Nome:"+dipendente.getNome()+" Dipedente.CodiceFiscale:"+dipendente.getCodiceFiscale()+"Dipedente.Cellulare:"+dipendente.getCellulare()+"Dipedente.Data_Di_Nascita:"+dipendente.getDataNascita());
 
@@ -651,7 +825,12 @@ public class Main
                                         case 5:
                                             GetAllDipendentiService getAllDipendentiService = new GetAllDipendentiService();
     
-                                            dipList = getAllDipendentiService.execute();
+                                            try {
+                                                dipList = getAllDipendentiService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Dipendente dip  : dipList)
                                             {
@@ -673,7 +852,12 @@ public class Main
                                             System.out.println("Inserisci la data di nascita nel formato 'yyyy-MM-dd' del Dipendente");
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
     
-                                            dipList = searchDipendenteService.execute(dipendente);
+                                            try {
+                                                dipList = searchDipendenteService.execute(dipendente);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Dipendente dip  : dipList)
                                             {
@@ -719,7 +903,12 @@ public class Main
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
                                             
                                             CreateArtistaService createArtistaService = new CreateArtistaService();
-                                            createArtistaService.execute(artista);
+                                            try {
+                                                createArtistaService.execute(artista);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 2:
@@ -733,7 +922,12 @@ public class Main
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
                                             
                                             UpdateArtistaService updateArtistaService = new UpdateArtistaService();
-                                            updateArtistaService.execute(artista);
+                                            try {
+                                                updateArtistaService.execute(artista);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 3:
@@ -741,14 +935,24 @@ public class Main
                                             artista.setCodAr(Integer.parseInt(in.readLine()));
     
                                             DeleteArtistaService deleteArtistaService = new DeleteArtistaService();
-                                            deleteArtistaService.execute(artista.getCodAr());
+                                            try {
+                                                deleteArtistaService.execute(artista.getCodAr());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice del Artista per la ricerca");
                                             artista.setCodAr(Integer.parseInt(in.readLine()));
 
-                                            artista= artistaDAO.getArtistaById(connection, artista.getCodAr());
+                                            try {
+                                                artista= artistaDAO.getArtistaById(connection, artista.getCodAr());
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             
                                             System.out.println("Artista.CodAr:" + artista.getCodAr()+" Artista.Nome:"+artista.getNome()+" Artista.Cognome:"+artista.getCognome()+"Artista.In_Vita:"+artista.isInVita()+"Artista.Data_Nascita:"+artista.getDataNascita());
                                         break;
@@ -756,7 +960,12 @@ public class Main
                                         case 5:
                                             GetAllArtistiService getAllArtistiService = new GetAllArtistiService();
     
-                                            artList = getAllArtistiService.execute();
+                                            try {
+                                                artList = getAllArtistiService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             for(Artista art : artList)
                                             {
                                                 System.out.println("|Artista.CodAr:" + art.getCodAr()+"| Artista.Nome:"+art.getNome()+"| Artista.Cognome:"+art.getCognome()+" |Artista.In_Vita:"+art.isInVita()+" |Artista.Data_Nascita:"+art.getDataNascita());
@@ -775,7 +984,12 @@ public class Main
                                             System.out.println("Inserisci la data di nascita del Artista se pervenuta");
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
     
-                                            artList = searchArtistaService.execute(artista);
+                                            try {
+                                                artList = searchArtistaService.execute(artista);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Artista art : artList)
                                             {
@@ -819,7 +1033,12 @@ public class Main
                                             opera.setDescrizione(in.readLine());
                                             
                                             CreateOperaService createOperaService = new CreateOperaService();
-                                            createOperaService.execute(opera);
+                                            try {
+                                                createOperaService.execute(opera);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -831,7 +1050,12 @@ public class Main
                                             opera.setDescrizione(in.readLine());
                                             
                                             UpdateOperaService updateOperaService = new UpdateOperaService();
-                                            updateOperaService.execute(opera);
+                                            try {
+                                                updateOperaService.execute(opera);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -840,14 +1064,24 @@ public class Main
                                             opera.setCodO(Integer.parseInt(in.readLine()));
     
                                             DeleteOperaService deleteOperaService = new DeleteOperaService();
-                                            deleteOperaService.execute(opera.getCodO());
+                                            try {
+                                                deleteOperaService.execute(opera.getCodO());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice dell'Opera per la ricerca");
                                             opera.setCodO(Integer.parseInt(in.readLine()));
 
-                                            opera= operaDAO.getOperaById(connection, opera.getCodO());
+                                            try {
+                                                opera= operaDAO.getOperaById(connection, opera.getCodO());
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             
                                             System.out.println("Opera.CodO:" + opera.getCodO()+" Opera.Nome:"+opera.getNome()+" Opera.Descrizione:"+opera.getDescrizione());
                                         break;
@@ -855,7 +1089,12 @@ public class Main
                                         case 5:
                                             GetAllOpereService getAllOpereService = new GetAllOpereService();
     
-                                            operList = getAllOpereService.execute();
+                                            try {
+                                                operList = getAllOpereService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             for(Opera oper : operList)
                                             {
                                                 System.out.println("|Oper.CodO:" + oper.getCodO()+"| Artista.Nome:"+oper.getNome()+"| Opera.Descrizione:"+oper.getDescrizione());
@@ -871,7 +1110,12 @@ public class Main
                                             System.out.println("Inserisci la descrizione dell'Opera");
                                             opera.setDescrizione(in.readLine());
     
-                                            operList = searchOperaService.execute(opera);
+                                            try {
+                                                operList = searchOperaService.execute(opera);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Opera oper : operList)
                                             {
@@ -916,7 +1160,12 @@ public class Main
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
                                             
                                             CreateBiglietteriaService createBiglietteriaService = new CreateBiglietteriaService();
-                                            createBiglietteriaService.execute(biglietteria);
+                                            try {
+                                                createBiglietteriaService.execute(biglietteria);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -930,7 +1179,12 @@ public class Main
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
                                             
                                             UpdateBiglietteriaService updateBiglietteriaService = new UpdateBiglietteriaService();
-                                            updateBiglietteriaService.execute(biglietteria);
+                                            try {
+                                                updateBiglietteriaService.execute(biglietteria);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -939,14 +1193,24 @@ public class Main
                                             biglietteria.setCodB(Integer.parseInt(in.readLine()));
     
                                             DeleteBiglietteriaService deleteBiglietteriaService = new DeleteBiglietteriaService();
-                                            deleteBiglietteriaService.execute(biglietteria.getCodB());
+                                            try {
+                                                deleteBiglietteriaService.execute(biglietteria.getCodB());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice della Biglietteria per la ricerca");
                                             biglietteria.setCodB(Integer.parseInt(in.readLine()));
 
-                                            biglietteria= biglietteriaDAO.getBiglietteriaById(connection, biglietteria.getCodB());
+                                            try {
+                                                biglietteria= biglietteriaDAO.getBiglietteriaById(connection, biglietteria.getCodB());
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         
                                             System.out.println("Biglietteria.CodB:" + biglietteria.getCodB()+" Biglietteria.Modalità_Pagamento:"+biglietteria.getModPag()+" Biglietteria.Ora_Apertura:"+biglietteria.getOraApertura()+" Biglietteria.Ora_Chiusura:"+biglietteria.getOraChiusura());
                                         break;
@@ -954,7 +1218,12 @@ public class Main
                                         case 5:
                                             GetAllBiglietterieService getAllBiglietterieService = new GetAllBiglietterieService();
     
-                                            biglietteriaList = getAllBiglietterieService.execute();
+                                            try {
+                                                biglietteriaList = getAllBiglietterieService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             for(Biglietteria bigl : biglietteriaList)
                                             {
                                                 System.out.println("|Biglietteria.CodB:" + bigl.getCodB()+" |Biglietteria.Modalità_Pagamento:"+bigl.getModPag()+" |Biglietteria.Ora_Apertura:"+bigl.getOraApertura()+" |Biglietteria.Ora_Chiusura:"+bigl.getOraChiusura());
@@ -972,7 +1241,12 @@ public class Main
                                             System.out.println("Inserisci l'orario di chiusura della Biglietteria in hh-mm-ss");
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
 
-                                            biglietteriaList = searchBiglietteriaService.execute(biglietteria);
+                                            try {
+                                                biglietteriaList = searchBiglietteriaService.execute(biglietteria);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Biglietteria bigl : biglietteriaList)
                                             {
@@ -1018,7 +1292,12 @@ public class Main
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
                                             
                                             CreateBigliettoService createBigliettoService = new CreateBigliettoService();
-                                            createBigliettoService.execute(biglietto);
+                                            try {
+                                                createBigliettoService.execute(biglietto);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -1032,7 +1311,12 @@ public class Main
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
                                             
                                             UpdateBigliettoService updateBigliettoService = new UpdateBigliettoService();
-                                            updateBigliettoService.execute(biglietto);
+                                            try {
+                                                updateBigliettoService.execute(biglietto);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -1041,14 +1325,24 @@ public class Main
                                             biglietto.setCodBi(Integer.parseInt(in.readLine()));
     
                                             DeleteBigliettoService deleteBigliettoService = new DeleteBigliettoService();
-                                            deleteBigliettoService.execute(biglietto.getCodBi());
+                                            try {
+                                                deleteBigliettoService.execute(biglietto.getCodBi());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice della Biglietteria per la ricerca");
                                             biglietto.setCodBi(Integer.parseInt(in.readLine()));
 
-                                            biglietto= bigliettoDAO.getBigliettoById(connection, biglietto.getCodBi());
+                                            try {
+                                                biglietto= bigliettoDAO.getBigliettoById(connection, biglietto.getCodBi());
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         
                                             System.out.println("Biglietto.CodBi:" + biglietto.getCodBi()+" Biglietto.Tipo_Biglietto:"+biglietto.getTipo()+" Biglietto.Prezzo:"+biglietto.getPrezzo()+" Biglietto.Data:"+biglietto.getData());
                                         break;
@@ -1056,7 +1350,12 @@ public class Main
                                         case 5:
                                             GetAllBigliettiService getAllBigliettiService = new GetAllBigliettiService();
     
-                                            biglList = getAllBigliettiService.execute();
+                                            try {
+                                                biglList = getAllBigliettiService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             for(Biglietto bigl : biglList)
                                             {
                                                 System.out.println("|Biglietto.CodBi:" + bigl.getCodBi()+" |Biglietto.Tipo_Biglietto:"+bigl.getTipo()+" |Biglietto.Prezzo:"+bigl.getPrezzo()+" |Biglietto.Data:"+bigl.getData());
@@ -1074,7 +1373,12 @@ public class Main
                                             System.out.println("Inserisci il tipo del biglietto "); //inserire i tipi disponibili per ricordare
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
 
-                                            biglList = searchBigliettoService.execute(biglietto);
+                                            try {
+                                                biglList = searchBigliettoService.execute(biglietto);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Biglietto bigl : biglList)
                                             {
@@ -1120,7 +1424,12 @@ public class Main
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
                                             
                                             CreateAbbonamentoService createAbbonamentoService = new CreateAbbonamentoService();
-                                            createAbbonamentoService.execute(abbonamento);
+                                            try {
+                                                createAbbonamentoService.execute(abbonamento);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -1134,7 +1443,12 @@ public class Main
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
                                                 
                                             UpdateAbbonamentoService updateAbbonamentoService = new UpdateAbbonamentoService();
-                                            updateAbbonamentoService.execute(abbonamento);
+                                            try {
+                                                updateAbbonamentoService.execute(abbonamento);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
 
                                         break;
     
@@ -1143,14 +1457,24 @@ public class Main
                                             abbonamento.setCodAb(Integer.parseInt(in.readLine()));
     
                                             DeleteAbbonamentoService deleteAbbonamentoService = new DeleteAbbonamentoService();
-                                            deleteAbbonamentoService.execute(abbonamento.getCodAb());
+                                            try {
+                                                deleteAbbonamentoService.execute(abbonamento.getCodAb());
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         break;
     
                                         case 4:
                                             System.out.println("Inserisci il codice dell'Abbonamento per la ricerca ");
                                             abbonamento.setCodAb(Integer.parseInt(in.readLine()));
 
-                                            abbonamento= abbonamentoDAO.getAbbonamentoById(connection, abbonamento.getCodAb());
+                                            try {
+                                                abbonamento= abbonamentoDAO.getAbbonamentoById(connection, abbonamento.getCodAb());
+                                            } catch (DAOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                         
                                             System.out.println("Abbonamento.CodAb:" + abbonamento.getCodAb()+" Abbonamento.Tipo_Biglietto:"+abbonamento.getTipo()+" Abbonamento.Prezzo:"+abbonamento.getPrezzo());
                                         break;
@@ -1158,7 +1482,12 @@ public class Main
                                         case 5:
                                             GetAllAbbonamentiService getAllAbbonamentiService = new GetAllAbbonamentiService();
     
-                                            abbList = getAllAbbonamentiService.execute();
+                                            try {
+                                                abbList = getAllAbbonamentiService.execute();
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
                                             for(Abbonamento abb : abbList)
                                             {
                                                 System.out.println("|Abbonamento.CodAb:" + abb.getCodAb()+" |Abbonamento.Tipo_Biglietto:"+abb.getTipo()+" |Abbonamento.Prezzo:"+abb.getPrezzo());
@@ -1176,7 +1505,12 @@ public class Main
                                             System.out.println("Inserisci il prezzo dell'Abbonamento "); //inserire i tipi disponibili per ricordare
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
 
-                                            abbList = searchAbbonamentoService.execute(abbonamento);
+                                            try {
+                                                abbList = searchAbbonamentoService.execute(abbonamento);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
     
                                             for(Abbonamento abb : abbList)
                                             {
