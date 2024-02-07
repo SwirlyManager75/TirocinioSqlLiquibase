@@ -26,8 +26,10 @@ public class Abbonamento_BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(INSERT_ABBONAMENTO_BIGLIETTERIA, null);
+            throw new DAOException("Errore durante l'associazione tra abbonamento e biglietto", e);
             //return false;
+        }catch (Exception e) {
+        	throw new DAOException("Errore generico durante l'associazione tra abbonamento e biglietto", e);
         }
     }
 

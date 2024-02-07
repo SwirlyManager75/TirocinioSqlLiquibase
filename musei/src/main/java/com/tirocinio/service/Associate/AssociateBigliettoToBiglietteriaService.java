@@ -23,10 +23,13 @@ public class AssociateBigliettoToBiglietteriaService {
 
     public boolean execute(int codBiglietto, int codBiglietteria) throws ServiceException {
         // Cerco la Biglietteria con il codice fornito
-        Connection connection = ConnectionManager.getConnection();
+        
+    	Connection connection = null;
         boolean ret;
 
         try {
+        	
+        	connection = ConnectionManager.getConnection();
 
             Biglietteria biglietteria = biglietteriaDAO.getBiglietteriaById(connection, codBiglietteria);
             Biglietto biglietto = bigliettoDAO.getBigliettoById(connection, codBiglietto);
