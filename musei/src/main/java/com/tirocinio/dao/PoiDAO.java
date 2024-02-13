@@ -29,9 +29,14 @@ public class PoiDAO {
                 pois.add(mapResultSetToPoi(resultSet));
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_ALL_POIS, null);
+            throw new DAOException("Errore durante la selezione di tutti i POI", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione di tutti i POI", e);
+
+            }
         return pois;
     }
 
@@ -45,9 +50,14 @@ public class PoiDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_POI_BY_ID, null);
+            throw new DAOException("Errore durante la selezione del POI con id:"+poiId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante la selezione del POI con id:"+poiId, e);
+
+            }
         return null;
     }
 
@@ -59,9 +69,14 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(INSERT_POI, null);
+            throw new DAOException("Errore durante l'aggiunta del POI", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiunta del POI", e);
+
+            }
     }
 
     public boolean updatePoi(Connection connection, Poi poi) throws DAOException {
@@ -73,10 +88,15 @@ public class PoiDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_POI, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
+
+            }
     }
 
     public boolean deletePoi(Connection connection, int poiId) throws DAOException {
@@ -87,9 +107,14 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(DELETE_POI, null);
+            throw new DAOException("Errore durante la cancellazione del POI con id:"+poiId, e);
             //return false;
-    }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la cancellazione del POI con id:"+poiId, e);
+
+            }
     }
 
     public List<Poi> search(Connection connection, Poi criteria) throws DAOException {
@@ -119,11 +144,17 @@ public class PoiDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
+                throw new DAOException("Errore durante la ricerca dei POI con criteri", e);
                 //return false;
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore durante la ricerca dei POI con criteri", e);
+    
+                }
         }
-        } catch (SQLException e) {
-            throw new DAOException("DAO Exception search", null);
+        catch (Exception e) {
+            throw new DAOException("Errore generico durante la prepare statement  ", e);
             //return false;
         }
 
@@ -138,10 +169,15 @@ public class PoiDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-                throw new DAOException(ASSOC_MUSEO, null);
-                //return false;
-        }
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'associazione tra il POI e il museo con id rispettivi:"+poi.getCodPoi()+","+museo.getCodM(), e);
+            //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante l'associazione tra il POI e il museo con id rispettivi:"+poi.getCodPoi()+","+museo.getCodM(), e);
+
+            }
     }
 
     private Poi mapResultSetToPoi(ResultSet resultSet) throws SQLException {

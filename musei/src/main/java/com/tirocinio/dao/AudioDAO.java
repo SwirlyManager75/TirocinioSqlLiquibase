@@ -28,10 +28,15 @@ public class AudioDAO {
             while (resultSet.next()) {
                 audios.add(mapResultSetToAudio(resultSet));
             }
-        } catch (SQLException e) {
-            throw new DAOException(SELECT_ALL_AUDIOS, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante la selezione di tutti gli audio", e);
             //return false;
-        }
+    }
+    catch(Exception e)
+    {
+        throw new DAOException("Errore generico durante la selezione di tutti gli audio", e);
+
+    }
         return audios;
     }
 
@@ -45,9 +50,14 @@ public class AudioDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_AUDIO_BY_ID, null);
+            throw new DAOException("Errore durante la selezione dell'audio con id:"+audioId, e);
             //return false;
-        }
+    }
+    catch(Exception e)
+    {
+        throw new DAOException("Errore generico durante la selezione dell'audio con id:"+audioId, e);
+
+    }
         return null;
     }
 
@@ -59,10 +69,16 @@ public class AudioDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(INSERT_AUDIO, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiunta dell'audio con url:"+audio.getUrl(), e);
             //return false;
-        }
+    }
+    catch(Exception e)
+    {
+        throw new DAOException("Errore generico durante l'aggiunta dell'audio con url:"+audio.getUrl(), e);
+
+    }
+
     }
 
     public boolean updateAudio(Connection connection, Audio audio) throws DAOException {
@@ -73,10 +89,15 @@ public class AudioDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_AUDIO, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento dell'audio con id:"+audio.getCodAu(), e);
             //return false;
-        }
+    }
+    catch(Exception e)
+    {
+        throw new DAOException("Errore generico durante l'aggiunta dell'audio con id:"+audio.getCodAu(), e);
+
+    }
     }
 
     public boolean deleteAudio(Connection connection, int audioId) throws DAOException {
@@ -86,10 +107,16 @@ public class AudioDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-                throw new DAOException(DELETE_AUDIO, null);
-                //return false;
-            }
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante la cancellazione dell'audio con id:"+audioId, e);
+            //return false;
+    }
+    catch(Exception e)
+    {
+        throw new DAOException("Errore generico durante la cancellazione dell'audio con id:"+audioId, e);
+
+    }
+
     }
 
     public List<Audio> search(Connection connection, Audio criteria) throws DAOException {
@@ -119,11 +146,16 @@ public class AudioDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
-                //return false;
+            throw new DAOException("Errore durante la ricerca dell'audio con criteri:", e);
+            //return false;
             }
-        } catch (SQLException e) {
-            throw new DAOException("Prepared Statement error", null);
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la ricerca dell'audio con criteri:", e);
+
+            }
+        } catch (Exception e) {
+            throw new DAOException("Prepared Statement error in ricerca audio con criteri", e);
             //return false;
         }
 
@@ -138,10 +170,15 @@ public class AudioDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(ASSOC_POI, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'associazione dell'audio con il poi, id rispettivi"+audio.getCodAu()+", "+poi.getCodPoi(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'associazione dell'audio con il poi, id rispettivi"+audio.getCodAu()+", "+poi.getCodPoi(), e);
+
+            }
     }
 
     private Audio mapResultSetToAudio(ResultSet resultSet) throws SQLException {

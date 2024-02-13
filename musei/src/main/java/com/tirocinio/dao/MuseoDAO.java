@@ -30,9 +30,14 @@ public class MuseoDAO {
                 museums.add(mapResultSetToMuseum(resultSet));
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_ALL_MUSEUMS, null);
+            throw new DAOException("Errore durante la selezione di tutti i musei", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione di tutti i musei", e);
+
+            }
         return museums;
     }
 
@@ -45,10 +50,16 @@ public class MuseoDAO {
                     return mapResultSetToMuseum(resultSet);
                 }
             }
-        } catch (SQLException e) {
-                throw new DAOException(SELECT_MUSEUM_BY_ID, null);
-                //return false;
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante la selezione del museo con id"+museumId, e);
+            //return false;
             }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione del museo con id"+museumId, e);
+
+            }
+
         return null;
     }
 
@@ -61,10 +72,14 @@ public class MuseoDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(INSERT_MUSEUM, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiunta del museo: "+museum.getNome(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore genereico durante l'aggiunta del museo: "+museum.getNome(), e);
+            }
     }
 
     public boolean updateMuseum(Connection connection, Museo museum) throws DAOException {
@@ -77,9 +92,14 @@ public class MuseoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(UPDATE_MUSEUM, null);
+            throw new DAOException("Errore durante l'aggiornamento del museo con id: "+museum.getCodM(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante l'aggiornamento del museo con id: "+museum.getCodM(), e);
+
+            }
     }
 
     public boolean deleteMuseum(Connection connection, int museumId) throws DAOException {
@@ -89,10 +109,15 @@ public class MuseoDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(DELETE_MUSEUM, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante la cancellazione del museo con id: "+museumId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante la cancellazione del museo con id: "+museumId, e);
+
+            }
     }
 
     public boolean associateWithCity(Connection connection, Museo museo, Citta citta) throws DAOException {
@@ -104,9 +129,14 @@ public class MuseoDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(ASSOC_MUSEUM, null);
+            throw new DAOException("Errore durante l'associazione del museo con la citta con id rispettivi: "+museo.getCodM()+","+citta.getCodCi(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante l'associazione del museo con la citta con id rispettivi: "+museo.getCodM()+","+citta.getCodCi(), e);
+
+            }
     }
 
     public List<Museo> search(Connection connection, Museo criteria) throws DAOException {
@@ -147,11 +177,16 @@ public class MuseoDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
+                throw new DAOException("Errore durante la ricerca del museo con criteri: "+criteria.getNome(), e);
                 //return false;
-            }
-        } catch (SQLException e) {
-            throw new DAOException("DAO Exception search", null);
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante la ricerca del museo con criteri: "+criteria.getNome(), e);
+    
+                }
+        } catch (Exception e) {
+            throw new DAOException("Errore generico durante la prepare statement ", e);
             //return false;
         }
     

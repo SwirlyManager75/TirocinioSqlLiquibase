@@ -21,9 +21,13 @@ public class SearchAudioService {
     public List<Audio> execute(Audio criteria) throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return audioDAO.search(connection, criteria);
-        } catch (SQLException | DAOException e) 
+        } catch (SQLException |DAOException e) 
         {
-            throw new ServiceException("In execute - DAOException ");
+            throw new ServiceException(e);
+        }
+        catch(Exception e)
+        {
+            throw new ServiceException("Errore generico durante la execute di ",e);
         }
     }
 }

@@ -21,9 +21,13 @@ public class GetAllOpereService {
     public List<Opera> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return operaDAO.getAllOpere(connection);
-        }catch (SQLException | DAOException e) 
+        }catch (SQLException |DAOException e) 
         {
-            throw new ServiceException("In execute - DAOException ");
+            throw new ServiceException(e);
+        }
+        catch(Exception e)
+        {
+            throw new ServiceException("Errore generico durante la execute di ",e);
         }
     }
 }

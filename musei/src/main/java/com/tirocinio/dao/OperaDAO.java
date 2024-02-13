@@ -31,9 +31,14 @@ public class OperaDAO {
                 opere.add(mapResultSetToOpera(resultSet));
             }
         } catch (SQLException e) {
-                throw new DAOException(SELECT_ALL_OPERE, null);
-                //return false;
-        }
+            throw new DAOException("Errore durante la selezione di tutte le opere ", e);
+            //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione di tutte le opere ", e);
+
+            }
         return opere;
     }
 
@@ -46,10 +51,15 @@ public class OperaDAO {
                     return mapResultSetToOpera(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            throw new DAOException(SELECT_OPERA_BY_ID, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante la selezione dell'opera con id: "+operaId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione dell'opera con id: "+operaId, e);
+
+            }
         return null;
     }
 
@@ -62,9 +72,14 @@ public class OperaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(INSERT_OPERA, null);
+            throw new DAOException("Errore durante l'aggiunta dell'opera: "+opera.getNome(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante l'aggiunta dell'opera: "+opera.getNome(), e);
+
+            }
     }
 
     public boolean updateOpera(Connection connection, Opera opera) throws DAOException {
@@ -77,9 +92,13 @@ public class OperaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(UPDATE_OPERA, null);
+            throw new DAOException("Errore durante l'aggiornamento dell'opera con id: "+opera.getCodO(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante l'aggiornamento dell'opera con id: "+opera.getCodO(), e);
+            }
     }
 
     public boolean deleteOpera(Connection connection, int operaId) throws DAOException {
@@ -89,10 +108,16 @@ public class OperaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        }catch (SQLException e) {
-            throw new DAOException(DELETE_OPERA, null);
+        } catch (SQLException e) 
+        {
+            throw new DAOException("Errore durante la cancellazione dell'opera con id: "+operaId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante la cancellazione dell'opera con id: "+operaId, e);
+
+            }
     }
 
     public List<Opera> search(Connection connection, Opera criteria) throws DAOException {
@@ -124,11 +149,16 @@ public class OperaDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
+                throw new DAOException("Errore durante la ricerca dell'opera con criterio ", e);
                 //return false;
-            }
-        } catch (SQLException e) {
-            throw new DAOException("DAO Exception search", null);
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante la ricerca dell'opera con criterio ", e);
+    
+                }
+        } catch (Exception e) {
+            throw new DAOException("Errore generico durante la prepare statement della ricerca con criterio delle opere", e);
             //return false;
         }
 
@@ -145,9 +175,14 @@ public class OperaDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(ASSOC_MUSEO, null);
+            throw new DAOException("Errore durante l'associazione tra un opera e un museo con id rispettivi: "+opera.getCodO()+","+museo.getCodM(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'associazione tra un opera e un museo con id rispettivi: "+opera.getCodO()+","+museo.getCodM(), e);
+
+            }
     }
 
     public boolean associateWithArtist(Connection connection, Opera opera, Artista artista) throws DAOException {
@@ -159,10 +194,15 @@ public class OperaDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        }catch (SQLException e) {
-            throw new DAOException(ASSOC_ARTISTA, null);
+        } catch (SQLException e) {
+            throw new DAOException("Errore durante l'associazione tra un opera e un artista con id rispettivi: "+opera.getCodO()+","+artista.getCodAr(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'associazione tra un opera e un artista con id rispettivi: "+opera.getCodO()+","+artista.getCodAr(), e);
+
+            }
     }
 
     private Opera mapResultSetToOpera(ResultSet resultSet) throws SQLException {

@@ -29,8 +29,13 @@ public class AbbonamentoDAO {
                 abbonamenti.add(mapResultSetToAbbonamento(resultSet));
             }
         } catch (SQLException e) {
-                throw new DAOException(SELECT_ALL_ABBONAMENTI, null);
+                throw new DAOException("Errore durante il recupero degli abbonamenti", e);
                 //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante il recupero degli abbonamenti", e);
+
         }
         return abbonamenti;
     }
@@ -45,8 +50,13 @@ public class AbbonamentoDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_ABBONAMENTO_BY_ID, null);
+            throw new DAOException("Errore durante l'ottenimento del abbonamento con id: "+abbonamentoId, e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico l'ottenimento del abbonamento con id: "+abbonamentoId, e);
+
         }
         return null;
     }
@@ -60,9 +70,14 @@ public class AbbonamentoDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(INSERT_ABBONAMENTO, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiunta dell'abbonamento "+abbonamento.getDescrizione(), e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante l'aggiunta dell'abbonamento", e);
+
         }
     }
 
@@ -76,9 +91,14 @@ public class AbbonamentoDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_ABBONAMENTO, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento dell'abbonamento con id"+abbonamento.getCodAb(), e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante l'aggiornamento dell'abbonamento con id"+abbonamento.getCodAb(), e);
+
         }
     }
 
@@ -90,8 +110,13 @@ public class AbbonamentoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(DELETE_ABBONAMENTO, null);
+            throw new DAOException("Errore durante la canancellazione dell'abbonamento con id:"+abbonamentoId, e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante la canancellazione dell'abbonamento con id:"+abbonamentoId, e);
+
         }
     }
 
@@ -128,8 +153,13 @@ public class AbbonamentoDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(queryBuilder.toString(), null);
+            throw new DAOException("Errore durante la ricerca dell'abbonamento con criteri ", e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante la ricerca dell'abbonamento con criteri ", e);
+
         }
 
         return matchingAbbonamenti;

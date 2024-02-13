@@ -7,7 +7,6 @@ import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class GetAllAbbonamentiService {
@@ -22,9 +21,13 @@ public class GetAllAbbonamentiService {
     public List<Abbonamento> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return abbonamentoDAO.getAllAbbonamenti(connection);
-        }catch (SQLException | DAOException e) 
+        }catch (DAOException e) 
         {
-            throw new ServiceException("In execute - DAOException ");
+            throw new ServiceException(e);
+        }
+        catch(Exception e)
+        {
+            throw new ServiceException("Errore generico durante la execute di ",e);
         }
         
         

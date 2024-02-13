@@ -28,9 +28,14 @@ public class CittaDAO {
                 cities.add(mapResultSetToCity(resultSet));
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_ALL_CITIES, null);
+            throw new DAOException("Errore durante  la selezione di tutte le città", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante  la selezione di tutte le città", e);
+
+            }
         return cities;
     }
 
@@ -44,10 +49,15 @@ public class CittaDAO {
                     return mapResultSetToCity(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            throw new DAOException(SELECT_CITY_BY_ID, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante  la selezione della città con id:"+cityId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante  la selezione della città con id:"+cityId, e);
+
+            }
         return null;
     }
 
@@ -61,9 +71,14 @@ public class CittaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(INSERT_CITY, null);
+            throw new DAOException("Errore durante  l'aggiunta della città: "+city.getNome(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico  durante  l'aggiunta della città: "+city.getNome(), e);
+
+            }
     }
 
     public boolean updateCity(Connection connection,Citta city) throws DAOException {
@@ -76,10 +91,15 @@ public class CittaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_CITY, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento della citta con id: "+city.getCodCi(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico  durante  l'aggiornamento della città con id: "+city.getCodCi(), e);
+
+            }
     }
 
     public boolean deleteCity(Connection connection,int cityId) throws DAOException {
@@ -90,10 +110,15 @@ public class CittaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(DELETE_CITY, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante la cancellazione della citta con id: "+cityId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante  la cancellazione della città con id: "+cityId, e);
+
+            }
     }
 
     public List<Citta> search(Connection connection, Citta criteria) throws DAOException {
@@ -127,11 +152,16 @@ public class CittaDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
+                throw new DAOException("Errore durante la ricerca della citta con con criteri", e);
                 //return false;
-            }
-        } catch (SQLException e) {
-                throw new DAOException("DAO Exception in search", null);
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante la ricerca della città con criteri : ", e);
+    
+                }
+        } catch (Exception e) {
+                throw new DAOException("Errore durante la prepareStatement della ricerca", e);
                 //return false;
             }
     

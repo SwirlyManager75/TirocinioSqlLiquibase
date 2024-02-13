@@ -9,6 +9,10 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 import com.google.protobuf.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AbbonamentoDAO;
@@ -89,15 +93,25 @@ import com.tirocinio.service.Update.UpdateDipendenteService;
 import com.tirocinio.service.Update.UpdateMuseumService;
 import com.tirocinio.service.Update.UpdateOperaService;
 import com.tirocinio.service.Update.UpdatePoiService;
+
 public class Main 
 {
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException 
     {
         //TODO GESTIRE LE EXCEPTION, INTEGRARE GESTIONE LOG4J 
         //Inizializzo la connessione
-        Connection connection = ConnectionManager.getConnection();
-        connection.setAutoCommit(false); 
-        
+        System.out.println(System.getProperty("user.dir"));
+        Logger logger=LogManager.getLogger(Main.class);
+        Connection connection=null;
+        try
+        {
+        connection = ConnectionManager.getConnection();
+        connection.setAutoCommit(false);
+        }
+        catch(SQLException e)
+        {
+            logger.error("Impossibile stabilire una connession con il database");
+        } 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 
