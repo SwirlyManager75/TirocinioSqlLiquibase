@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ClienteDAO {
 
     private static final String SELECT_ALL_CLIENTI = "SELECT * FROM Cliente";
@@ -19,7 +22,10 @@ public class ClienteDAO {
     private static final String UPDATE_CLIENTE = "UPDATE Cliente SET Nome = ?, Cognome = ?, Mail = ?, Cellulare = ? WHERE Cod_Cli = ?";
     private static final String DELETE_CLIENTE = "DELETE FROM Cliente WHERE Cod_Cli = ?";
     private static final String ASSOC_CITTA = "UPDATE Cliente SET Cod_E_Ci = ? WHERE Cod_Cli = ?";
-    //TODO AGGIUNGERE LOGICA PER LEGARE CLIENTI AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_CLIENTI) CREARE UN DAO APPOSITO PER 
+
+        private static final Logger logger= LogManager.getLogger();
+
+
 
     public List<Cliente> getAllClienti(Connection connection) throws DAOException {
         List<Cliente> clienti = new ArrayList<>();
@@ -29,10 +35,15 @@ public class ClienteDAO {
             while (resultSet.next()) {
                 clienti.add(mapResultSetToCliente(resultSet));
             }
-        } catch (SQLException e) {
-            throw new DAOException(SELECT_ALL_CLIENTI, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante la selezione di tutti i clienti", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione di tutti i clienti", e);
+
+            }
         return clienti;
     }
 
@@ -46,9 +57,14 @@ public class ClienteDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_CLIENTE_BY_ID, null);
+            throw new DAOException("Errore durante la selezione del cliente con id "+clienteId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione del cliente con id "+clienteId, e);
+
+            }
         return null;
     }
 
@@ -63,10 +79,15 @@ public class ClienteDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(INSERT_CLIENTE, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiunta del cliente del cliente "+cliente.getNome()+" "+cliente.getNome(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiunta del cliente del cliente "+cliente.getNome()+" "+cliente.getNome(), e);
+
+            }
     }
 
     public boolean updateCliente(Connection connection, Cliente cliente) throws DAOException {
@@ -81,10 +102,15 @@ public class ClienteDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_CLIENTE, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento del cliente con id "+cliente.getCodCli(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiornamento del cliente con id "+cliente.getCodCli(), e);
+
+            }
     }
 
     public boolean deleteCliente(Connection connection, int clienteId) throws DAOException {
@@ -94,10 +120,15 @@ public class ClienteDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(DELETE_CLIENTE, null);
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante la cancellazione del cliente con id "+clienteId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la cancellazione del cliente con id "+clienteId, e);
+
+            }
     }
 
     public List<Cliente> search(Connection connection, Cliente criteria) throws DAOException {
@@ -139,12 +170,17 @@ public class ClienteDAO {
                 while (resultSet.next()) {
                     matchingClienti.add(mapResultSetToCliente(resultSet));
                 }
-            }catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
+            } catch (SQLException e) {
+                throw new DAOException("Errore durante la ricerca con criterio dei clienti ", e);
                 //return false;
-            }
-        } catch (SQLException e) {
-            throw new DAOException("DAO Exception search", null);
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante la ricerca con criterio dei clienti ", e);
+    
+                }
+        } catch (Exception e) {
+            throw new DAOException("Errore generico durante la prepare statement della ricarca con criterio dei clienti", e);
             //return false;
         }
 
@@ -160,9 +196,14 @@ public class ClienteDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        }catch (SQLException e) {
-                throw new DAOException(ASSOC_CITTA, null);
-                //return false;
+        } catch (SQLException e) {
+            throw new DAOException("Errore durante l'associazione del cliente con una Città", e);
+            //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'associazione del cliente con una Città", e);
+
             }
     }
 

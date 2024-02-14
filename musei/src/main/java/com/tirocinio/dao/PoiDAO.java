@@ -11,6 +11,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 public class PoiDAO {
 
     private static final String SELECT_ALL_POIS = "SELECT * FROM Poi";
@@ -19,8 +23,13 @@ public class PoiDAO {
     private static final String UPDATE_POI = "UPDATE Poi SET Descrizione = ? WHERE Cod_Poi = ?";
     private static final String DELETE_POI = "DELETE FROM Poi WHERE Cod_Poi = ?";
     private static final String ASSOC_MUSEO =  "UPDATE Poi SET Cod_E_M = ? WHERE Cod_Poi = ?";
+    private static final String GETLAST_POI = "SELECT * FROM Poi WHERE Cod_Poi = (SELECT MAX(Cod_Poi) FROM Poi) ";
+    
+    private static final Logger logger= LogManager.getLogger(PoiDAO.class);
 
     public List<Poi> getAllPois(Connection connection) throws DAOException {
+        
+
         List<Poi> pois = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_POIS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -29,9 +38,14 @@ public class PoiDAO {
                 pois.add(mapResultSetToPoi(resultSet));
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_ALL_POIS, null);
+            throw new DAOException("Errore durante la selezione di tutti i POI", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione di tutti i POI", e);
+
+            }
         return pois;
     }
 
@@ -45,38 +59,102 @@ public class PoiDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(SELECT_POI_BY_ID, null);
+            throw new DAOException("Errore durante la selezione del POI con id:"+poiId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante la selezione del POI con id:"+poiId, e);
+
+            }
         return null;
     }
 
-    public boolean addPoi(Connection connection, Poi poi) throws DAOException {
+    public Poi getLastPoi(Connection connection) throws DAOException
+    {
+        Poi poi=new Poi();
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(GETLAST_POI))
+        {
+
+            ResultSet resultP = preparedStatement.executeQuery();
+            poi.setCodPoi(resultP.getInt("Cod_Poi"));
+            poi.setDescrizione(resultP.getString("Descrizione"));
+            
+            if(resultP.getInt("Cod_E_M")!=0)
+            {
+                try(PreparedStatement preparedStatement2 = connection.prepareStatement("SELECT * FROM Museo WHERE Cod_M = "+resultP.getString("Cod_E_M")))
+                {
+                    Museo m=new Museo();
+
+                    ResultSet resultM =  preparedStatement2.executeQuery();
+                    
+                    m.setCodM(resultM.getInt("Cod_M"));
+                    m.setNome("Nome");
+                    m.setVia("Via");
+                }
+                catch(SQLException e)
+                {
+                    throw new DAOException("Errore durante il recupero del Museo a cui è legato il POI ", e);
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante il recupero del Museo a cui è legato il POI ", e);
+
+                }
+
+            }
+
+            return poi;
+        }
+        catch(SQLException e)
+        {
+            throw new DAOException("Errore durante la selezione dell'ultimo poi inserito", e);
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante la selezione dell'ultimo poi inserito", e);
+
+        }
+    }
+
+    public Poi addPoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
     
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
+            //int rowsAffected = preparedStatement.executeUpdate();
+            
+            return getLastPoi(connection);
         } catch (SQLException e) {
-            throw new DAOException(INSERT_POI, null);
+            throw new DAOException("Errore durante l'aggiunta del POI", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiunta del POI", e);
+
+            }
     }
 
-    public boolean updatePoi(Connection connection, Poi poi) throws DAOException {
+    public Poi updatePoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
            
             preparedStatement.setInt(2, poi.getCodPoi());
 
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_POI, null);
+            //int rowsAffected = preparedStatement.executeUpdate();
+            return poi;//prima ritornavo bool
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
+
+            }
     }
 
     public boolean deletePoi(Connection connection, int poiId) throws DAOException {
@@ -87,9 +165,14 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(DELETE_POI, null);
+            throw new DAOException("Errore durante la cancellazione del POI con id:"+poiId, e);
             //return false;
-    }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la cancellazione del POI con id:"+poiId, e);
+
+            }
     }
 
     public List<Poi> search(Connection connection, Poi criteria) throws DAOException {
@@ -119,11 +202,17 @@ public class PoiDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(preparedStatement.toString(), null);
+                throw new DAOException("Errore durante la ricerca dei POI con criteri", e);
                 //return false;
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore durante la ricerca dei POI con criteri", e);
+    
+                }
         }
-        } catch (SQLException e) {
-            throw new DAOException("DAO Exception search", null);
+        catch (Exception e) {
+            throw new DAOException("Errore generico durante la prepare statement  ", e);
             //return false;
         }
 
@@ -138,10 +227,15 @@ public class PoiDAO {
 
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-                throw new DAOException(ASSOC_MUSEO, null);
-                //return false;
-        }
+        }  catch (SQLException e) {
+            throw new DAOException("Errore durante l'associazione tra il POI e il museo con id rispettivi:"+poi.getCodPoi()+","+museo.getCodM(), e);
+            //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore durante l'associazione tra il POI e il museo con id rispettivi:"+poi.getCodPoi()+","+museo.getCodM(), e);
+
+            }
     }
 
     private Poi mapResultSetToPoi(ResultSet resultSet) throws SQLException {

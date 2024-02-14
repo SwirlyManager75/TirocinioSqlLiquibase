@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class BiglietteriaDAO {
 
     private static final String SELECT_ALL_BIGLIETTERIE = "SELECT * FROM Biglietteria";
@@ -19,6 +22,9 @@ public class BiglietteriaDAO {
     private static final String UPDATE_BIGLIETTERIA = "UPDATE Biglietteria SET Ora_Ap = ?, Ora_Ch = ?, Mod_Pag = ? WHERE Cod_B = ?";
     private static final String DELETE_BIGLIETTERIA = "DELETE FROM Biglietteria WHERE Cod_B = ?";
     private static final String ASSOC_MUSEO= "UPDATE Biglietteria SET Cod_E_M = ? WHERE Cod_B = ?" ;
+
+        private static final Logger logger= LogManager.getLogger();
+
     //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
     
 
@@ -31,8 +37,13 @@ public class BiglietteriaDAO {
                 biglietterie.add(mapResultSetToBiglietteria(resultSet));
             }
         }catch (SQLException e) {
-                throw new DAOException(SELECT_ALL_BIGLIETTERIE, null);
-                //return false;
+            throw new DAOException("Errore durante la selezione di tutte le biglietterie", e);
+            //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione di tutte le biglietterie ", e);
+
             }
         return biglietterie;
     }
@@ -46,10 +57,15 @@ public class BiglietteriaDAO {
                     return mapResultSetToBiglietteria(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            throw new DAOException(SELECT_BIGLIETTERIA_BY_ID, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante la selezione della biglietteria con id:"+biglietteriaId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la selezione della biglietteria con id:"+biglietteriaId, e);
+
+            }
         return null;
     }
 
@@ -63,10 +79,15 @@ public class BiglietteriaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(INSERT_BIGLIETTERIA, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiunta della biglietteria", e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiunta della biglietteria", e);
+
+            }
     }
 
     public boolean updateBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
@@ -80,10 +101,15 @@ public class BiglietteriaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(UPDATE_BIGLIETTERIA, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento della biglietteria con id: "+biglietteria.getCodB(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'aggiornamento della biglietteria con id: "+biglietteria.getCodB(), e);
+
+            }
     }
 
     public boolean deleteBiglietteria(Connection connection, int biglietteriaId) throws DAOException {
@@ -93,10 +119,15 @@ public class BiglietteriaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new DAOException(DELETE_BIGLIETTERIA, null);
+        }catch (SQLException e) {
+            throw new DAOException("Errore durante la cancellazione della biglietteria con id: "+biglietteriaId, e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la cancellazione della biglietteria con id: "+biglietteriaId, e);
+
+            }
     }
 
     public List<Biglietteria> search(Connection connection, Biglietteria criteria) throws DAOException {
@@ -134,13 +165,19 @@ public class BiglietteriaDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(queryBuilder.toString(), null);
+                throw new DAOException("Errore durante la ricerca della biglietteria con criteri: ", e);
                 //return false;
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante la ricerca della biglietteria con criteri: ", e);
+    
+                }
+        }catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante il prepare statement della ricerca con criterio delle biglietterie", e);
+
             }
-        } catch (SQLException e) {
-            throw new DAOException(queryBuilder.toString(), null);
-            //return false;
-        }
 
         return matchingBiglietterie;
     }
@@ -155,9 +192,14 @@ public class BiglietteriaDAO {
             int rowsAffected =statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(ASSOC_MUSEO, null);
+            throw new DAOException("Errore durante l'associazione della biglietteria con id: "+biglietteria.getCodB()+" e il museo con id:"+museo.getCodM(), e);
             //return false;
-        }
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante l'associazione della biglietteria con id: "+biglietteria.getCodB()+" e il museo con id:"+museo.getCodM(), e);
+
+            }
     }
 
     private Biglietteria mapResultSetToBiglietteria(ResultSet resultSet) throws SQLException {

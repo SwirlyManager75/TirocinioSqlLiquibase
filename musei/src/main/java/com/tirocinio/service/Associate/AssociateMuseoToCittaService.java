@@ -40,7 +40,7 @@ public class AssociateMuseoToCittaService {
                 System.out.println("Città non trovata con codice: " + codCitta);
                 return false;
             }
-        }catch (SQLException | DAOException e) 
+        }catch (DAOException e) 
         {
             
             try {
@@ -48,10 +48,14 @@ public class AssociateMuseoToCittaService {
             } 
             catch (SQLException e1) 
             {
-                e1.printStackTrace();
+                throw new ServiceException("Rollback non eseguito - errore",e1);
             } 
-            throw new ServiceException("In execute - DAOException ");
+            throw new ServiceException(e);
             
+        }
+        catch(Exception e)
+        {
+            throw new ServiceException("Errore generico in commit",e);
         }
         finally
         {
@@ -60,8 +64,8 @@ public class AssociateMuseoToCittaService {
                 connection.close();
             } catch (SQLException e) 
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                
+                throw new ServiceException("Errore durante la chiusura della connessione",e);
             }
         }
     }

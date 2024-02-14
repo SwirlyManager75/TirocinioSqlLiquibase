@@ -10,12 +10,18 @@ import java.util.HashMap;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.tirocinio.exceptions.DAOException;
 
 public class Abbonamento_BiglietteriaDAO {
 
     private static final String INSERT_ABBONAMENTO_BIGLIETTERIA = "INSERT INTO Abbonamento_Biglietteria (Cod_E_A, Cod_E_B) VALUES (?, ?)";
     private static final String DELETE_ABBONAMENTO_BIGLIETTERIA = "DELETE FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
+
+            private static final Logger logger= LogManager.getLogger();
+
 
     public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO_BIGLIETTERIA)) {
@@ -41,8 +47,12 @@ public class Abbonamento_BiglietteriaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(DELETE_ABBONAMENTO_BIGLIETTERIA, null);
+            throw new DAOException("Errore durante la cancellazione dell'abbonamento dalla biglietteria "+abbonamentoBiglietteriaId,e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durente la cancellazione di un abbonamento dalla biglietteria "+abbonamentoBiglietteriaId, e);
         }
     }
 
@@ -61,8 +71,12 @@ public class Abbonamento_BiglietteriaDAO {
             // Restituisci true se almeno una riga è stata aggiornata
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DAOException(query, null);
+            throw new DAOException("Errore durante l'aggiornamento dell'abbonamento e della biglietteria con codice AB"+Cod_AB, e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante l'aggiornamento dell'abbonamento e della biglietteria con codice AB"+Cod_AB, e);
         }
     }
 
@@ -81,25 +95,32 @@ public class Abbonamento_BiglietteriaDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(query, null);
+                throw new DAOException("Errore durante la lettura delle biglietterie che hanno l'abbonamento "+codiceAbbonamento, e);
                 //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la lettura delle biglietterie che hanno l'abbonamento "+codiceAbbonamento, e);
             }
         }
         catch (SQLException e) {
-            throw new DAOException(query, null);
+            throw new DAOException("Errore durante il prepareStatement per la query: "+query, e);
             //return false;
         }
-        
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante il prepareStatement per la query: "+query, e);
+        }
         
         return result;
     }
 
-    public Map<Integer, Integer> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
+    public Map<Integer, Integer> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceBiglietteria) throws SQLException, DAOException {
         Map<Integer, Integer> result = new HashMap<>();
         String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
                        "WHERE ab.Cod_E_B = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, codiceAbbonamento);
+            statement.setInt(1, codiceBiglietteria);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -109,13 +130,22 @@ public class Abbonamento_BiglietteriaDAO {
                 }
             }
             catch (SQLException e) {
-                throw new DAOException(query, null);
+                throw new DAOException("Errore durante la lettura degli abbonamenti della biglietteria "+codiceBiglietteria, e);
                 //return false;
+            }
+            catch(Exception e)
+            {
+                throw new DAOException("Errore generico durante la lettura degli abbonamenti della biglietteria "+codiceBiglietteria, e);
+
             }
         }
         catch (SQLException e) {
-            throw new DAOException(query, null);
+            throw new DAOException("Errore durante il prepare statement per la query: "+query, e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante il prepare statement per la query: "+query, e);
         }
         return result;
     }
@@ -132,8 +162,13 @@ public class Abbonamento_BiglietteriaDAO {
             }
         }
         catch (SQLException e) {
-            throw new DAOException(query, null);
+            throw new DAOException("Errore durante la lettura degli abbonamenti e delle biglietterie", e);
             //return false;
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante la lettura degli abbonamenti e delle biglietterie", e);
+
         }
         return result;
     }

@@ -26,7 +26,7 @@ public class CreateAudioService {
             ret=audioDAO.addAudio(connection, audio);            
             connection.commit();
             return ret;
-        }catch (SQLException | DAOException e) 
+        }catch (DAOException e) 
         {
             
             try {
@@ -34,10 +34,14 @@ public class CreateAudioService {
             } 
             catch (SQLException e1) 
             {
-                e1.printStackTrace();
+                throw new ServiceException("Rollback non eseguito - errore",e1);
             } 
-            throw new ServiceException("In execute - DAOException ");
+            throw new ServiceException(e);
             
+        }
+        catch(Exception e)
+        {
+            throw new ServiceException("Errore generico in commit",e);
         }
         finally
         {
@@ -46,11 +50,10 @@ public class CreateAudioService {
                 connection.close();
             } catch (SQLException e) 
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                
+                throw new ServiceException("Errore durante la chiusura della connessione",e);
             }
         }
-        
         
     }
 }
