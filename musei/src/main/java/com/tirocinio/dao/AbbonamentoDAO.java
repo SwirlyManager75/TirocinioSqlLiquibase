@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class AbbonamentoDAO {
 
     private static final String SELECT_ALL_ABBONAMENTI = "SELECT * FROM Abbonamento";
@@ -17,6 +20,9 @@ public class AbbonamentoDAO {
     private static final String INSERT_ABBONAMENTO = "INSERT INTO Abbonamento (Tipo, Descrizione, Prezzo) VALUES (?, ?, ?)";
     private static final String UPDATE_ABBONAMENTO = "UPDATE Abbonamento SET Tipo = ?, Descrizione = ?, Prezzo = ? WHERE Cod_Ab = ?";
     private static final String DELETE_ABBONAMENTO = "DELETE FROM Abbonamento WHERE Cod_Ab = ?";
+
+            private static final Logger logger= LogManager.getLogger();
+
     //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
     //TODO AGGIUNGERE LOGICA PER LEGARE ABBONAMENTI A CLIENTI(SI USA LA TABELLA CLIENTI_ABBONAMENTI)
 

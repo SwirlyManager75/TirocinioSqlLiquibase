@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ClienteDAO {
 
     private static final String SELECT_ALL_CLIENTI = "SELECT * FROM Cliente";
@@ -19,7 +22,10 @@ public class ClienteDAO {
     private static final String UPDATE_CLIENTE = "UPDATE Cliente SET Nome = ?, Cognome = ?, Mail = ?, Cellulare = ? WHERE Cod_Cli = ?";
     private static final String DELETE_CLIENTE = "DELETE FROM Cliente WHERE Cod_Cli = ?";
     private static final String ASSOC_CITTA = "UPDATE Cliente SET Cod_E_Ci = ? WHERE Cod_Cli = ?";
-    //TODO AGGIUNGERE LOGICA PER LEGARE CLIENTI AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_CLIENTI) CREARE UN DAO APPOSITO PER 
+
+        private static final Logger logger= LogManager.getLogger();
+
+
 
     public List<Cliente> getAllClienti(Connection connection) throws DAOException {
         List<Cliente> clienti = new ArrayList<>();

@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class OperaDAO {
 
     private static final String SELECT_ALL_OPERE = "SELECT * FROM Opera";
@@ -21,6 +24,9 @@ public class OperaDAO {
     private static final String DELETE_OPERA = "DELETE FROM Opera WHERE Cod_O = ?";
     private static final String ASSOC_ARTISTA= "UPDATE Opera SET Cod_E_Ar = ? WHERE Cod_O = ?";
     private static final String ASSOC_MUSEO = "UPDATE Opera SET Cod_E_Ci = ? WHERE Cod_O = ?";
+
+        private static final Logger logger= LogManager.getLogger();
+
 
     public List<Opera> getAllOpere(Connection connection) throws DAOException {
         List<Opera> opere = new ArrayList<>();

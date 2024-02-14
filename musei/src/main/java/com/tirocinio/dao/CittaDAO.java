@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class CittaDAO {
 
     private static final String SELECT_ALL_CITIES = "SELECT * FROM Citta";
@@ -17,6 +20,9 @@ public class CittaDAO {
     private static final String INSERT_CITY = "INSERT INTO Citta (Nome, Provincia) VALUES (?, ?)";
     private static final String UPDATE_CITY = "UPDATE Citta SET Nome = ?, Provincia = ? WHERE Cod_Ci = ?";
     private static final String DELETE_CITY = "DELETE FROM Citta WHERE Cod_Ci = ?";
+
+        private static final Logger logger= LogManager.getLogger();
+
 
     public List<Citta> getAllCities(Connection connection) throws DAOException {
         List<Citta> cities = new ArrayList<>();

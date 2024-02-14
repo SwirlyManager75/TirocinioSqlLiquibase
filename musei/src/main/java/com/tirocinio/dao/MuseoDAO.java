@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class MuseoDAO {
 
     private static final String SELECT_ALL_MUSEUMS = "SELECT * FROM Museo";
@@ -19,6 +22,9 @@ public class MuseoDAO {
     private static final String UPDATE_MUSEUM = "UPDATE Museo SET Nome = ?, Via = ? WHERE Cod_M = ?";
     private static final String DELETE_MUSEUM = "DELETE FROM Museo WHERE Cod_M = ?";
     private static final String ASSOC_MUSEUM = "UPDATE Museo SET Cod_E_Ci = ? WHERE Cod_M = ?";
+
+        private static final Logger logger= LogManager.getLogger();
+
 
     public List<Museo> getAllMuseums(Connection connection) throws DAOException {
         List<Museo> museums = new ArrayList<>();

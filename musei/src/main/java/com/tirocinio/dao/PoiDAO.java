@@ -11,6 +11,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 public class PoiDAO {
 
     private static final String SELECT_ALL_POIS = "SELECT * FROM Poi";
@@ -19,8 +23,13 @@ public class PoiDAO {
     private static final String UPDATE_POI = "UPDATE Poi SET Descrizione = ? WHERE Cod_Poi = ?";
     private static final String DELETE_POI = "DELETE FROM Poi WHERE Cod_Poi = ?";
     private static final String ASSOC_MUSEO =  "UPDATE Poi SET Cod_E_M = ? WHERE Cod_Poi = ?";
+    private static final String GETLAST_POI = "SELECT * FROM Poi WHERE Cod_Poi = (SELECT MAX(Cod_Poi) FROM Poi) ";
+    
+    private static final Logger logger= LogManager.getLogger(PoiDAO.class);
 
     public List<Poi> getAllPois(Connection connection) throws DAOException {
+        
+
         List<Poi> pois = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_POIS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -61,13 +70,62 @@ public class PoiDAO {
         return null;
     }
 
-    public boolean addPoi(Connection connection, Poi poi) throws DAOException {
+    public Poi getLastPoi(Connection connection) throws DAOException
+    {
+        Poi poi=new Poi();
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(GETLAST_POI))
+        {
+
+            ResultSet resultP = preparedStatement.executeQuery();
+            poi.setCodPoi(resultP.getInt("Cod_Poi"));
+            poi.setDescrizione(resultP.getString("Descrizione"));
+            
+            if(resultP.getInt("Cod_E_M")!=0)
+            {
+                try(PreparedStatement preparedStatement2 = connection.prepareStatement("SELECT * FROM Museo WHERE Cod_M = "+resultP.getString("Cod_E_M")))
+                {
+                    Museo m=new Museo();
+
+                    ResultSet resultM =  preparedStatement2.executeQuery();
+                    
+                    m.setCodM(resultM.getInt("Cod_M"));
+                    m.setNome("Nome");
+                    m.setVia("Via");
+                }
+                catch(SQLException e)
+                {
+                    throw new DAOException("Errore durante il recupero del Museo a cui è legato il POI ", e);
+                }
+                catch(Exception e)
+                {
+                    throw new DAOException("Errore generico durante il recupero del Museo a cui è legato il POI ", e);
+
+                }
+
+            }
+
+            return poi;
+        }
+        catch(SQLException e)
+        {
+            throw new DAOException("Errore durante la selezione dell'ultimo poi inserito", e);
+        }
+        catch(Exception e)
+        {
+            throw new DAOException("Errore generico durante la selezione dell'ultimo poi inserito", e);
+
+        }
+    }
+
+    public Poi addPoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
     
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
+            //int rowsAffected = preparedStatement.executeUpdate();
+            
+            return getLastPoi(connection);
         } catch (SQLException e) {
             throw new DAOException("Errore durante l'aggiunta del POI", e);
             //return false;
@@ -79,15 +137,15 @@ public class PoiDAO {
             }
     }
 
-    public boolean updatePoi(Connection connection, Poi poi) throws DAOException {
+    public Poi updatePoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
            
             preparedStatement.setInt(2, poi.getCodPoi());
 
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
+            //int rowsAffected = preparedStatement.executeUpdate();
+            return poi;//prima ritornavo bool
         }  catch (SQLException e) {
             throw new DAOException("Errore durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
             //return false;

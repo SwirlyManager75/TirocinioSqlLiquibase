@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class BigliettoDAO {
 
     private static final String SELECT_ALL_BIGLIETTI = "SELECT * FROM Biglietto";
@@ -21,6 +24,9 @@ public class BigliettoDAO {
     private static final String DELETE_BIGLIETTO = "DELETE FROM Biglietto WHERE Cod_Bi = ?";
     private static final String ASSOC_CLIENTE = "UPDATE Biglietto SET Cod_E_Cli = ? WHERE Cod_Bi = ?";
     private static final String ASSOC_BIGLIETTERIA = "UPDATE Biglietto SET Cod_E_B = ? WHERE Cod_Bi = ?";
+
+        private static final Logger logger= LogManager.getLogger();
+
 
     public List<Biglietto> getAllBiglietti(Connection connection) throws DAOException {
         List<Biglietto> biglietti = new ArrayList<>();

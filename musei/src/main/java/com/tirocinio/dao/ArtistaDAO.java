@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ArtistaDAO {
 
     private static final String SELECT_ALL_ARTISTI = "SELECT * FROM Artista";
@@ -19,6 +22,9 @@ public class ArtistaDAO {
     private static final String UPDATE_ARTISTA = "UPDATE Artista SET Nome = ?, Cognome = ?, Data_Nascita = ?, In_vita = ? WHERE Cod_Ar = ?";
     private static final String DELETE_ARTISTA = "DELETE FROM Artista WHERE Cod_Ar = ?";
     private static final String ASSOC_CITTA = "UPDATE Artista SET Cod_E_Ci = ? WHERE Cod_Ar = ?";
+
+            private static final Logger logger= LogManager.getLogger();
+
 
     public List<Artista> getAllArtisti(Connection connection) throws DAOException {
         List<Artista> artisti = new ArrayList<>();

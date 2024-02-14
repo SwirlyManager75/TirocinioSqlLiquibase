@@ -6,10 +6,16 @@ import java.util.HashMap;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.tirocinio.exceptions.DAOException;
 
 public class Cliente_AbbonamentoDAO {
+    
     private Connection connection;
+        private static final Logger logger= LogManager.getLogger();
+
 
     // Costruttore che accetta una connessione al database
     public Cliente_AbbonamentoDAO(Connection connection) {
