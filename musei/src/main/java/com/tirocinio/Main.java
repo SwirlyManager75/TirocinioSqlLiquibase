@@ -89,14 +89,21 @@ import com.tirocinio.service.Update.UpdateDipendenteService;
 import com.tirocinio.service.Update.UpdateMuseumService;
 import com.tirocinio.service.Update.UpdateOperaService;
 import com.tirocinio.service.Update.UpdatePoiService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class Main 
 {
+    public static final Logger logger = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException 
     {
-        //TODO GESTIRE LE EXCEPTION, INTEGRARE GESTIONE LOG4J 
+        //TODO INTEGRARE GESTIONE LOG4J 
         //Inizializzo la connessione
+        //String workingDirectory = System.getProperty("user.dir");
+        //System.out.println(workingDirectory);
         Connection connection = ConnectionManager.getConnection();
         connection.setAutoCommit(false); 
+        logger.info("Avviata connessione per l'unico service mancante");//TODO IMPOSTARE INFO SU OGNI SERVICE E ERROR NEI CATCH
         
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
