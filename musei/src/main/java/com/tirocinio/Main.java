@@ -93,13 +93,28 @@ import com.tirocinio.service.Update.UpdateDipendenteService;
 import com.tirocinio.service.Update.UpdateMuseumService;
 import com.tirocinio.service.Update.UpdateOperaService;
 import com.tirocinio.service.Update.UpdatePoiService;
+<<<<<<< HEAD
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+=======
 
+>>>>>>> 2fa056fddc04a0b8549b1260cb1f40641a794572
 public class Main 
 {
+    public static final Logger logger = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException 
     {
-        //TODO GESTIRE LE EXCEPTION, INTEGRARE GESTIONE LOG4J 
+        //TODO INTEGRARE GESTIONE LOG4J 
         //Inizializzo la connessione
+<<<<<<< HEAD
+        //String workingDirectory = System.getProperty("user.dir");
+        //System.out.println(workingDirectory);
+        Connection connection = ConnectionManager.getConnection();
+        connection.setAutoCommit(false); 
+        logger.info("Avviata connessione per l'unico service mancante");//TODO IMPOSTARE INFO SU OGNI SERVICE E ERROR NEI CATCH
+        
+=======
         System.out.println(System.getProperty("user.dir"));
         Logger logger=LogManager.getLogger(Main.class);
         Connection connection=null;
@@ -112,6 +127,7 @@ public class Main
         {
             logger.error("Impossibile stabilire una connession con il database");
         } 
+>>>>>>> 2fa056fddc04a0b8549b1260cb1f40641a794572
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 
