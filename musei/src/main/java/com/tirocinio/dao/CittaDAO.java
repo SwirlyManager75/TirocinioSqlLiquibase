@@ -34,14 +34,20 @@ public class CittaDAO {
                 cities.add(mapResultSetToCity(resultSet));
             }
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante  la selezione di tutte le città", e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante  la selezione di tutte le città", e);
 
             }
+            logger.info("SUCCESS:");
+
         return cities;
     }
 
@@ -52,15 +58,21 @@ public class CittaDAO {
             preparedStatement.setInt(1, cityId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    logger.info("SUCCESS:");
+
                     return mapResultSetToCity(resultSet);
                 }
             }
         }catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante  la selezione della città con id:"+cityId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante  la selezione della città con id:"+cityId, e);
 
             }
@@ -75,13 +87,19 @@ public class CittaDAO {
             preparedStatement.setBoolean(2, city.isProvincia());
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante  l'aggiunta della città: "+city.getNome(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico  durante  l'aggiunta della città: "+city.getNome(), e);
 
             }
@@ -96,13 +114,19 @@ public class CittaDAO {
             preparedStatement.setInt(3, city.getCodCi());
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiornamento della citta con id: "+city.getCodCi(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico  durante  l'aggiornamento della città con id: "+city.getCodCi(), e);
 
             }
@@ -115,13 +139,19 @@ public class CittaDAO {
             preparedStatement.setInt(1, cityId);
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la cancellazione della citta con id: "+cityId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante  la cancellazione della città con id: "+cityId, e);
 
             }
@@ -158,19 +188,27 @@ public class CittaDAO {
                 }
             }
             catch (SQLException e) {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante la ricerca della citta con con criteri", e);
                 //return false;
                 }
                 catch(Exception e)
                 {
+                    logger.error("SqlError");
+
                     throw new DAOException("Errore generico durante la ricerca della città con criteri : ", e);
     
                 }
         } catch (Exception e) {
+            logger.error("SqlError");
+
                 throw new DAOException("Errore durante la prepareStatement della ricerca", e);
                 //return false;
             }
     
+            logger.info("SUCCESS:");
+
         return matchingCities;
     }
 

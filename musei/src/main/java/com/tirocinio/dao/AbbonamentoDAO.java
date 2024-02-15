@@ -35,14 +35,19 @@ public class AbbonamentoDAO {
                 abbonamenti.add(mapResultSetToAbbonamento(resultSet));
             }
         } catch (SQLException e) {
+                logger.error(" Errore durante il recupero degli abbonamenti"+e.getMessage());
                 throw new DAOException("Errore durante il recupero degli abbonamenti", e);
                 //return false;
         }
         catch(Exception e)
         {
+            logger.error(" Errore generico durante il recupero degli abbonamenti"+e.getMessage());
+
             throw new DAOException("Errore generico durante il recupero degli abbonamenti", e);
 
         }
+
+        logger.info("SUCCESS: lettura di tutti gli abbonamenti, righe: "+abbonamenti.size());
         return abbonamenti;
     }
 
@@ -52,15 +57,20 @@ public class AbbonamentoDAO {
             preparedStatement.setInt(1, abbonamentoId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    logger.info("SUCCESS: Lettura dell'abbonamento con ID:"+abbonamentoId);
+
                     return mapResultSetToAbbonamento(resultSet);
                 }
             }
         } catch (SQLException e) {
+            logger.error("Errore durante l'ottenimento del abbonamento con id: "+abbonamentoId+" ,errore:"+e.getMessage());
             throw new DAOException("Errore durante l'ottenimento del abbonamento con id: "+abbonamentoId, e);
             //return false;
         }
         catch(Exception e)
         {
+            logger.error("Errore generico durante l'ottenimento del abbonamento con id: "+abbonamentoId+" ,errore:"+e.getMessage());
+
             throw new DAOException("Errore generico l'ottenimento del abbonamento con id: "+abbonamentoId, e);
 
         }
@@ -75,13 +85,19 @@ public class AbbonamentoDAO {
             preparedStatement.setFloat(3, abbonamento.getPrezzo());
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
+            
         }catch (SQLException e) {
+            logger.error("");
             throw new DAOException("Errore durante l'aggiunta dell'abbonamento "+abbonamento.getDescrizione(), e);
             //return false;
         }
         catch(Exception e)
         {
+            logger.error("");
+
             throw new DAOException("Errore generico durante l'aggiunta dell'abbonamento", e);
 
         }
@@ -96,13 +112,19 @@ public class AbbonamentoDAO {
             preparedStatement.setInt(4, abbonamento.getCodAb());
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }catch (SQLException e) {
+            logger.error("");
+
             throw new DAOException("Errore durante l'aggiornamento dell'abbonamento con id"+abbonamento.getCodAb(), e);
             //return false;
         }
         catch(Exception e)
         {
+            logger.error("");
+
             throw new DAOException("Errore generico durante l'aggiornamento dell'abbonamento con id"+abbonamento.getCodAb(), e);
 
         }
@@ -116,11 +138,15 @@ public class AbbonamentoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
+            logger.error("");
+
             throw new DAOException("Errore durante la canancellazione dell'abbonamento con id:"+abbonamentoId, e);
             //return false;
         }
         catch(Exception e)
         {
+            logger.error("");
+
             throw new DAOException("Errore generico durante la canancellazione dell'abbonamento con id:"+abbonamentoId, e);
 
         }
@@ -159,14 +185,20 @@ public class AbbonamentoDAO {
                 }
             }
         } catch (SQLException e) {
+            logger.error("");
+
             throw new DAOException("Errore durante la ricerca dell'abbonamento con criteri ", e);
             //return false;
         }
         catch(Exception e)
         {
+            logger.error("");
+
             throw new DAOException("Errore generico durante la ricerca dell'abbonamento con criteri ", e);
 
         }
+
+        logger.info("SUCCESS:");
 
         return matchingAbbonamenti;
     }

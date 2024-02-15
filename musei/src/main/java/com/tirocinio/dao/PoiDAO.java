@@ -38,14 +38,20 @@ public class PoiDAO {
                 pois.add(mapResultSetToPoi(resultSet));
             }
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione di tutti i POI", e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la selezione di tutti i POI", e);
 
             }
+            logger.info("SUCCESS:");
+
         return pois;
     }
 
@@ -55,15 +61,21 @@ public class PoiDAO {
             preparedStatement.setInt(1, poiId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    logger.info("SUCCESS:");
+
                     return mapResultSetToPoi(resultSet);
                 }
             }
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione del POI con id:"+poiId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante la selezione del POI con id:"+poiId, e);
 
             }
@@ -95,24 +107,33 @@ public class PoiDAO {
                 }
                 catch(SQLException e)
                 {
+                    logger.error("SqlError");
+
                     throw new DAOException("Errore durante il recupero del Museo a cui è legato il POI ", e);
                 }
                 catch(Exception e)
                 {
+                    logger.error("SqlError");
+
                     throw new DAOException("Errore generico durante il recupero del Museo a cui è legato il POI ", e);
 
                 }
 
             }
+            logger.info("SUCCESS:");
 
             return poi;
         }
         catch(SQLException e)
         {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione dell'ultimo poi inserito", e);
         }
         catch(Exception e)
         {
+            logger.error("SqlError");
+
             throw new DAOException("Errore generico durante la selezione dell'ultimo poi inserito", e);
 
         }
@@ -123,15 +144,20 @@ public class PoiDAO {
 
             preparedStatement.setString(1, poi.getDescrizione());
     
-            //int rowsAffected = preparedStatement.executeUpdate();
-            
+            int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return getLastPoi(connection);
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiunta del POI", e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'aggiunta del POI", e);
 
             }
@@ -144,14 +170,20 @@ public class PoiDAO {
            
             preparedStatement.setInt(2, poi.getCodPoi());
 
-            //int rowsAffected = preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return poi;//prima ritornavo bool
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'aggiornamento del POI con id:"+poi.getCodPoi(), e);
 
             }
@@ -163,13 +195,19 @@ public class PoiDAO {
             preparedStatement.setInt(1, poiId);
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la cancellazione del POI con id:"+poiId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la cancellazione del POI con id:"+poiId, e);
 
             }
@@ -202,19 +240,27 @@ public class PoiDAO {
                 }
             }
             catch (SQLException e) {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante la ricerca dei POI con criteri", e);
                 //return false;
                 }
                 catch(Exception e)
                 {
+                    logger.error("SqlError");
+
                     throw new DAOException("Errore durante la ricerca dei POI con criteri", e);
     
                 }
         }
         catch (Exception e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore generico durante la prepare statement  ", e);
             //return false;
         }
+
+        logger.info("SUCCESS:");
 
         return matchingPois;
     }
@@ -226,13 +272,19 @@ public class PoiDAO {
             statement.setInt(2, poi.getCodPoi());
 
             int rowsAffected =statement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'associazione tra il POI e il museo con id rispettivi:"+poi.getCodPoi()+","+museo.getCodM(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante l'associazione tra il POI e il museo con id rispettivi:"+poi.getCodPoi()+","+museo.getCodM(), e);
 
             }

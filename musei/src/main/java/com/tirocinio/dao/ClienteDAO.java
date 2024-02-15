@@ -36,14 +36,20 @@ public class ClienteDAO {
                 clienti.add(mapResultSetToCliente(resultSet));
             }
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione di tutti i clienti", e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la selezione di tutti i clienti", e);
 
             }
+            logger.info("SUCCESS:");
+
         return clienti;
     }
 
@@ -53,15 +59,21 @@ public class ClienteDAO {
             preparedStatement.setInt(1, clienteId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    logger.info("SUCCESS:");
+
                     return mapResultSetToCliente(resultSet);
                 }
             }
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione del cliente con id "+clienteId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la selezione del cliente con id "+clienteId, e);
 
             }
@@ -78,13 +90,19 @@ public class ClienteDAO {
             
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiunta del cliente del cliente "+cliente.getNome()+" "+cliente.getNome(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'aggiunta del cliente del cliente "+cliente.getNome()+" "+cliente.getNome(), e);
 
             }
@@ -101,13 +119,19 @@ public class ClienteDAO {
             preparedStatement.setInt(5, cliente.getCodCli());
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiornamento del cliente con id "+cliente.getCodCli(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'aggiornamento del cliente con id "+cliente.getCodCli(), e);
 
             }
@@ -119,13 +143,19 @@ public class ClienteDAO {
             preparedStatement.setInt(1, clienteId);
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la cancellazione del cliente con id "+clienteId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la cancellazione del cliente con id "+clienteId, e);
 
             }
@@ -171,18 +201,25 @@ public class ClienteDAO {
                     matchingClienti.add(mapResultSetToCliente(resultSet));
                 }
             } catch (SQLException e) {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante la ricerca con criterio dei clienti ", e);
                 //return false;
                 }
                 catch(Exception e)
                 {
+                    logger.error("SqlError");
+
                     throw new DAOException("Errore generico durante la ricerca con criterio dei clienti ", e);
     
                 }
         } catch (Exception e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore generico durante la prepare statement della ricarca con criterio dei clienti", e);
             //return false;
         }
+        logger.info("SUCCESS:");
 
         return matchingClienti;
     }
@@ -195,13 +232,19 @@ public class ClienteDAO {
             statement.setInt(2, cliente.getCodCli());
 
             int rowsAffected =statement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'associazione del cliente con una Città", e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'associazione del cliente con una Città", e);
 
             }

@@ -37,14 +37,20 @@ public class DipendenteDAO {
                 dipendenti.add(mapResultSetToDipendente(resultSet));
             }
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione di tutti i dipendenti", e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la selezione di tutti i dipendenti", e);
 
             }
+            logger.info("SUCCESS:");
+
         return dipendenti;
     }
 
@@ -54,15 +60,21 @@ public class DipendenteDAO {
             preparedStatement.setInt(1, dipendenteId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    logger.info("SUCCESS:");
+
                     return mapResultSetToDipendente(resultSet);
                 }
             }
         } catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la selezione del dipendente con id "+dipendenteId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante la selezione del dipendente con id "+dipendenteId, e);
 
             }
@@ -79,13 +91,19 @@ public class DipendenteDAO {
             
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiunta del dipendente: "+dipendente.getNome(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'aggiunta del dipendente: "+dipendente.getNome(), e);
 
             }
@@ -101,13 +119,19 @@ public class DipendenteDAO {
             preparedStatement.setInt(5, dipendente.getCodD());
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'aggiornamento del dipendente: "+dipendente.getCodD(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante l'aggiornamento del dipendente: "+dipendente.getCodD(), e);
                 //return false;
     
@@ -120,13 +144,19 @@ public class DipendenteDAO {
             preparedStatement.setInt(1, dipendenteId);
 
             int rowsAffected = preparedStatement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante la cancellazione del dipendente: "+dipendenteId, e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la cancellazione del dipendente: "+dipendenteId, e);
 
             }
@@ -172,11 +202,15 @@ public class DipendenteDAO {
                 }
             }
             catch (SQLException e) {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore generico durante la ricerca dei dipendenti con criteri: "+criteria.getCodiceFiscale(), e);
                 //return false;
                 }
                 catch(Exception e)
                 {
+                    logger.error("SqlError");
+
                     throw new DAOException("Errore generico durante la ricerca dei dipendenti con criteri: "+criteria.getCodiceFiscale(), e);
     
                 }
@@ -184,6 +218,7 @@ public class DipendenteDAO {
             throw new DAOException("DAO Exception search", null);
             //return false;
         }
+        logger.info("SUCCESS:");
 
         return matchingDipendenti;
     }
@@ -196,13 +231,19 @@ public class DipendenteDAO {
             statement.setInt(2, dipendente.getCodD());
 
             int rowsAffected =statement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'associazione tra dipendente e citta id rispettivi:"+dipendente.getCodD()+","+citta.getCodCi(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante l'associazione tra dipendente e citta id rispettivi:"+dipendente.getCodD()+","+citta.getCodCi(), e);
 
             }
@@ -216,13 +257,19 @@ public class DipendenteDAO {
             statement.setInt(2, dipendente.getCodD());
 
             int rowsAffected =statement.executeUpdate();
+            logger.info("SUCCESS:");
+
             return rowsAffected > 0;
         }  catch (SQLException e) {
+            logger.error("SqlError");
+
             throw new DAOException("Errore durante l'associazione tra dipendente e museo id rispettivi:"+dipendente.getCodD()+","+museo.getCodM(), e);
             //return false;
             }
             catch(Exception e)
             {
+                logger.error("SqlError");
+
                 throw new DAOException("Errore durante l'associazione tra dipendente e museo id rispettivi:"+dipendente.getCodD()+","+museo.getCodM(), e);
 
             }

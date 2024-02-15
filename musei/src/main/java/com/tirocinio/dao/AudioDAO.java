@@ -48,6 +48,8 @@ public class AudioDAO {
         throw new DAOException("Errore generico durante la selezione di tutti gli audio", e);
 
     }
+        logger.info("SUCCESS:");
+
         return audios;
     }
 
