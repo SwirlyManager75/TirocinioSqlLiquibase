@@ -24,9 +24,33 @@ public class BigliettoDAO {
     private static final String DELETE_BIGLIETTO = "DELETE FROM Biglietto WHERE Cod_Bi = ?";
     private static final String ASSOC_CLIENTE = "UPDATE Biglietto SET Cod_E_Cli = ? WHERE Cod_Bi = ?";
     private static final String ASSOC_BIGLIETTERIA = "UPDATE Biglietto SET Cod_E_B = ? WHERE Cod_Bi = ?";
+    private static final String LASTKEY_BIGLIETTO = "SELECT * FROM BIGLIETTO WHERE Cod_Bi = (SELECT MAX(Cod_Bi) FROM BIGLIETTO)";
 
-        private static final Logger logger= LogManager.getLogger();
 
+    private static final Logger logger= LogManager.getLogger(BigliettoDAO.class);
+
+    public int getLastKey(Connection connection) throws DAOException{
+        Biglietto bigl=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_BIGLIETTO)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           bigl =  mapResultSetToBiglietto(resultSet);
+           logger.info("Ultimo id recuperato");
+
+           return bigl.getCodBi();
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
     public List<Biglietto> getAllBiglietti(Connection connection) throws DAOException {
         List<Biglietto> biglietti = new ArrayList<>();
@@ -37,19 +61,17 @@ public class BigliettoDAO {
                 biglietti.add(mapResultSetToBiglietto(resultSet));
             }
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la selezione di tutti i biglietti", e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la selezione di tutti i biglietti", e);
 
             }
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: selezione di tutti i biglietti, rows:"+biglietti.size());
 
         return biglietti;
     }
@@ -60,28 +82,26 @@ public class BigliettoDAO {
             preparedStatement.setInt(1, bigliettoId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    logger.info("SUCCESS:");
+                    logger.info("SUCCESS: selezione biglietto con id:"+bigliettoId);
 
                     return mapResultSetToBiglietto(resultSet);
                 }
             }
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la selezione del biglietto con id:"+bigliettoId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la selezione del biglietto con id:"+bigliettoId, e);
 
             }
         return null;
     }
 
-    public boolean addBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
+    public int addBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BIGLIETTO)) {
 
             preparedStatement.setFloat(1, biglietto.getPrezzo());
@@ -90,25 +110,23 @@ public class BigliettoDAO {
         
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
-
-            return rowsAffected > 0;
+            logger.info("SUCCESS: aggiunto biglietto , rows:"+rowsAffected);
+            return getLastKey(connection);
+            //return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiunta del biglietto con data: "+biglietto.getData(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore gneerico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'aggiunta del biglietto con data: "+biglietto.getData(), e);
 
             }
     }
 
-    public boolean updateBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
+    public Biglietto updateBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BIGLIETTO)) {
 
             preparedStatement.setFloat(1, biglietto.getPrezzo());
@@ -117,19 +135,17 @@ public class BigliettoDAO {
             preparedStatement.setInt(4, biglietto.getCodBi());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
-
-            return rowsAffected > 0;
+            logger.info("SUCCESS: aggiornamento del biglietto con id:"+biglietto.getCodBi()+", rows:"+rowsAffected);
+            return biglietto;
+            //return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiornamento del biglietto con id: "+biglietto.getCodBi(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'aggiornamento del biglietto con id: "+biglietto.getCodBi(), e);
 
             }
@@ -141,19 +157,17 @@ public class BigliettoDAO {
             preparedStatement.setInt(1, bigliettoId);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: cancellazione del biglietto con id:"+bigliettoId+", rows:"+rowsAffected);
 
             return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la cancellazione del biglietto con id: "+bigliettoId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la cancellazione del biglietto con id: "+bigliettoId, e);
 
             }
@@ -193,25 +207,23 @@ public class BigliettoDAO {
                 }
             }
             catch (SQLException e) {
-                logger.error("SqlError");
-
+                logger.error("SqlError "+e.getMessage());
                 throw new DAOException("Errore durante la ricerca del biglietto con criteri", e);
                 //return false;
                 }
                 catch(Exception e)
                 {
-                    logger.error("SqlError");
-
+                    logger.error("Errore generico "+e.getMessage());
                     throw new DAOException("Errore generico durante la ricerca del biglietto con criteri", e);
     
                 }
         } catch (Exception e) {
-            logger.error("SqlError");
-
-            throw new DAOException("Errore durante il prareStatement", null);
+            logger.error("Errore generico "+e.getMessage());
+            throw new DAOException("Errore durante il prepare statement", e);
             //return false;
         }
-        logger.info("SUCCESS:");
+
+        logger.info("SUCCESS: ricerca biglietto con criterio, rows"+matchingBiglietti.size());
 
         return matchingBiglietti;
     }
@@ -224,7 +236,7 @@ public class BigliettoDAO {
             statement.setInt(2, biglietto.getCodBi());
             
             int rowsAffected =statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: associazione del biglietto al cliente , id rispettivi:"+biglietto.getCodBi()+","+cliente.getCodCli()+" , rows:"+rowsAffected);
 
             return rowsAffected > 0;
         }catch (SQLException e) {
@@ -235,8 +247,7 @@ public class BigliettoDAO {
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'associazione del biglietto con id:"+biglietto.getCodBi()+ " e cliente con id:"+cliente.getCodCli(), e);
 
             }
@@ -250,19 +261,17 @@ public class BigliettoDAO {
             statement.setInt(2, biglietto.getCodBi());
 
             int rowsAffected =statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: associazione biglietto con biglietteria rispettivi id:"+biglietto.getCodBi()+" , "+biglietteria.getCodB()+", rows:"+rowsAffected);
 
             return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'associazione del biglietto con id:"+biglietto.getCodBi()+ " e biglietteria con id:"+biglietteria.getCodB(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'associazione del biglietto con id:"+biglietto.getCodBi()+ " e biglietteria con id:"+biglietteria.getCodB(), e);
 
             }

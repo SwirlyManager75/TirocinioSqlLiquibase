@@ -17,9 +17,9 @@ public class UpdateOperaService {
         this.operaDAO = new OperaDAO();
     }
 
-    public boolean execute(Opera opera) throws ServiceException {
+    public Opera execute(Opera opera) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Opera ret;
         try {
             ret = operaDAO.updateOpera(connection, opera);
             connection.commit();

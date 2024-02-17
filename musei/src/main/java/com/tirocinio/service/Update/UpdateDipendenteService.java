@@ -17,9 +17,9 @@ public class UpdateDipendenteService {
         this.dipendenteDAO = new DipendenteDAO();
     }
 
-    public boolean execute(Dipendente dipendente) throws ServiceException {
+    public Dipendente execute(Dipendente dipendente) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Dipendente ret;
         try {
             ret= dipendenteDAO.updateDipendente(connection, dipendente);
             connection.commit();

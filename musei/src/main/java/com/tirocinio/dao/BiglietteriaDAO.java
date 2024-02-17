@@ -22,11 +22,35 @@ public class BiglietteriaDAO {
     private static final String UPDATE_BIGLIETTERIA = "UPDATE Biglietteria SET Ora_Ap = ?, Ora_Ch = ?, Mod_Pag = ? WHERE Cod_B = ?";
     private static final String DELETE_BIGLIETTERIA = "DELETE FROM Biglietteria WHERE Cod_B = ?";
     private static final String ASSOC_MUSEO= "UPDATE Biglietteria SET Cod_E_M = ? WHERE Cod_B = ?" ;
+    private static final String LASTKEY_BIGLIETTERIA = "SELECT * FROM BIGLIETTERIA WHERE Cod_B = (SELECT MAX(Cod_B) FROM BIGLIETTEREIA)";
 
-        private static final Logger logger= LogManager.getLogger();
+
+    private static final Logger logger= LogManager.getLogger(BiglietteriaDAO.class);
 
     //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
     
+    public int getLastKey(Connection connection) throws DAOException{
+        Biglietteria bigl=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_BIGLIETTERIA)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           bigl =  mapResultSetToBiglietteria(resultSet);
+           logger.info("Ultimo id recuperato");
+
+           return bigl.getCodB();
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
     public List<Biglietteria> getAllBiglietterie(Connection connection) throws DAOException {
         List<Biglietteria> biglietterie = new ArrayList<>();
@@ -37,18 +61,18 @@ public class BiglietteriaDAO {
                 biglietterie.add(mapResultSetToBiglietteria(resultSet));
             }
         }catch (SQLException e) {
-            logger.error("SqlError");
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la selezione di tutte le biglietterie", e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
+                logger.error("Errore generico durante la selezione di tutte le biglietterie"+e.getMessage());
 
                 throw new DAOException("Errore generico durante la selezione di tutte le biglietterie ", e);
 
             }
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: selezionate tutte le biglietterie , rows:"+biglietterie.size());
 
 
         return biglietterie;
@@ -60,20 +84,20 @@ public class BiglietteriaDAO {
             preparedStatement.setInt(1, biglietteriaId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    logger.info("SUCCESS:");
+                    logger.info("SUCCESS: selezione della biglietteria con ID");
 
                     return mapResultSetToBiglietteria(resultSet);
                 }
             }
         }catch (SQLException e) {
-            logger.error("SqlError");
+            logger.error("SqlError "+e.getMessage());
 
             throw new DAOException("Errore durante la selezione della biglietteria con id:"+biglietteriaId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
+                logger.error("SqlError "+e.getMessage());
 
                 throw new DAOException("Errore generico durante la selezione della biglietteria con id:"+biglietteriaId, e);
 
@@ -81,7 +105,7 @@ public class BiglietteriaDAO {
         return null;
     }
 
-    public boolean addBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
+    public int addBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BIGLIETTERIA)) {
 
             preparedStatement.setTime(1, biglietteria.getOraApertura());
@@ -90,25 +114,25 @@ public class BiglietteriaDAO {
             
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
-
-            return rowsAffected > 0;
+            logger.info("SUCCESS: aggiunta biglietteria , rows:"+rowsAffected);
+            return getLastKey(connection);
+            //return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("SqlError");
+            logger.error("SqlError "+e.getMessage());
 
             throw new DAOException("Errore durante l'aggiunta della biglietteria", e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
+                logger.error("Errore generico "+e.getMessage());
 
                 throw new DAOException("Errore generico durante l'aggiunta della biglietteria", e);
 
             }
     }
 
-    public boolean updateBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
+    public Biglietteria updateBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BIGLIETTERIA)) {
 
             preparedStatement.setTime(1, biglietteria.getOraApertura());
@@ -118,19 +142,18 @@ public class BiglietteriaDAO {
             preparedStatement.setInt(4, biglietteria.getCodB());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
-
-            return rowsAffected > 0;
+            logger.info("SUCCESS: update biglietteria, rows:"+rowsAffected);
+            return biglietteria;
+            //return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("");
+            logger.error("SqlError "+e.getMessage());
 
             throw new DAOException("Errore durante l'aggiornamento della biglietteria con id: "+biglietteria.getCodB(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'aggiornamento della biglietteria con id: "+biglietteria.getCodB(), e);
 
             }
@@ -142,19 +165,17 @@ public class BiglietteriaDAO {
             preparedStatement.setInt(1, biglietteriaId);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: cancellazione biglietteria, rows:"+rowsAffected);
 
             return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la cancellazione della biglietteria con id: "+biglietteriaId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la cancellazione della biglietteria con id: "+biglietteriaId, e);
 
             }
@@ -195,27 +216,24 @@ public class BiglietteriaDAO {
                 }
             }
             catch (SQLException e) {
-                logger.error("");
-
+                logger.error("SqlError "+e.getMessage());
                 throw new DAOException("Errore durante la ricerca della biglietteria con criteri: ", e);
                 //return false;
                 }
                 catch(Exception e)
                 {
-                    logger.error("");
-
+                    logger.error("Errore generico "+e.getMessage());
                     throw new DAOException("Errore generico durante la ricerca della biglietteria con criteri: ", e);
     
                 }
         }catch(Exception e)
             {
-                logger.error("");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante il prepare statement della ricerca con criterio delle biglietterie", e);
 
             }
 
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: ricerca delle biglietterie con criterio , rows:"+matchingBiglietterie.size());
 
         return matchingBiglietterie;
     }
@@ -227,19 +245,18 @@ public class BiglietteriaDAO {
             statement.setInt(1, museo.getCodM());
             statement.setInt(2, biglietteria.getCodB());
 
-            logger.info("SUCCESS:");
             int rowsAffected =statement.executeUpdate();
+            logger.info("SUCCESS: associazione biglietteria con museo con id rispettivi"+biglietteria.getCodB()+", "+museo.getCodM()+", rows:"+rowsAffected);
+
             return rowsAffected > 0;
         } catch (SQLException e) {
-            logger.error("");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'associazione della biglietteria con id: "+biglietteria.getCodB()+" e il museo con id:"+museo.getCodM(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'associazione della biglietteria con id: "+biglietteria.getCodB()+" e il museo con id:"+museo.getCodM(), e);
 
             }

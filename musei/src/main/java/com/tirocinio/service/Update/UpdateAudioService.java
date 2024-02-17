@@ -17,9 +17,9 @@ public class UpdateAudioService {
         this.audioDAO = new AudioDAO();
     }
 
-    public boolean execute(Audio audio) throws  ServiceException {
+    public Audio execute(Audio audio) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Audio ret;
         try  {
             ret= audioDAO.updateAudio(connection, audio);
             connection.commit();

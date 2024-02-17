@@ -18,9 +18,9 @@ public class CreateAudioService {
         this.audioDAO = new AudioDAO();
     }
 
-    public boolean execute(Audio audio) throws ServiceException {
+    public int execute(Audio audio) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=audioDAO.addAudio(connection, audio);            

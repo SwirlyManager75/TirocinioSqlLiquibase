@@ -18,9 +18,9 @@ public class UpdateAbbonamentoService {
        
     }
 
-    public boolean execute(Abbonamento abbonamento) throws  ServiceException {
+    public Abbonamento execute(Abbonamento abbonamento) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Abbonamento ret;
         try{
             ret= abbonamentoDAO.updateAbbonamento(connection, abbonamento);
             connection.commit();

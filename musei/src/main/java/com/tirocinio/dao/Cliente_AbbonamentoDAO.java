@@ -14,7 +14,7 @@ import com.tirocinio.exceptions.DAOException;
 public class Cliente_AbbonamentoDAO {
     
     private Connection connection;
-        private static final Logger logger= LogManager.getLogger();
+    private static final Logger logger= LogManager.getLogger(Cliente_AbbonamentoDAO.class);
 
 
     // Costruttore che accetta una connessione al database
@@ -28,20 +28,18 @@ public class Cliente_AbbonamentoDAO {
             statement.setInt(1, codiceCliente);
             statement.setInt(2, codiceAbbonamento);
             int rowsAffeccted=statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: associato cliente ad un abbonamento con id rispettivi"+codiceCliente+", "+codiceAbbonamento+"rows:"+rowsAffeccted);
 
             return  rowsAffeccted > 0;
         }
         catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'associazione tra cliente con id:"+codiceCliente+" e abbonamento con id:"+codiceAbbonamento, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'associazione tra cliente con id:"+codiceCliente+" e abbonamento con id:"+codiceAbbonamento, e);
 
             }
@@ -53,20 +51,18 @@ public class Cliente_AbbonamentoDAO {
             statement.setInt(1, codiceCliente);
             statement.setInt(2, codiceAbbonamento);
             int rowsAffeccted=statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: cancellazione dell'associazione tra cliente e abbonamento con id rispettivi "+codiceCliente+" , "+codiceAbbonamento+" rows:"+rowsAffeccted);
 
             return rowsAffeccted > 0;
         }
         catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore  durante la cancellazione dell'associazione del cliente con id:"+codiceCliente+" e abbonamento con id:"+codiceAbbonamento, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la cancellazione dell'associazione cliente con id:"+codiceCliente+" e abbonamento con id:"+codiceAbbonamento, e);
 
             }
@@ -85,20 +81,18 @@ public class Cliente_AbbonamentoDAO {
             }
         }
         catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore  durante la lettura degli abbonamenti del cliente con id:"+codiceCliente, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore  "+e.getMessage());
                 throw new DAOException("Errore generico durante la lettura degli abbonamenti del cliente con id:"+codiceCliente, e);
 
             }
 
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: selezione abbonamenti del cliente con id "+codiceCliente+" rows:"+result.size());
 
         return result;
     }
@@ -110,20 +104,18 @@ public class Cliente_AbbonamentoDAO {
             statement.setInt(2, codiceCliente);
             statement.setInt(3, vecchioCodiceAbbonamento);
             int rowsAffeccted=statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: aggiornamento dell'abbonamento per Cliente id rispettivi"+nuovoCodiceAbbonamento+", "+codiceCliente);
 
             return rowsAffeccted > 0;
         }
         catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiornamento dell'abbonamento del cliente con id:"+codiceCliente+" che ha abbonamento id"+vecchioCodiceAbbonamento, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante l'aggiornamento dell'abbonamento del cliente con id:"+codiceCliente+" che ha abbonamento id"+vecchioCodiceAbbonamento, e);
 
             }

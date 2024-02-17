@@ -17,9 +17,9 @@ public class UpdateArtistaService {
         this.artistaDAO = new ArtistaDAO();
     }
 
-    public boolean execute(Artista artista) throws  ServiceException {
+    public Artista execute(Artista artista) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Artista ret;
         try {
             ret= artistaDAO.updateArtista(connection, artista);
             connection.commit();

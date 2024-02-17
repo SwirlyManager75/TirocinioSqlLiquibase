@@ -19,10 +19,10 @@ public class CreateCityService {
         
     }
 
-    public boolean execute(Citta city) throws ServiceException {
+    public int execute(Citta city) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {             
             ret=cittaDAO.addCity(connection, city);           

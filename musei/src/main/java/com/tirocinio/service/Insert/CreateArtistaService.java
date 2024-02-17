@@ -18,10 +18,10 @@ public class CreateArtistaService {
         this.artistaDAO = new ArtistaDAO();
     }
 
-    public boolean execute(Artista artista) throws ServiceException {
+    public int execute(Artista artista) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=artistaDAO.addArtista(connection, artista);

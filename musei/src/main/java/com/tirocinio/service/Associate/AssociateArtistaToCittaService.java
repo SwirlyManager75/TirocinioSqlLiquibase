@@ -33,7 +33,7 @@ public class AssociateArtistaToCittaService {
             if (citta != null && artista != null) {
                 
                 // Inserisco l'Artista nel database
-                ret=artistaDAO.addArtista(connection, artista);
+                ret=artistaDAO.associateWithCity(connection, artista,citta);
                 connection.commit();
                 return ret;
 

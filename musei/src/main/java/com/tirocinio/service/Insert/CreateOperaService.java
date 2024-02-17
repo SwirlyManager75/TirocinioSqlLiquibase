@@ -19,9 +19,9 @@ public class CreateOperaService {
         
     }
 
-    public boolean execute(Opera opera) throws  ServiceException {
+    public int execute(Opera opera) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=operaDAO.addOpera(connection, opera);            

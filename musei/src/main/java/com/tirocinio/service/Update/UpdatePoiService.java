@@ -17,9 +17,9 @@ public class UpdatePoiService {
         this.poiDAO = new PoiDAO();
     }
 
-    public boolean execute(Poi poi) throws ServiceException {
+    public Poi execute(Poi poi) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Poi ret;
         try {
             ret = poiDAO.updatePoi(connection, poi);
             connection.commit();

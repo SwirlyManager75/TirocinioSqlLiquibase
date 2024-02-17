@@ -18,10 +18,10 @@ public class CreateDipendenteService {
         this.dipendenteDAO = new DipendenteDAO();
     }
 
-    public boolean execute(Dipendente dipendente) throws ServiceException {
+    public int execute(Dipendente dipendente) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=dipendenteDAO.addDipendente(connection, dipendente);          

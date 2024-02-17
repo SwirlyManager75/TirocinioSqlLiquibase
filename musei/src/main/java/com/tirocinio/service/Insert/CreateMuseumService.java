@@ -18,10 +18,10 @@ public class CreateMuseumService {
         this.museoDAO = new MuseoDAO();
     }
 
-    public boolean execute(Museo museum) throws ServiceException {
+    public int execute(Museo museum) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=museoDAO.addMuseum(connection, museum);

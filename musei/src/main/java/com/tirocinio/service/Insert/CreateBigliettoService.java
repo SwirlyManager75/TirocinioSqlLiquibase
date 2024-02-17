@@ -18,10 +18,10 @@ public class CreateBigliettoService {
         
     }
 
-    public boolean execute(Biglietto biglietto) throws ServiceException {
+    public int execute(Biglietto biglietto) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=bigliettoDAO.addBiglietto(connection, biglietto);            

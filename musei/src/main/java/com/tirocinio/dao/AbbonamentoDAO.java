@@ -20,11 +20,31 @@ public class AbbonamentoDAO {
     private static final String INSERT_ABBONAMENTO = "INSERT INTO Abbonamento (Tipo, Descrizione, Prezzo) VALUES (?, ?, ?)";
     private static final String UPDATE_ABBONAMENTO = "UPDATE Abbonamento SET Tipo = ?, Descrizione = ?, Prezzo = ? WHERE Cod_Ab = ?";
     private static final String DELETE_ABBONAMENTO = "DELETE FROM Abbonamento WHERE Cod_Ab = ?";
+    private static final String LASTKEY_ABBONAMENTO = "SELECT * FROM Abbonamento WHERE Cod_Ab = (SELECT MAX(Cod_Ab) FROM Abbonamento)";
 
-            private static final Logger logger= LogManager.getLogger();
+    private static final Logger logger= LogManager.getLogger(AbbonamentoDAO.class);
 
-    //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
-    //TODO AGGIUNGERE LOGICA PER LEGARE ABBONAMENTI A CLIENTI(SI USA LA TABELLA CLIENTI_ABBONAMENTI)
+    public int getLastKey(Connection connection) throws DAOException{
+        Abbonamento abb=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_ABBONAMENTO)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           abb =  mapResultSetToAbbonamento(resultSet);
+            logger.info("Ultimo id recuperato");
+           return abb.getCodAb();
+           
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
     public List<Abbonamento> getAllAbbonamenti(Connection connection) throws DAOException {
         List<Abbonamento> abbonamenti = new ArrayList<>();
@@ -77,7 +97,7 @@ public class AbbonamentoDAO {
         return null;
     }
 
-    public boolean addAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
+    public int addAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO)) {
 
             preparedStatement.setString(1, convertTipoToDatabase(abbonamento.getTipo()));
@@ -85,12 +105,12 @@ public class AbbonamentoDAO {
             preparedStatement.setFloat(3, abbonamento.getPrezzo());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: inserito abbonamento , rows:"+rowsAffected);
 
-            return rowsAffected > 0;
+            return getLastKey(connection);
             
         }catch (SQLException e) {
-            logger.error("");
+            logger.error("SqlError");
             throw new DAOException("Errore durante l'aggiunta dell'abbonamento "+abbonamento.getDescrizione(), e);
             //return false;
         }
@@ -103,7 +123,7 @@ public class AbbonamentoDAO {
         }
     }
 
-    public boolean updateAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
+    public Abbonamento updateAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ABBONAMENTO)) {
 
             preparedStatement.setString(1, convertTipoToDatabase(abbonamento.getTipo()));
@@ -112,9 +132,9 @@ public class AbbonamentoDAO {
             preparedStatement.setInt(4, abbonamento.getCodAb());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: aggiornato abbonamento ,rows:"+rowsAffected);
 
-            return rowsAffected > 0;
+            return abbonamento;
         }catch (SQLException e) {
             logger.error("");
 

@@ -19,10 +19,10 @@ public class CreateClienteService {
        
     }
 
-    public boolean execute(Cliente cliente) throws ServiceException {
+    public int execute(Cliente cliente) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=clienteDAO.addCliente(connection, cliente);       

@@ -17,9 +17,9 @@ public class UpdateClienteService {
         this.clienteDAO = new ClienteDAO();
     }
 
-    public boolean execute(Cliente cliente) throws ServiceException {
+    public Cliente execute(Cliente cliente) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Cliente ret;
         try  {
             ret= clienteDAO.updateCliente(connection, cliente);
             connection.commit();

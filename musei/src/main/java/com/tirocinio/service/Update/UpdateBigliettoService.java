@@ -17,9 +17,9 @@ public class UpdateBigliettoService {
         this.bigliettoDAO = new BigliettoDAO();
     }
 
-    public boolean execute(Biglietto biglietto) throws  ServiceException {
+    public Biglietto execute(Biglietto biglietto) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Biglietto ret;
         try {
             ret= bigliettoDAO.updateBiglietto(connection, biglietto);
             connection.commit();

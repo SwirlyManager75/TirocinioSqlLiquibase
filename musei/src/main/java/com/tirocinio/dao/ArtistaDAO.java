@@ -22,8 +22,33 @@ public class ArtistaDAO {
     private static final String UPDATE_ARTISTA = "UPDATE Artista SET Nome = ?, Cognome = ?, Data_Nascita = ?, In_vita = ? WHERE Cod_Ar = ?";
     private static final String DELETE_ARTISTA = "DELETE FROM Artista WHERE Cod_Ar = ?";
     private static final String ASSOC_CITTA = "UPDATE Artista SET Cod_E_Ci = ? WHERE Cod_Ar = ?";
+    private static final String LASTKEY_ARTISTA = "SELECT * FROM Artista WHERE Cod_Ar = (SELECT MAX(Cod_Ar) FROM Artista)";
 
-            private static final Logger logger= LogManager.getLogger();
+
+    private static final Logger logger= LogManager.getLogger(ArtistaDAO.class);
+
+    public int getLastKey(Connection connection) throws DAOException{
+        Artista art=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_ARTISTA)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           art =  mapResultSetToArtista(resultSet);
+           logger.info("Ultimo id recuperato");
+
+           return art.getCodAr();
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
 
     public List<Artista> getAllArtisti(Connection connection) throws DAOException {
@@ -79,7 +104,7 @@ public class ArtistaDAO {
         return null;
     }
 
-    public boolean addArtista(Connection connection, Artista artista) throws DAOException {
+    public int addArtista(Connection connection, Artista artista) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTISTA)) {
 
             preparedStatement.setString(1, artista.getNome());
@@ -88,9 +113,9 @@ public class ArtistaDAO {
             preparedStatement.setBoolean(4, artista.isInVita());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
-
-            return rowsAffected > 0;
+            logger.info("SUCCESS: aggiunta artista , rows:"+rowsAffected);
+            return getLastKey(connection);
+            //return rowsAffected > 0;
         } catch (SQLException e) {
             logger.error("");
 
@@ -106,7 +131,7 @@ public class ArtistaDAO {
     }
     }
 
-    public boolean updateArtista(Connection connection, Artista artista) throws DAOException {
+    public Artista updateArtista(Connection connection, Artista artista) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ARTISTA)) {
 
             preparedStatement.setString(1, artista.getNome());
@@ -116,18 +141,18 @@ public class ArtistaDAO {
             preparedStatement.setInt(5, artista.getCodAr());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
-
-            return rowsAffected > 0;
+            logger.info("SUCCESS: aggiornamento artista, rows:"+rowsAffected);
+            return artista;
+            //return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("");
+            logger.error("Errore durante l'aggiornemento dell'artista con id "+artista.getCodAr());
 
             throw new DAOException("Errore durante l'aggiornemento dell'artista con id "+artista.getCodAr(), e);
             //return false;
     }
     catch(Exception e)
     {
-        logger.error("");
+        logger.error("Errore generico durante l'aggiornamento dell'artista con id "+artista.getCodAr());
 
         throw new DAOException("Errore generico durante l'aggiornamento dell'artista con id "+artista.getCodAr() , e);
 
@@ -140,18 +165,18 @@ public class ArtistaDAO {
             preparedStatement.setInt(1, artistaId);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: cancellazione artista");
 
             return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("");
+            logger.error("Errore durante la cancellazione dell'artista con id "+artistaId);
 
             throw new DAOException("Errore durante la cancellazione dell'artista con id "+artistaId, e);
             //return false;
     }
     catch(Exception e)
     {
-        logger.error("");
+        logger.error("Errore generico durante la cancellazione dell'artista con id "+artistaId);
 
         throw new DAOException("Errore generico durante la cancellazione dell'artista con id "+artistaId, e);
 
@@ -198,19 +223,19 @@ public class ArtistaDAO {
                 }
             }
         } catch (SQLException e) {
-            logger.error("");
+            logger.error("SQLError durante la ricerca degli artisti con criteri ");
 
             throw new DAOException("Errore durante la ricerca degli artisti con criteri", e);
             //return false;
     }
     catch(Exception e)
     {
-        logger.error("");
+        logger.error("Errore generico durante la ricerca degli artisti con criteri ");
 
-        throw new DAOException("Errore generico durante la ricerca degli artisti con id ", e);
+        throw new DAOException("Errore generico durante la ricerca degli artisti con criteri ", e);
 
     }
-        logger.info("SUCCESS:");
+        logger.info("SUCCESS: ricerca con criterio , rows:"+matchingArtisti.size());
 
         return matchingArtisti;
     }
@@ -223,17 +248,17 @@ public class ArtistaDAO {
             statement.setInt(2, artista.getCodAr());
 
             int rowsAffected =statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: associzato Citta con Artista con id rispettivi "+citta.getCodCi()+","+artista.getCodAr());
             return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("");
+            logger.error("SQLError durante l'associazione dell'artista e citta con IDartista:  "+artista.getCodAr()+" e IDCitta: "+citta.getCodCi());
 
             throw new DAOException("Errore durante l'associazione dell'artista e citta con IDartista:  "+artista.getCodAr()+" e IDCitta: "+citta.getCodCi(), e);
             //return false;
     }
     catch(Exception e)
     {
-        logger.error("");
+        logger.error("Errore generico durante l'associazione dell'artista e citta con IDartista:  "+artista.getCodAr()+" e IDCitta: "+citta.getCodCi());
 
         throw new DAOException("Errore generico durante l'associazione dell'artista e citta con IDartista:  "+artista.getCodAr()+" e IDCitta: "+citta.getCodCi(), e);
 

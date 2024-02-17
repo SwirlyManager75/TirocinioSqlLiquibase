@@ -19,9 +19,9 @@ public class CreateAbbonamentoService {
         
     }
 
-    public boolean execute(Abbonamento abbonamento) throws ServiceException {
+    public int execute(Abbonamento abbonamento) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=abbonamentoDAO.addAbbonamento(connection,abbonamento);

@@ -17,9 +17,9 @@ public class UpdateBiglietteriaService {
         this.biglietteriaDAO = new BiglietteriaDAO();
     }
 
-    public boolean execute(Biglietteria biglietteria) throws  ServiceException {
+    public Biglietteria execute(Biglietteria biglietteria) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Biglietteria ret;
 
         try {
             ret = biglietteriaDAO.updateBiglietteria(connection, biglietteria);

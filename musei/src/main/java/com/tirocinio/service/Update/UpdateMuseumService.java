@@ -17,9 +17,9 @@ public class UpdateMuseumService {
         this.museoDAO = new MuseoDAO();
     }
 
-    public boolean execute(Museo museum) throws  ServiceException {
+    public Museo execute(Museo museum) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Museo ret;
         try {
             ret = museoDAO.updateMuseum(connection, museum);
             connection.commit();

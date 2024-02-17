@@ -17,7 +17,7 @@ public class Abbonamento_BiglietteriaDAO {
     private static final String INSERT_ABBONAMENTO_BIGLIETTERIA = "INSERT INTO Abbonamento_Biglietteria (Cod_E_A, Cod_E_B) VALUES (?, ?)";
     private static final String DELETE_ABBONAMENTO_BIGLIETTERIA = "DELETE FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
 
-        private static final Logger logger= LogManager.getLogger();
+        private static final Logger logger= LogManager.getLogger(Abbonamento_BiglietteriaDAO.class);
 
 
     public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) throws DAOException {
@@ -28,7 +28,7 @@ public class Abbonamento_BiglietteriaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
 
-            logger.info("SECCES: Associazione Abbonamento a Biglietteria con id rispettivi"+Cod_Ab+" , "+Cod_B);
+            logger.info("SUCCESS: Associazione Abbonamento a Biglietteria con id rispettivi"+Cod_Ab+" , "+Cod_B);
             return rowsAffected > 0;
         } catch (SQLException e) {
 

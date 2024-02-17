@@ -18,10 +18,10 @@ public class CreatePoiService {
         this.poiDAO = new PoiDAO();
     }
 
-    public boolean execute(Poi poi) throws ServiceException {
+    public int execute(Poi poi) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=poiDAO.addPoi(connection, poi);           

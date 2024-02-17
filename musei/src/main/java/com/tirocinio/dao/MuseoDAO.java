@@ -22,9 +22,33 @@ public class MuseoDAO {
     private static final String UPDATE_MUSEUM = "UPDATE Museo SET Nome = ?, Via = ? WHERE Cod_M = ?";
     private static final String DELETE_MUSEUM = "DELETE FROM Museo WHERE Cod_M = ?";
     private static final String ASSOC_MUSEUM = "UPDATE Museo SET Cod_E_Ci = ? WHERE Cod_M = ?";
+    private static final String LASTKEY_MUSEUM = "SELECT * FROM MUSEO WHERE Cod_M = (SELECT MAX(Cod_M) FROM MUSEO)";
 
-        private static final Logger logger= LogManager.getLogger();
 
+    private static final Logger logger= LogManager.getLogger(MuseoDAO.class);
+
+    public int getLastKey(Connection connection) throws DAOException{
+        Museo museo=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_MUSEUM)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           museo =  mapResultSetToMuseum(resultSet);
+           logger.info("Ultimo id recuperato");
+
+           return museo.getCodM();
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
     public List<Museo> getAllMuseums(Connection connection) throws DAOException {
         List<Museo> museums = new ArrayList<>();
@@ -36,19 +60,17 @@ public class MuseoDAO {
                 museums.add(mapResultSetToMuseum(resultSet));
             }
         } catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la selezione di tutti i musei", e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la selezione di tutti i musei", e);
 
             }
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: selezione di tutti i musei , rows:"+museums.size());
 
         return museums;
     }
@@ -59,21 +81,19 @@ public class MuseoDAO {
             preparedStatement.setInt(1, museumId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    logger.info("SUCCESS:");
+                    logger.info("SUCCESS: selezione del museo");
 
                     return mapResultSetToMuseum(resultSet);
                 }
             }
         }  catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la selezione del museo con id"+museumId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante la selezione del museo con id"+museumId, e);
 
             }
@@ -81,7 +101,7 @@ public class MuseoDAO {
         return null;
     }
 
-    public boolean addMuseum(Connection connection, Museo museum) throws DAOException {
+    public int addMuseum(Connection connection, Museo museum) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_MUSEUM)) {
 
             preparedStatement.setString(1, museum.getNome());
@@ -89,24 +109,22 @@ public class MuseoDAO {
             //preparedStatement.setInt(3, museum.getCodECi());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: aggiunta del museo , rows:"+rowsAffected);
 
-            return rowsAffected > 0;
+            return getLastKey(connection);
         }  catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiunta del museo: "+museum.getNome(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore genereico durante l'aggiunta del museo: "+museum.getNome(), e);
             }
     }
 
-    public boolean updateMuseum(Connection connection, Museo museum) throws DAOException {
+    public Museo updateMuseum(Connection connection, Museo museum) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_MUSEUM)) {
 
             preparedStatement.setString(1, museum.getNome());
@@ -114,19 +132,17 @@ public class MuseoDAO {
             preparedStatement.setInt(3, museum.getCodM());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: aggiornamento del museo , rows:"+rowsAffected);
 
-            return rowsAffected > 0;
+            return museum;
         } catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiornamento del museo con id: "+museum.getCodM(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore durante l'aggiornamento del museo con id: "+museum.getCodM(), e);
 
             }
@@ -138,19 +154,17 @@ public class MuseoDAO {
             preparedStatement.setInt(1, museumId);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: cancellazione del museo , rows:"+rowsAffected);
 
             return rowsAffected > 0;
         }  catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la cancellazione del museo con id: "+museumId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore durante la cancellazione del museo con id: "+museumId, e);
 
             }
@@ -163,19 +177,17 @@ public class MuseoDAO {
             statement.setInt(2, museo.getCodM());
 
             int rowsAffected =statement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: associazione del museo con citta , rows:"+rowsAffected);
 
             return rowsAffected > 0;
         } catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'associazione del museo con la citta con id rispettivi: "+museo.getCodM()+","+citta.getCodCi(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore durante l'associazione del museo con la citta con id rispettivi: "+museo.getCodM()+","+citta.getCodCi(), e);
 
             }
@@ -219,25 +231,22 @@ public class MuseoDAO {
                 }
             }
             catch (SQLException e) {
-                logger.error("SqlError");
-
+                logger.error("SqlError "+e.getMessage());
                 throw new DAOException("Errore durante la ricerca del museo con criteri: "+criteria.getNome(), e);
                 //return false;
                 }
                 catch(Exception e)
                 {
-                    logger.error("SqlError");
-
+                    logger.error("Errore generico "+e.getMessage());
                     throw new DAOException("Errore generico durante la ricerca del museo con criteri: "+criteria.getNome(), e);
     
                 }
         } catch (Exception e) {
-            logger.error("SqlError");
-
+            logger.error("Errore generico "+e.getMessage());
             throw new DAOException("Errore generico durante la prepare statement ", e);
             //return false;
         }
-        logger.info("SUCCESS:");
+        logger.info("SUCCESS: ricerca del museo con criterio , rows:"+matchingMuseums.size());
 
         return matchingMuseums;
     }

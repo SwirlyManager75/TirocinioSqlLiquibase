@@ -18,10 +18,10 @@ public class CreateBiglietteriaService {
         this.biglietteriaDAO = new BiglietteriaDAO();
     }
 
-    public boolean execute(Biglietteria biglietteria) throws ServiceException {
+    public int execute(Biglietteria biglietteria) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        int ret;
         try 
         {
             ret=biglietteriaDAO.addBiglietteria(connection, biglietteria);            

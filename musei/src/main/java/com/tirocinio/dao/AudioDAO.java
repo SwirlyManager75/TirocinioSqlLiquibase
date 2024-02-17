@@ -22,9 +22,33 @@ public class AudioDAO {
     private static final String UPDATE_AUDIO = "UPDATE Audio SET URL = ? WHERE Cod_Au = ?";
     private static final String DELETE_AUDIO = "DELETE FROM Audio WHERE Cod_Au = ?";
     private static final String ASSOC_POI = "UPDATE Audio SET Cod_E_Poi = ? WHERE Cod_Au = ?";
+    private static final String LASTKEY_AUDIO = "SELECT * FROM Audio WHERE Cod_Au = (SELECT MAX(Cod_Au) FROM Audio)";
 
-        private static final Logger logger= LogManager.getLogger();
 
+    private static final Logger logger= LogManager.getLogger(AudioDAO.class);
+
+    public int getLastKey(Connection connection) throws DAOException{
+        Audio aud=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_AUDIO)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           aud =  mapResultSetToAudio(resultSet);
+           logger.info("Ultimo id recuperato");
+
+           return aud.getCodAu();
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
     public List<Audio> getAllAudios(Connection connection) throws DAOException {
         List<Audio> audios = new ArrayList<>();
@@ -77,7 +101,7 @@ public class AudioDAO {
         return null;
     }
 
-    public boolean addAudio(Connection connection, Audio audio) throws DAOException {
+    public int addAudio(Connection connection, Audio audio) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
@@ -85,7 +109,8 @@ public class AudioDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: Aggiunta Audio rowsaffected:"+rowsAffected);
-            return rowsAffected > 0;
+            return getLastKey(connection);
+            //return rowsAffected > 0;
         }catch (SQLException e) {
             logger.error("SQLError durante l'aggiunta dell'audio con url:"+audio.getUrl()+" ,"+e.getMessage());
             throw new DAOException("Errore durante l'aggiunta dell'audio con url:"+audio.getUrl(), e);

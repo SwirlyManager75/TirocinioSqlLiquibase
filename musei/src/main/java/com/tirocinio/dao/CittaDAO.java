@@ -20,9 +20,33 @@ public class CittaDAO {
     private static final String INSERT_CITY = "INSERT INTO Citta (Nome, Provincia) VALUES (?, ?)";
     private static final String UPDATE_CITY = "UPDATE Citta SET Nome = ?, Provincia = ? WHERE Cod_Ci = ?";
     private static final String DELETE_CITY = "DELETE FROM Citta WHERE Cod_Ci = ?";
+    private static final String LASTKEY_CITTA = "SELECT * FROM CITTA WHERE Cod_Ci = (SELECT MAX(Cod_Ci) FROM CITTA)";
 
-        private static final Logger logger= LogManager.getLogger();
 
+    private static final Logger logger= LogManager.getLogger(CittaDAO.class);
+
+    public int getLastKey(Connection connection) throws DAOException{
+        Citta citta=null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LASTKEY_CITTA)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+           citta =  mapResultSetToCity(resultSet);
+           logger.info("Ultimo id recuperato");
+
+           return citta.getCodCi();
+        } catch (SQLException e) {
+            logger.error("SQLError "+e.getMessage());
+
+            throw new DAOException("Errore durante il recupero dell'ultimo id Abbonamento", e);
+        }
+        catch(Exception e)
+        {
+            logger.error("Errore generico "+e.getMessage());
+
+            throw new DAOException("Errore generico durante il recupero dell'ultimo id Abbonamento", e);
+
+        }
+    }
 
     public List<Citta> getAllCities(Connection connection) throws DAOException {
         List<Citta> cities = new ArrayList<>();
@@ -34,19 +58,17 @@ public class CittaDAO {
                 cities.add(mapResultSetToCity(resultSet));
             }
         } catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante  la selezione di tutte le città", e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante  la selezione di tutte le città", e);
 
             }
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: selezione di tutte le città eseguita, rows"+cities.size());
 
         return cities;
     }
@@ -58,28 +80,26 @@ public class CittaDAO {
             preparedStatement.setInt(1, cityId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    logger.info("SUCCESS:");
+                    logger.info("SUCCESS: selezione della citta con id:"+cityId);
 
                     return mapResultSetToCity(resultSet);
                 }
             }
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante  la selezione della città con id:"+cityId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante  la selezione della città con id:"+cityId, e);
 
             }
         return null;
     }
 
-    public boolean addCity(Connection connection,Citta city) throws DAOException {
+    public int addCity(Connection connection,Citta city) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CITY)) {
 
@@ -87,25 +107,23 @@ public class CittaDAO {
             preparedStatement.setBoolean(2, city.isProvincia());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: aggiunta città, rows:"+rowsAffected);
 
-            return rowsAffected > 0;
+            return getLastKey(connection);
         } catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante  l'aggiunta della città: "+city.getNome(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico  durante  l'aggiunta della città: "+city.getNome(), e);
 
             }
     }
 
-    public boolean updateCity(Connection connection,Citta city) throws DAOException {
+    public Citta updateCity(Connection connection,Citta city) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CITY)) {
 
@@ -114,19 +132,17 @@ public class CittaDAO {
             preparedStatement.setInt(3, city.getCodCi());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: aggiorna citta , rows:"+rowsAffected);
 
-            return rowsAffected > 0;
+            return city;
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiornamento della citta con id: "+city.getCodCi(), e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico  durante  l'aggiornamento della città con id: "+city.getCodCi(), e);
 
             }
@@ -139,19 +155,17 @@ public class CittaDAO {
             preparedStatement.setInt(1, cityId);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: cancellazione citta , rows "+rowsAffected);
 
             return rowsAffected > 0;
         }catch (SQLException e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante la cancellazione della citta con id: "+cityId, e);
             //return false;
             }
             catch(Exception e)
             {
-                logger.error("SqlError");
-
+                logger.error("Errore generico "+e.getMessage());
                 throw new DAOException("Errore generico durante  la cancellazione della città con id: "+cityId, e);
 
             }
@@ -188,26 +202,23 @@ public class CittaDAO {
                 }
             }
             catch (SQLException e) {
-                logger.error("SqlError");
-
+                logger.error("SqlError "+e.getMessage());
                 throw new DAOException("Errore durante la ricerca della citta con con criteri", e);
                 //return false;
                 }
                 catch(Exception e)
                 {
-                    logger.error("SqlError");
-
+                    logger.error("Errore generico "+e.getMessage());
                     throw new DAOException("Errore generico durante la ricerca della città con criteri : ", e);
     
                 }
         } catch (Exception e) {
-            logger.error("SqlError");
-
+            logger.error("SqlError "+e.getMessage());
                 throw new DAOException("Errore durante la prepareStatement della ricerca", e);
                 //return false;
             }
     
-            logger.info("SUCCESS:");
+            logger.info("SUCCESS: ricerca citta con criterio, rows:"+matchingCities.size());
 
         return matchingCities;
     }

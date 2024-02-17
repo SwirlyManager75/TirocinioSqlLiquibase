@@ -17,9 +17,9 @@ public class UpdateCityService {
         this.cittaDAO = new CittaDAO();
     }
 
-    public boolean execute(Citta city) throws  ServiceException {
+    public Citta execute(Citta city) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        boolean ret;
+        Citta ret;
         try{
             ret= cittaDAO.updateCity(connection, city);
             connection.commit();
