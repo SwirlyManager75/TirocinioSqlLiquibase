@@ -1,13 +1,12 @@
 package com.tirocinio.service.GetAll;
 
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.CittaDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class GetAllCitiesService {
@@ -23,7 +22,7 @@ public class GetAllCitiesService {
         {
             return cittaDAO.getAllCities(connection);
         } 
-        catch (SQLException |DAOException e) 
+        catch (DAOException e) 
         {
             throw new ServiceException(e);
         }

@@ -1,6 +1,6 @@
 package com.tirocinio.service.Associate;
 
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AudioDAO;
 import com.tirocinio.dao.PoiDAO;

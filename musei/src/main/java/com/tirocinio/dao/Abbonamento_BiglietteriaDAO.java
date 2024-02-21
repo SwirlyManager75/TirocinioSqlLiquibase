@@ -14,11 +14,22 @@ import com.tirocinio.exceptions.DAOException;
 
 public class Abbonamento_BiglietteriaDAO {
 
+    Connection connection;
+
     private static final String INSERT_ABBONAMENTO_BIGLIETTERIA = "INSERT INTO Abbonamento_Biglietteria (Cod_E_A, Cod_E_B) VALUES (?, ?)";
     private static final String DELETE_ABBONAMENTO_BIGLIETTERIA = "DELETE FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
 
         private static final Logger logger= LogManager.getLogger(Abbonamento_BiglietteriaDAO.class);
 
+    public Abbonamento_BiglietteriaDAO(Connection connection)
+    {
+            this.connection=connection;
+    }
+
+    public Abbonamento_BiglietteriaDAO()
+    {
+
+    }
 
     public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO_BIGLIETTERIA)) {

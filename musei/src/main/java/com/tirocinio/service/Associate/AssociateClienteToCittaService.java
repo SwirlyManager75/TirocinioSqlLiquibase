@@ -2,7 +2,7 @@ package com.tirocinio.service.Associate;
 
 import com.tirocinio.dao.ClienteDAO;
 import com.tirocinio.exceptions.DAOException;
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.CittaDAO;
 import com.tirocinio.model.Cliente;

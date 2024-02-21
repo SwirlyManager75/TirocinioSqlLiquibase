@@ -1,13 +1,12 @@
 package com.tirocinio.service.GetAll;
 
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.PoiDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Poi;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class GetAllPoisService {
@@ -21,7 +20,7 @@ public class GetAllPoisService {
     public List<Poi> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return poiDAO.getAllPois(connection);
-        }catch (SQLException |DAOException e) 
+        }catch (DAOException e) 
         {
             throw new ServiceException(e);
         }

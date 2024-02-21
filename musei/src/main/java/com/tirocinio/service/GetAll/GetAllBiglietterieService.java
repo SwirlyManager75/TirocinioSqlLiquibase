@@ -1,13 +1,12 @@
 package com.tirocinio.service.GetAll;
 
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.BiglietteriaDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class GetAllBiglietterieService {
@@ -21,7 +20,7 @@ public class GetAllBiglietterieService {
     public List<Biglietteria> execute() throws ServiceException {
         try (Connection connection = ConnectionManager.getConnection()) {
             return biglietteriaDAO.getAllBiglietterie(connection);
-        }catch (SQLException |DAOException e) 
+        }catch (DAOException e) 
         {
             throw new ServiceException(e);
         }

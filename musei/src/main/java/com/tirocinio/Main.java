@@ -13,15 +13,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
+import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AbbonamentoDAO;
+import com.tirocinio.dao.Abbonamento_BiglietteriaDAO;
 import com.tirocinio.dao.ArtistaDAO;
 import com.tirocinio.dao.AudioDAO;
 import com.tirocinio.dao.BiglietteriaDAO;
 import com.tirocinio.dao.BigliettoDAO;
 import com.tirocinio.dao.CittaDAO;
 import com.tirocinio.dao.ClienteDAO;
+import com.tirocinio.dao.Cliente_AbbonamentoDAO;
 import com.tirocinio.dao.DipendenteDAO;
 import com.tirocinio.dao.MuseoDAO;
 import com.tirocinio.dao.OperaDAO;
@@ -38,12 +41,14 @@ import com.tirocinio.model.Dipendente;
 import com.tirocinio.model.Museo;
 import com.tirocinio.model.Opera;
 import com.tirocinio.model.Poi;
+import com.tirocinio.service.Delete.DeleteAbbonamentoBiglietterieService;
 import com.tirocinio.service.Delete.DeleteAbbonamentoService;
 import com.tirocinio.service.Delete.DeleteArtistaService;
 import com.tirocinio.service.Delete.DeleteAudioService;
 import com.tirocinio.service.Delete.DeleteBiglietteriaService;
 import com.tirocinio.service.Delete.DeleteBigliettoService;
 import com.tirocinio.service.Delete.DeleteCityService;
+import com.tirocinio.service.Delete.DeleteClienteAbbonamentoService;
 import com.tirocinio.service.Delete.DeleteClienteService;
 import com.tirocinio.service.Delete.DeleteDipendenteService;
 import com.tirocinio.service.Delete.DeleteMuseumService;
@@ -61,23 +66,29 @@ import com.tirocinio.service.GetAll.GetAllMuseumsService;
 import com.tirocinio.service.GetAll.GetAllOpereService;
 import com.tirocinio.service.GetAll.GetAllPoisService;
 import com.tirocinio.service.Insert.CreateAbbonamentoService;
+import com.tirocinio.service.Insert.CreateAbbonamentoToBigliettoService;
 import com.tirocinio.service.Insert.CreateArtistaService;
 import com.tirocinio.service.Insert.CreateAudioService;
 import com.tirocinio.service.Insert.CreateBiglietteriaService;
 import com.tirocinio.service.Insert.CreateBigliettoService;
 import com.tirocinio.service.Insert.CreateCityService;
 import com.tirocinio.service.Insert.CreateClienteService;
+import com.tirocinio.service.Insert.CreateClienteToAbbonamentoService;
 import com.tirocinio.service.Insert.CreateDipendenteService;
 import com.tirocinio.service.Insert.CreateMuseumService;
 import com.tirocinio.service.Insert.CreateOperaService;
 import com.tirocinio.service.Insert.CreatePoiService;
+import com.tirocinio.service.Search.SearchAbbonamentiForBiglietteriaService;
+import com.tirocinio.service.Search.SearchAbbonamentiForClientiService;
 import com.tirocinio.service.Search.SearchAbbonamentoService;
 import com.tirocinio.service.Search.SearchArtistaService;
 import com.tirocinio.service.Search.SearchAudioService;
 import com.tirocinio.service.Search.SearchBiglietteriaService;
+import com.tirocinio.service.Search.SearchBiglietterieForAbbonamentoService;
 import com.tirocinio.service.Search.SearchBigliettoService;
 import com.tirocinio.service.Search.SearchCityService;
 import com.tirocinio.service.Search.SearchClienteService;
+import com.tirocinio.service.Search.SearchClientiForAbbonamento;
 import com.tirocinio.service.Search.SearchDipendenteService;
 import com.tirocinio.service.Search.SearchMuseumService;
 import com.tirocinio.service.Search.SearchOperaService;
@@ -88,6 +99,8 @@ import com.tirocinio.service.Update.UpdateAudioService;
 import com.tirocinio.service.Update.UpdateBiglietteriaService;
 import com.tirocinio.service.Update.UpdateBigliettoService;
 import com.tirocinio.service.Update.UpdateCityService;
+import com.tirocinio.service.Update.UpdateAbbonamentoBiglietterieService;
+import com.tirocinio.service.Update.UpdateAbbonamentoForClienteService;
 import com.tirocinio.service.Update.UpdateClienteService;
 import com.tirocinio.service.Update.UpdateDipendenteService;
 import com.tirocinio.service.Update.UpdateMuseumService;
@@ -117,7 +130,7 @@ public class Main
 
         int scelta=0;
         int subscleta=0;
-        String arr[] = {"Audio","POI","Museo","Citta","Cliente","Dipendente","Artista","Opere","Biglietteria","Biglietto","Abbonamento"};
+        String arr[] = {"Audio","POI","Museo","Citta","Cliente","Dipendente","Artista","Opere","Biglietteria","Biglietto","Abbonamento","Abbonamento_Biglietteria","Cliente_Abbonamento"};
 
         do
         {
@@ -132,7 +145,9 @@ public class Main
             System.out.println("9)Biglietteria");
             System.out.println("10)Biglietto");
             System.out.println("11)Abbonamento");
-            System.out.println("12)Esci");
+            System.out.println("12)Abbonamento_Biglietteria");
+            System.out.println("13)Cliente_Abbonamento");
+            System.out.println("14)Esci");
 
             scelta= Integer.parseInt(in.readLine());
             subscleta=0;
@@ -1543,6 +1558,259 @@ public class Main
                     break;
 
                     case 12:
+                    {   // TODO CREARE SERVICE PER IL DAO
+                        int Cod_Ab,Cod_Bi;
+                        do 
+                                {
+                                    System.out.println("1)Insert  "+ arr[scelta-1]);
+                                    System.out.println("2)Update  "+ arr[scelta-1]);
+                                    System.out.println("3)Delete   "+ arr[scelta-1]);
+                                    System.out.println("4)Get All Biglietterie per Abbonamento  ");
+                                    System.out.println("5)Get All Abbonamenti per Biglietteria ");
+                                    System.out.println("6)Esci  ");
+
+                                    
+                                    subscleta= Integer.parseInt(in.readLine());
+                                    switch (subscleta) 
+                                    {
+                                        case 1:
+                                            System.out.println("Inserisci il codice abbonamento da associare");
+                                            Cod_Ab = Integer.parseInt(in.readLine());
+                                            System.out.println("Inserisci il codice della biglietteria da associare");
+                                            Cod_Bi = Integer.parseInt(in.readLine());
+
+                                            CreateAbbonamentoToBigliettoService createAbbonamentoToBigliettoService = new CreateAbbonamentoToBigliettoService();
+                                            
+                                            try 
+                                            {
+                                                createAbbonamentoToBigliettoService.execute(null);
+                                            } 
+                                            catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
+                                        break;
+    
+                                        case 2:
+
+                                        System.out.println("Inserisci il codice abbonamento da modificare");
+                                            Cod_Ab = Integer.parseInt(in.readLine());
+                                            System.out.println("Inserisci il codice della biglietteria da modificare");
+                                            Cod_Bi = Integer.parseInt(in.readLine());
+                                            System.out.println("Inserisci il codice abbonamento di rimpiazzo");
+                                            int Cod_Abmod = Integer.parseInt(in.readLine());
+                                            System.out.println("Inserisci il codice della biglietteria di rimpiazzo");
+                                            int Cod_Bimod = Integer.parseInt(in.readLine());
+
+                                            UpdateAbbonamentoBiglietterieService updateAbbonamentoBiglietterieService = new UpdateAbbonamentoBiglietterieService();
+                                            
+                                            try 
+                                            {
+                                                updateAbbonamentoBiglietterieService.execute(null);
+                                            } 
+                                            catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
+                                        break;
+    
+                                        case 3:
+
+                                        System.out.println("Inserisci il codice abbonamento da cancellare");
+                                            Cod_Ab = Integer.parseInt(in.readLine());
+                                            System.out.println("Inserisci il codice della biglietteria da cancellare");
+                                            Cod_Bi = Integer.parseInt(in.readLine());
+
+                                            DeleteAbbonamentoBiglietterieService deleteAbbonamentoBiglietterieService = new DeleteAbbonamentoBiglietterieService();
+                                            
+                                            try 
+                                            {
+                                                deleteAbbonamentoBiglietterieService.execute(null);
+                                            } 
+                                            catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+                                            
+                                        break;
+    
+                                        case 4:
+
+                                        
+                                        System.out.println("Inserisci il codice della biglietteria");
+                                        Cod_Bi = Integer.parseInt(in.readLine());
+
+                                        SearchAbbonamentiForBiglietteriaService searchAbbonamentiForBiglietteriaService = new SearchAbbonamentiForBiglietteriaService();
+                                        
+                                        try 
+                                        {
+                                            searchAbbonamentiForBiglietteriaService.execute(null);
+                                        } 
+                                        catch (ServiceException e) 
+                                        {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                            
+                                        break;
+    
+                                        case 5:
+
+                                        System.out.println("Inserisci il codice della biglietteria");
+                                        Cod_Bi = Integer.parseInt(in.readLine());
+
+                                        SearchBiglietterieForAbbonamentoService searchBiglietterieForAbbonamentoService = new SearchBiglietterieForAbbonamentoService();
+                                        
+                                        try 
+                                        {
+                                            searchBiglietterieForAbbonamentoService.execute(null);
+                                        } 
+                                        catch (ServiceException e) 
+                                        {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                             
+                                        break;
+                                    
+                                        default:
+    
+                                        break;
+                                    }
+                                    
+                                } while (subscleta < 6);
+                    }
+
+                    case 13:
+                    {
+                        //TODO inserire le map come input
+                        int Cod_Cli,Cod_Ab;
+                        do 
+                                {
+                                    System.out.println("1)Insert  "+ arr[scelta-1]);
+                                    System.out.println("2)Update  "+ arr[scelta-1]);
+                                    System.out.println("3)Delete   "+ arr[scelta-1]);
+                                    System.out.println("4)Get All Clienti per Abbonamento  ");
+                                    System.out.println("5)Get All Abbonamenti per Cliente ");
+                                    System.out.println("6)Esci  ");
+
+                                    
+                                    subscleta= Integer.parseInt(in.readLine());
+                                    switch (subscleta) 
+                                    {
+                                        case 1:
+
+                                        System.out.println("Inserisci il codice abbonamento da associare");
+                                        Cod_Ab = Integer.parseInt(in.readLine());
+                                        System.out.println("Inserisci il codice del cliente da associare");
+                                        Cod_Cli = Integer.parseInt(in.readLine());
+
+                                        CreateClienteToAbbonamentoService cService = new CreateClienteToAbbonamentoService();
+
+                                            try 
+                                            {
+                                                cService.execute(null);
+                                            } catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
+                                        break;
+    
+                                        case 2:
+
+                                        System.out.println("Inserisci il codice abbonamento da modificare");
+                                        Cod_Ab = Integer.parseInt(in.readLine());
+                                        System.out.println("Inserisci il nuovo codice abbonamento da associare");
+                                        int Cod_AbNuovo = Integer.parseInt(in.readLine());
+                                        System.out.println("Inserisci il codice del cliente");
+                                        Cod_Cli = Integer.parseInt(in.readLine());
+
+                                        UpdateAbbonamentoForClienteService cService2 = new UpdateAbbonamentoForClienteService();
+
+                                            try 
+                                            {
+                                                cService2.execute(null);
+                                            } catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
+                                        break;
+    
+                                        case 3:
+                                            
+                                        System.out.println("Inserisci il codice abbonamento da cancellare");
+                                        Cod_Ab = Integer.parseInt(in.readLine());
+                                        System.out.println("Inserisci il codice del cliente da cancellare");
+                                        Cod_Cli = Integer.parseInt(in.readLine());
+
+                                        DeleteClienteAbbonamentoService cService3 = new DeleteClienteAbbonamentoService();
+
+                                            try 
+                                            {
+                                                cService3.execute(null);
+                                            } catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
+                                        break;
+    
+                                        case 4:
+
+                                        System.out.println("Inserisci il codice abbonamento da cancellare");
+                                        Cod_Ab = Integer.parseInt(in.readLine());
+
+                                        SearchAbbonamentiForClientiService cService4 = new SearchAbbonamentiForClientiService();
+
+                                            try 
+                                            {
+                                                cService4.execute(null);
+                                            } catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+                                            
+                                        break;
+    
+                                        case 5:
+
+                                        
+                                        System.out.println("Inserisci il codice del cliente da cancellare");
+                                        Cod_Cli = Integer.parseInt(in.readLine());
+
+                                        SearchClientiForAbbonamento cService5 = new SearchClientiForAbbonamento();
+
+                                            try 
+                                            {
+                                                cService5.execute(null);
+                                            } catch (ServiceException e) 
+                                            {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+                                             
+                                        break;
+                                    
+                                        default:
+    
+                                        break;
+                                    }
+                                    
+                                } while (subscleta < 6);
+                    }
+
+                    case 14:
                                 System.out.println("Quitting");
                     break;
 
@@ -1551,7 +1819,7 @@ public class Main
                     break;
             }
 
-        }while(scelta <12);
+        }while(scelta <14);
     }
 }
 

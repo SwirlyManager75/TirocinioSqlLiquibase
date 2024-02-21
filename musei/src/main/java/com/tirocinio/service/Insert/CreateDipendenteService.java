@@ -1,6 +1,6 @@
 package com.tirocinio.service.Insert;
 
-import com.google.protobuf.ServiceException;
+import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.DipendenteDAO;
 import com.tirocinio.exceptions.DAOException;

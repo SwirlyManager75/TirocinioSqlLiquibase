@@ -13,17 +13,15 @@ import com.tirocinio.exceptions.DAOException;
 
 public class Cliente_AbbonamentoDAO {
     
-    private Connection connection;
     private static final Logger logger= LogManager.getLogger(Cliente_AbbonamentoDAO.class);
 
+    public Cliente_AbbonamentoDAO() {
 
-    // Costruttore che accetta una connessione al database
-    public Cliente_AbbonamentoDAO(Connection connection) {
-        this.connection = connection;
     }
 
-    public boolean addClienteAbbonamento(int codiceCliente, int codiceAbbonamento) throws SQLException, DAOException {
-        String query = "INSERT INTO Cliente_Abbonamenti (Cod_Cliente, Cod_Abbonamento) VALUES (?, ?)";
+    public boolean addClienteAbbonamento(Connection connection,int codiceCliente, int codiceAbbonamento) throws SQLException, DAOException {
+        String query = "INSERT INTO Cliente_Abbonamenti (Cod_Cli, Cod_Ab) VALUES (?, ?)";
+        
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, codiceCliente);
             statement.setInt(2, codiceAbbonamento);
@@ -45,8 +43,8 @@ public class Cliente_AbbonamentoDAO {
             }
     }
 
-    public boolean deleteClienteAbbonamento(int codiceCliente, int codiceAbbonamento) throws SQLException, DAOException {
-        String query = "DELETE FROM Cliente_Abbonamenti WHERE Cod_Cliente = ? AND Cod_Abbonamento = ?";
+    public boolean deleteClienteAbbonamento(Connection connection,int codiceCliente, int codiceAbbonamento) throws SQLException, DAOException {
+        String query = "DELETE FROM Cliente_Abbonamenti WHERE Cod_Cli = ? AND Cod_Ab = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, codiceCliente);
             statement.setInt(2, codiceAbbonamento);
@@ -68,14 +66,14 @@ public class Cliente_AbbonamentoDAO {
             }
     }
 
-    public Map<Integer, Integer> leggiAbbonamentiPerCliente(int codiceCliente) throws SQLException, DAOException {
+    public Map<Integer, Integer> leggiAbbonamentiPerCliente(Connection connection,int codiceCliente) throws SQLException, DAOException {
         Map<Integer, Integer> result = new HashMap<>();
-        String query = "SELECT Cod_Abbonamento FROM Cliente_Abbonamenti WHERE Cod_Cliente = ?";
+        String query = "SELECT Cod_Ab FROM Cliente_Abbonamenti WHERE Cod_Cli = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, codiceCliente);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    int codiceAbbonamento = resultSet.getInt("Cod_Abbonamento");
+                    int codiceAbbonamento = resultSet.getInt("Cod_Ab");
                     result.put(codiceCliente, codiceAbbonamento);
                 }
             }
@@ -97,8 +95,37 @@ public class Cliente_AbbonamentoDAO {
         return result;
     }
     
-    public boolean updateClienteAbbonamento(int codiceCliente, int vecchioCodiceAbbonamento, int nuovoCodiceAbbonamento) throws SQLException, DAOException {
-        String query = "UPDATE Cliente_Abbonamenti SET Cod_Abbonamento = ? WHERE Cod_Cliente = ? AND Cod_Abbonamento = ?";
+    public Map<Integer, Integer> leggiClientiPerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
+        Map<Integer, Integer> result = new HashMap<>();
+        String query = "SELECT Cod_Cli FROM Cliente_Abbonamenti WHERE Cod_Ab = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, codiceAbbonamento);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int codiceCliente = resultSet.getInt("Cod_Cli");
+                    result.put(codiceCliente, codiceAbbonamento);
+                }
+            }
+        }
+        catch (SQLException e) {
+            logger.error("SqlError "+e.getMessage());
+            throw new DAOException("Errore  durante la lettura dei clienti con abbonamento di id:"+codiceAbbonamento, e);
+            //return false;
+            }
+            catch(Exception e)
+            {
+                logger.error("Errore  "+e.getMessage());
+                throw new DAOException("Errore generico durante la lettura dei clienti con abbonamento di id:"+codiceAbbonamento, e);
+
+            }
+
+            logger.info("SUCCESS: selezione abbonamenti dei clienti con abbonamento di id: "+codiceAbbonamento+" rows:"+result.size());
+
+        return result;
+    }
+
+    public boolean updateClienteAbbonamento(Connection connection,int codiceCliente, int vecchioCodiceAbbonamento, int nuovoCodiceAbbonamento) throws SQLException, DAOException {
+        String query = "UPDATE Cliente_Abbonamenti SET Cod_Ab = ? WHERE Cod_Cli = ? AND Cod_Abbonamento = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, nuovoCodiceAbbonamento);
             statement.setInt(2, codiceCliente);
