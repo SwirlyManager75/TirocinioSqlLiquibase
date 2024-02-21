@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 
 import com.tirocinio.exceptions.ServiceException;
-import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.AbbonamentoDAO;
 import com.tirocinio.dao.Abbonamento_BiglietteriaDAO;
