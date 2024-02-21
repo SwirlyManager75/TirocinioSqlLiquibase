@@ -15,20 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.AbbonamentoDAO;
-import com.tirocinio.dao.Abbonamento_BiglietteriaDAO;
-import com.tirocinio.dao.ArtistaDAO;
-import com.tirocinio.dao.AudioDAO;
-import com.tirocinio.dao.BiglietteriaDAO;
-import com.tirocinio.dao.BigliettoDAO;
-import com.tirocinio.dao.CittaDAO;
-import com.tirocinio.dao.ClienteDAO;
-import com.tirocinio.dao.Cliente_AbbonamentoDAO;
-import com.tirocinio.dao.DipendenteDAO;
-import com.tirocinio.dao.MuseoDAO;
-import com.tirocinio.dao.OperaDAO;
-import com.tirocinio.dao.PoiDAO;
-import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Audio;
@@ -64,6 +50,17 @@ import com.tirocinio.service.GetAll.GetAllDipendentiService;
 import com.tirocinio.service.GetAll.GetAllMuseumsService;
 import com.tirocinio.service.GetAll.GetAllOpereService;
 import com.tirocinio.service.GetAll.GetAllPoisService;
+import com.tirocinio.service.GetById.GetByIdAbbonamentoService;
+import com.tirocinio.service.GetById.GetByIdArtistiService;
+import com.tirocinio.service.GetById.GetByIdAudiosService;
+import com.tirocinio.service.GetById.GetByIdBiglietterieService;
+import com.tirocinio.service.GetById.GetByIdBigliettoService;
+import com.tirocinio.service.GetById.GetByIdCityService;
+import com.tirocinio.service.GetById.GetByIdClienteService;
+import com.tirocinio.service.GetById.GetByIdDipendenteService;
+import com.tirocinio.service.GetById.GetByIdMuseoService;
+import com.tirocinio.service.GetById.GetByIdOperaService;
+import com.tirocinio.service.GetById.GetByIdPoiService;
 import com.tirocinio.service.Insert.CreateAbbonamentoService;
 import com.tirocinio.service.Insert.CreateAbbonamentoToBigliettoService;
 import com.tirocinio.service.Insert.CreateArtistaService;
@@ -154,7 +151,6 @@ public class Main
             {
     
                     case 1:
-                    AudioDAO audioDAO= new AudioDAO();
 
                             do 
                             {
@@ -225,8 +221,9 @@ public class Main
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
                                         try {
-                                            audio= audioDAO.getAudioById(connection,audio.getCodAu());
-                                        } catch (DAOException e) {
+                                            GetByIdAudiosService audiosService = new GetByIdAudiosService();
+                                            audiosService.execute(audio.getCodAu());
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
@@ -278,7 +275,7 @@ public class Main
                     break;
 
                     case 2:
-                        PoiDAO poiDao = new PoiDAO();
+                        
                             do 
                             {
                                 System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -341,8 +338,9 @@ public class Main
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
                                         try {
-                                            poiDao.getPoiById(connection, poi.getCodPoi());
-                                        } catch (DAOException e) {
+                                            GetByIdPoiService getByIdPoiService= new GetByIdPoiService();
+                                            getByIdPoiService.execute(poi.getCodPoi());
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
@@ -394,7 +392,6 @@ public class Main
                     break;
 
                     case 3:
-                        MuseoDAO museoDAO = new MuseoDAO();
                             do 
                             {
                                 System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -458,8 +455,9 @@ public class Main
                                         museo.setCodM(Integer.parseInt(in.readLine()));
 
                                         try {
-                                            museoDAO.getMuseumById(connection, museo.getCodM());
-                                        } catch (DAOException e) {
+                                            GetByIdMuseoService getByIdMuseoService = new GetByIdMuseoService();
+                                            getByIdMuseoService.execute(museo.getCodM());
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
@@ -513,7 +511,6 @@ public class Main
                     break;
 
                     case 4:
-                        CittaDAO cittaDAO = new CittaDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -577,8 +574,9 @@ public class Main
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
                                             try {
-                                                cittaDAO.getCityById(connection, citta.getCodCi());
-                                            } catch (DAOException e) {
+                                                GetByIdCityService getByIdCityService = new GetByIdCityService();
+                                                getByIdCityService.execute(citta.getCodCi());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             } //TODO CREARE SERVICE
@@ -633,7 +631,6 @@ public class Main
                     break; 
 
                     case 5:
-                        ClienteDAO clienteDAO = new ClienteDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -705,8 +702,9 @@ public class Main
                                             cliente.setCodCli(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                cliente = clienteDAO.getClienteById(connection, subscleta);
-                                            } catch (DAOException e) {
+                                                GetByIdClienteService getByIdClienteService = new GetByIdClienteService();
+                                                getByIdClienteService.execute(cliente.getCodCli());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -767,7 +765,6 @@ public class Main
                     break;
 
                     case 6:
-                            DipendenteDAO dipendenteDAO = new DipendenteDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -840,8 +837,9 @@ public class Main
                                             dipendente.setCodD(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                dipendente = dipendenteDAO.getDipendenteById(connection, subscleta);
-                                            } catch (DAOException e) {
+                                                GetByIdDipendenteService getByIdDipendenteService = new GetByIdDipendenteService();
+                                                getByIdDipendenteService.execute(dipendente.getCodD());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -903,7 +901,6 @@ public class Main
                     break;
 
                     case 7:
-                                ArtistaDAO artistaDAO = new ArtistaDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -976,8 +973,9 @@ public class Main
                                             artista.setCodAr(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                artista= artistaDAO.getArtistaById(connection, artista.getCodAr());
-                                            } catch (DAOException e) {
+                                                GetByIdArtistiService getByIdArtistiService = new GetByIdArtistiService();
+                                                getByIdArtistiService.execute(artista.getCodAr());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -1036,7 +1034,6 @@ public class Main
                     break;
 
                     case 8:
-                            OperaDAO operaDAO = new OperaDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -1105,8 +1102,9 @@ public class Main
                                             opera.setCodO(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                opera= operaDAO.getOperaById(connection, opera.getCodO());
-                                            } catch (DAOException e) {
+                                                GetByIdOperaService getByIdOperaService = new GetByIdOperaService();
+                                                getByIdOperaService.execute(opera.getCodO());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -1161,7 +1159,6 @@ public class Main
                     break;
 
                     case 9:
-                            BiglietteriaDAO biglietteriaDAO = new BiglietteriaDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -1234,8 +1231,9 @@ public class Main
                                             biglietteria.setCodB(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                biglietteria= biglietteriaDAO.getBiglietteriaById(connection, biglietteria.getCodB());
-                                            } catch (DAOException e) {
+                                                GetByIdBiglietterieService getByIdBiglietterieService = new GetByIdBiglietterieService();
+                                                getByIdBiglietterieService.execute(biglietteria.getCodB());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -1293,7 +1291,6 @@ public class Main
                     break;
 
                     case 10:
-                            BigliettoDAO bigliettoDAO = new BigliettoDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -1366,8 +1363,9 @@ public class Main
                                             biglietto.setCodBi(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                biglietto= bigliettoDAO.getBigliettoById(connection, biglietto.getCodBi());
-                                            } catch (DAOException e) {
+                                                GetByIdBigliettoService getByIdBigliettoService = new GetByIdBigliettoService();
+                                                getByIdBigliettoService.execute(biglietto.getCodBi());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -1425,7 +1423,6 @@ public class Main
                     break;
 
                     case 11:
-                            AbbonamentoDAO abbonamentoDAO = new AbbonamentoDAO();
                                 do 
                                 {
                                     System.out.println("1)Insert  "+ arr[scelta-1]);
@@ -1498,8 +1495,9 @@ public class Main
                                             abbonamento.setCodAb(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                abbonamento= abbonamentoDAO.getAbbonamentoById(connection, abbonamento.getCodAb());
-                                            } catch (DAOException e) {
+                                                GetByIdAbbonamentoService getByIdAbbonamentoService = new GetByIdAbbonamentoService();
+                                                getByIdAbbonamentoService.execute(abbonamento.getCodAb());
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
@@ -1557,7 +1555,7 @@ public class Main
                     break;
 
                     case 12:
-                    {   // TODO CREARE SERVICE PER IL DAO
+                    {   
                         int Cod_Ab,Cod_Bi;
                         do 
                                 {
