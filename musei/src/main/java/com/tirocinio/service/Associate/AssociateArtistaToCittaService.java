@@ -4,6 +4,7 @@ import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
 import com.tirocinio.dao.ArtistaDAO;
 import com.tirocinio.dao.CittaDAO;
+import com.tirocinio.dao.impl.CittaDAOImpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Citta;
@@ -18,7 +19,7 @@ public class AssociateArtistaToCittaService {
 
     public AssociateArtistaToCittaService( ) {
         this.artistaDAO = new ArtistaDAO();
-        this.cittaDAO = new CittaDAO();
+        this.cittaDAO = new CittaDAOImpl();
     }
 
     public boolean execute(int codAr, int codCitta) throws ServiceException {

@@ -62,7 +62,7 @@ import com.tirocinio.service.GetById.GetByIdMuseoService;
 import com.tirocinio.service.GetById.GetByIdOperaService;
 import com.tirocinio.service.GetById.GetByIdPoiService;
 import com.tirocinio.service.Insert.CreateAbbonamentoService;
-import com.tirocinio.service.Insert.CreateAbbonamentoToBigliettoService;
+import com.tirocinio.service.Insert.CreateAbbonamentoToBiglietteriaService;
 import com.tirocinio.service.Insert.CreateArtistaService;
 import com.tirocinio.service.Insert.CreateAudioService;
 import com.tirocinio.service.Insert.CreateBiglietteriaService;
@@ -1576,7 +1576,7 @@ public class Main
                                             System.out.println("Inserisci il codice della biglietteria da associare");
                                             Cod_Bi = Integer.parseInt(in.readLine());
 
-                                            CreateAbbonamentoToBigliettoService createAbbonamentoToBigliettoService = new CreateAbbonamentoToBigliettoService();
+                                            CreateAbbonamentoToBiglietteriaService createAbbonamentoToBigliettoService = new CreateAbbonamentoToBiglietteriaService();
                                             
                                             try 
                                             {
