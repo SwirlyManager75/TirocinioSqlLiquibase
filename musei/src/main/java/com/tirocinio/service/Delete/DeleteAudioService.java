@@ -1,32 +1,40 @@
 package com.tirocinio.service.Delete;
 
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.AudioDAO;
+import com.tirocinio.dao.Interfaces.AudioDAO;
+import com.tirocinio.dao.impl.AudioDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeleteAudioService {
+public class DeleteAudioService implements MuseoGenericService {
 
     private final AudioDAO audioDAO;
     
 
     public DeleteAudioService( ) {
-        this.audioDAO = new AudioDAO();
+        this.audioDAO = new AudioDAOimpl();
     }
 
-    public boolean execute(int audioId) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
-            ret=audioDAO.deleteAudio(connection, audioId);          
+            int audioId = (Integer)input.get("audio");
+            ret=audioDAO.deleteAudio(connection, audioId); 
+            output.put("DeleteAudio", ret);     
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -57,4 +65,6 @@ public class DeleteAudioService {
         }
          
     }
+
+    
 }

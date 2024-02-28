@@ -2,31 +2,38 @@ package com.tirocinio.service.Insert;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.PoiDAO;
+import com.tirocinio.dao.Interfaces.PoiDAO;
+import com.tirocinio.dao.impl.PoiDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Poi;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CreatePoiService {
+public class CreatePoiService implements MuseoGenericService {
 
     private final PoiDAO poiDAO;
    
 
     public CreatePoiService( ) {
-        this.poiDAO = new PoiDAO();
+        this.poiDAO = new PoiDAOimpl();
     }
 
-    public int execute(Poi poi) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        int ret;
+        Poi ret;
+        Map<Object, Object> output=new HashMap<>();
+
         try 
         {
-            ret=poiDAO.addPoi(connection, poi);           
+            ret=poiDAO.addPoi(connection, (Poi)input.get("poi"));
+            output.put("CreatePoi", ret);         
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -57,4 +64,6 @@ public class CreatePoiService {
         }
                  
     }
+
+    
 }

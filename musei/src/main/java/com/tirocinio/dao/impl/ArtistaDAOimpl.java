@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.ArtistaDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Citta;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ArtistaDAO {
+public class ArtistaDAOimpl implements ArtistaDAO {
 
     private static final String SELECT_ALL_ARTISTI = "SELECT * FROM Artista";
     private static final String SELECT_ARTISTA_BY_ID = "SELECT * FROM Artista WHERE Cod_Ar = ?";
@@ -25,7 +25,7 @@ public class ArtistaDAO {
     private static final String LASTKEY_ARTISTA = "SELECT * FROM Artista WHERE Cod_Ar = (SELECT MAX(Cod_Ar) FROM Artista)";
 
 
-    private static final Logger logger= LogManager.getLogger(ArtistaDAO.class);
+    private static final Logger logger= LogManager.getLogger(ArtistaDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Artista art=null;
@@ -104,7 +104,7 @@ public class ArtistaDAO {
         return null;
     }
 
-    public int addArtista(Connection connection, Artista artista) throws DAOException {
+    public Artista addArtista(Connection connection, Artista artista) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTISTA)) {
 
             preparedStatement.setString(1, artista.getNome());
@@ -114,7 +114,8 @@ public class ArtistaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta artista , rows:"+rowsAffected);
-            return getLastKey(connection);
+            artista.setCodAr(getLastKey(connection));
+            return artista;
             //return rowsAffected > 0;
         } catch (SQLException e) {
             logger.error("");

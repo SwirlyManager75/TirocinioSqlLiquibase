@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.BigliettoDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
 import com.tirocinio.model.Biglietto;
@@ -15,7 +15,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class BigliettoDAO {
+public class BigliettoDAOimpl implements BigliettoDAO {
 
     private static final String SELECT_ALL_BIGLIETTI = "SELECT * FROM Biglietto";
     private static final String SELECT_BIGLIETTO_BY_ID = "SELECT * FROM Biglietto WHERE Cod_Bi = ?";
@@ -27,7 +27,7 @@ public class BigliettoDAO {
     private static final String LASTKEY_BIGLIETTO = "SELECT * FROM BIGLIETTO WHERE Cod_Bi = (SELECT MAX(Cod_Bi) FROM BIGLIETTO)";
 
 
-    private static final Logger logger= LogManager.getLogger(BigliettoDAO.class);
+    private static final Logger logger= LogManager.getLogger(BigliettoDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Biglietto bigl=null;
@@ -101,7 +101,7 @@ public class BigliettoDAO {
         return null;
     }
 
-    public int addBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
+    public Biglietto addBiglietto(Connection connection, Biglietto biglietto) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BIGLIETTO)) {
 
             preparedStatement.setFloat(1, biglietto.getPrezzo());
@@ -111,7 +111,8 @@ public class BigliettoDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunto biglietto , rows:"+rowsAffected);
-            return getLastKey(connection);
+            biglietto.setCodBi(getLastKey(connection));
+            return biglietto;
             //return rowsAffected > 0;
         }catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());

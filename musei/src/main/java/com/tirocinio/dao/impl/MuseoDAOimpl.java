@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.MuseoDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 import com.tirocinio.model.Museo;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class MuseoDAO {
+public class MuseoDAOimpl implements MuseoDAO {
 
     private static final String SELECT_ALL_MUSEUMS = "SELECT * FROM Museo";
     private static final String SELECT_MUSEUM_BY_ID = "SELECT * FROM Museo WHERE Cod_M = ?";
@@ -25,7 +25,7 @@ public class MuseoDAO {
     private static final String LASTKEY_MUSEUM = "SELECT * FROM MUSEO WHERE Cod_M = (SELECT MAX(Cod_M) FROM MUSEO)";
 
 
-    private static final Logger logger= LogManager.getLogger(MuseoDAO.class);
+    private static final Logger logger= LogManager.getLogger(MuseoDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Museo museo=null;
@@ -101,7 +101,7 @@ public class MuseoDAO {
         return null;
     }
 
-    public int addMuseum(Connection connection, Museo museum) throws DAOException {
+    public Museo addMuseum(Connection connection, Museo museum) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_MUSEUM)) {
 
             preparedStatement.setString(1, museum.getNome());
@@ -111,7 +111,9 @@ public class MuseoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta del museo , rows:"+rowsAffected);
 
-            return getLastKey(connection);
+            museum.setCodM(getLastKey(connection));
+
+            return museum;
         }  catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiunta del museo: "+museum.getNome(), e);

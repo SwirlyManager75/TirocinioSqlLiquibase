@@ -1,45 +1,59 @@
 package com.tirocinio.service.Associate;
 
-import com.tirocinio.dao.PoiDAO;
+import com.tirocinio.dao.Interfaces.MuseoDAO;
+import com.tirocinio.dao.Interfaces.PoiDAO;
+import com.tirocinio.dao.impl.MuseoDAOimpl;
+import com.tirocinio.dao.impl.PoiDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.MuseoDAO;
 import com.tirocinio.model.Poi;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.model.Museo;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AssociatePoiToMuseoService{
+public class AssociatePoiToMuseoService implements MuseoGenericService{
 
     private final PoiDAO poiDAO;
     private final MuseoDAO museoDAO;
 
     public AssociatePoiToMuseoService( ) {
-        this.poiDAO = new PoiDAO();
-        this.museoDAO = new MuseoDAO();
+        this.poiDAO = new PoiDAOimpl();
+        this.museoDAO = new MuseoDAOimpl();
     }
 
-    public boolean execute( int museoId, int poiId) throws ServiceException {
+    public Map<Object, Object> execute( Map<Object, Object> input) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try{
 
-            Museo museo = museoDAO.getMuseumById(connection, museoId);
-            Poi poi = poiDAO.getPoiById(connection, poiId);
+            int codMuseo=(Integer)input.get("museo");
+            int codPoi=(Integer)input.get("poi");
+
+            Museo museo = museoDAO.getMuseumById(connection, codMuseo);
+            Poi poi = poiDAO.getPoiById(connection, codPoi);
             if (museo != null && poi != null)
             {
                 // Aggiorno il Poi nel database
                 ret=poiDAO.associateWithMuseum(connection,poi,museo);
-                 connection.commit();
-                return ret;
+                output.put("AssociatePoiToMuseo", ret);
+
+                connection.commit();
+                return output;
 
             } else {
                 // Museo non trovato
-                System.out.println("Museo non trovato con ID: " + museoId);
-                return false;
+                System.out.println("Museo non trovato con ID: " + codMuseo);
+                output.put("AssociatePoiToMuseo", false);
+
+                return output;
             }
         }catch (DAOException e) 
         {

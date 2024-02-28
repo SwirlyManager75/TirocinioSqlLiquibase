@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.OperaDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Artista;
 import com.tirocinio.model.Museo;
@@ -15,7 +15,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class OperaDAO {
+public class OperaDAOimpl implements OperaDAO{
 
     private static final String SELECT_ALL_OPERE = "SELECT * FROM Opera";
     private static final String SELECT_OPERA_BY_ID = "SELECT * FROM Opera WHERE Cod_O = ?";
@@ -27,7 +27,7 @@ public class OperaDAO {
     private static final String LASTKEY_OPERA = "SELECT * FROM OPERA WHERE Cod_O = (SELECT MAX(Cod_O) FROM OPERA)";
 
 
-    private static final Logger logger= LogManager.getLogger(OperaDAO.class);
+    private static final Logger logger= LogManager.getLogger(OperaDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Opera opera=null;
@@ -101,7 +101,7 @@ public class OperaDAO {
         return null;
     }
 
-    public int addOpera(Connection connection, Opera opera) throws DAOException {
+    public Opera addOpera(Connection connection, Opera opera) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_OPERA)) {
 
             preparedStatement.setString(1, opera.getNome());
@@ -109,7 +109,8 @@ public class OperaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta dell'opera , rows:"+rowsAffected);
-            return getLastKey(connection);
+            opera.setCodO( getLastKey(connection));
+            return opera;
             //return rowsAffected > 0;
         } catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());

@@ -2,34 +2,41 @@ package com.tirocinio.service.Associate;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.DipendenteDAO;
-import com.tirocinio.dao.MuseoDAO;
+import com.tirocinio.dao.impl.DipendenteDAOimpl;
+import com.tirocinio.dao.impl.MuseoDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Dipendente;
 import com.tirocinio.model.Museo;
-
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class AssociateDipendenteToMuseoService {
+public class AssociateDipendenteToMuseoService implements MuseoGenericService {
 
-    private final DipendenteDAO dipendenteDAO;
-    private final MuseoDAO museoDAO;
+    private final DipendenteDAOimpl dipendenteDAO;
+    private final MuseoDAOimpl museoDAO;
   
 
     public AssociateDipendenteToMuseoService( ) {
-        this.dipendenteDAO = new DipendenteDAO();
-        this.museoDAO = new MuseoDAO();
+        this.dipendenteDAO = new DipendenteDAOimpl();
+        this.museoDAO = new MuseoDAOimpl();
     }
 
-    public boolean execute(int codDipendente, int codMuseo) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
+
+            int codMuseo=(Integer)input.get("museo");
+            int codDipendente=(Integer)input.get("dipendente");
 
             Museo museo = museoDAO.getMuseumById(connection, codMuseo);
             Dipendente dipendente = dipendenteDAO.getDipendenteById(connection, codDipendente);
@@ -38,13 +45,16 @@ public class AssociateDipendenteToMuseoService {
 
                 // Inserisco il Dipendente nel database
                 ret=dipendenteDAO.associateWithMuseum(connection, dipendente,museo);
+                output.put("AssociateDipendenteToMuseo", ret);
                  connection.commit();
-                return ret;
+                return output;
 
             } else {
                 // Città o Museo non trovato
                 System.out.println(" Dipendete o Museo non trovato con codice: " + codDipendente + " o " + codMuseo);
-                return false;
+                output.put("AssociateDipendenteToMuseo", false);
+
+                return output;
             }
         }catch (DAOException e) 
         {

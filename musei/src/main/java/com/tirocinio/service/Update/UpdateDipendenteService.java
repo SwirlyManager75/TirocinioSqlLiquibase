@@ -2,28 +2,35 @@ package com.tirocinio.service.Update;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.DipendenteDAO;
+import com.tirocinio.dao.Interfaces.DipendenteDAO;
+import com.tirocinio.dao.impl.DipendenteDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Dipendente;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class UpdateDipendenteService {
+public class UpdateDipendenteService  implements MuseoGenericService{
 
     private final DipendenteDAO dipendenteDAO;
 
     public UpdateDipendenteService( ) {
-        this.dipendenteDAO = new DipendenteDAO();
+        this.dipendenteDAO = new DipendenteDAOimpl();
     }
 
-    public Dipendente execute(Dipendente dipendente) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
         Dipendente ret;
+        Map<Object, Object> output = new HashMap<>();
+
         try {
-            ret= dipendenteDAO.updateDipendente(connection, dipendente);
+            ret= dipendenteDAO.updateDipendente(connection, (Dipendente)input.get("dipendente"));
+            output.put("UpdateDipendente", ret);
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -53,4 +60,6 @@ public class UpdateDipendenteService {
             }
         }
     }
+
+    
 }

@@ -7,7 +7,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,7 +77,7 @@ import com.tirocinio.service.Insert.CreateMuseumService;
 import com.tirocinio.service.Insert.CreateOperaService;
 import com.tirocinio.service.Insert.CreatePoiService;
 import com.tirocinio.service.Search.SearchAbbonamentiForBiglietteriaService;
-import com.tirocinio.service.Search.SearchAbbonamentiForClientiService;
+import com.tirocinio.service.Search.SearchAbbonamentiForClienteService;
 import com.tirocinio.service.Search.SearchAbbonamentoService;
 import com.tirocinio.service.Search.SearchArtistaService;
 import com.tirocinio.service.Search.SearchAudioService;
@@ -105,6 +107,18 @@ import com.tirocinio.service.Update.UpdatePoiService;
 
 public class Main 
 {
+    private static Map<String,String> serviceMap = new HashMap<>();
+
+    private static void initServiceMap() {
+		serviceMap.put("DeleteAbbonamentoService","com.tirocinio.service.Delete.DeleteAbbonamentoService");
+		serviceMap.put("DeleteAbbonanentoBiglietterieService", "com.tirocinio.service.Delete.DeleteAbbonamentoBiglietterieService");
+        serviceMap.put("DeleteArtistaService", "com.tirocinio.service.Delete.DeleteArtistaService");
+
+		// serviceMap.put("ABBONAMENTO_BIGLIETTERIA_SERVICE_DELETE",
+		// "com.tirocinio.service....");
+		// serviceMap.put("ABBONAMENTO_BIGLIETTERIA_SERVICE_SEARCH",
+		// "com.tirocinio.service....");
+	}
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException 
     {
         //TODO GESTIRE LE EXCEPTION, INTEGRARE GESTIONE LOG4J 
@@ -121,12 +135,16 @@ public class Main
         {
             logger.error("Impossibile stabilire una connession con il database");
         } 
+
+        initServiceMap();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 
         int scelta=0;
         int subscleta=0;
         String arr[] = {"Audio","POI","Museo","Citta","Cliente","Dipendente","Artista","Opere","Biglietteria","Biglietto","Abbonamento","Abbonamento_Biglietteria","Cliente_Abbonamento"};
+        Map<Object, Object> myInput = new HashMap();
+		Map<Object, Object> myOutput = new HashMap();
 
         do
         {
@@ -1566,15 +1584,17 @@ public class Main
                                     System.out.println("5)Get All Abbonamenti per Biglietteria ");
                                     System.out.println("6)Esci  ");
 
-                                    
+                                    Biglietteria bigl=new Biglietteria();
+                                    Abbonamento abb=new Abbonamento();
+
                                     subscleta= Integer.parseInt(in.readLine());
                                     switch (subscleta) 
                                     {
                                         case 1:
                                             System.out.println("Inserisci il codice abbonamento da associare");
-                                            Cod_Ab = Integer.parseInt(in.readLine());
+                                            bigl.setCodB(Integer.parseInt(in.readLine()));
                                             System.out.println("Inserisci il codice della biglietteria da associare");
-                                            Cod_Bi = Integer.parseInt(in.readLine());
+                                            abb.setCodAb(Integer.parseInt(in.readLine()));
 
                                             CreateAbbonamentoToBiglietteriaService createAbbonamentoToBigliettoService = new CreateAbbonamentoToBiglietteriaService();
                                             
@@ -1767,7 +1787,7 @@ public class Main
                                         System.out.println("Inserisci il codice abbonamento da cancellare");
                                         Cod_Ab = Integer.parseInt(in.readLine());
 
-                                        SearchAbbonamentiForClientiService cService4 = new SearchAbbonamentiForClientiService();
+                                        SearchAbbonamentiForClienteService cService4 = new SearchAbbonamentiForClienteService();
 
                                             try 
                                             {

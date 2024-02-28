@@ -2,28 +2,35 @@ package com.tirocinio.service.Update;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.CittaDAO;
+import com.tirocinio.dao.Interfaces.CittaDAO;
+import com.tirocinio.dao.impl.CittaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class UpdateCityService {
+public class UpdateCityService  implements MuseoGenericService{
 
     private final CittaDAO cittaDAO;
 
     public UpdateCityService( ) {
-        this.cittaDAO = new CittaDAO();
+        this.cittaDAO = new CittaDAOimpl();
     }
 
-    public Citta execute(Citta city) throws  ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
         Citta ret;
+        Map<Object, Object> output = new HashMap<>();
+
         try{
-            ret= cittaDAO.updateCity(connection, city);
+            ret= cittaDAO.updateCity(connection, (Citta)input.get("citta"));
+            output.put("UpdateCity", ret);
             connection.commit();
-            return ret;
+            return output;
 
         }catch (DAOException e) 
         {
@@ -54,4 +61,6 @@ public class UpdateCityService {
             }
         }
     }
+
+    
 }

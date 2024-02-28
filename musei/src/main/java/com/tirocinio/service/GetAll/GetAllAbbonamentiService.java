@@ -1,26 +1,34 @@
 package com.tirocinio.service.GetAll;
 
 import com.tirocinio.exceptions.ServiceException;
-import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.AbbonamentoDAO;
-import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
+import com.tirocinio.connection.ConnectionManager;
+import com.tirocinio.dao.Interfaces.AbbonamentoDAO;
+import com.tirocinio.dao.impl.AbbonamentoDAOimpl;
+import com.tirocinio.exceptions.DAOException;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class GetAllAbbonamentiService {
+public class GetAllAbbonamentiService implements MuseoGenericService {
 
     private final AbbonamentoDAO abbonamentoDAO;
     
 
     public GetAllAbbonamentiService( ) {
-        this.abbonamentoDAO = new AbbonamentoDAO();
+        this.abbonamentoDAO = new AbbonamentoDAOimpl();
     }
 
-    public List<Abbonamento> execute() throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
+        Map<Object, Object> output = new HashMap<>();
+
         try (Connection connection = ConnectionManager.getConnection()) {
-            return abbonamentoDAO.getAllAbbonamenti(connection);
+            List<Abbonamento> list= abbonamentoDAO.getAllAbbonamenti(connection);
+            output.put("GetAllAbbonamenti", list);
+            return output;
         }catch (DAOException e) 
         {
             throw new ServiceException(e);
@@ -32,4 +40,6 @@ public class GetAllAbbonamentiService {
         
         
     }
+
+   
 }

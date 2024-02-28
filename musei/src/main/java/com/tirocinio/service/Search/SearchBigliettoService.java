@@ -2,24 +2,32 @@ package com.tirocinio.service.Search;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.BigliettoDAO;
+import com.tirocinio.dao.Interfaces.BigliettoDAO;
+import com.tirocinio.dao.impl.BigliettoDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietto;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class SearchBigliettoService {
+public class SearchBigliettoService  implements MuseoGenericService{
 
     private final BigliettoDAO bigliettoDAO;
 
     public SearchBigliettoService( ) {
-        this.bigliettoDAO = new BigliettoDAO();
+        this.bigliettoDAO = new BigliettoDAOimpl();
     }
 
-    public List<Biglietto> execute(Biglietto criteria) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
+                Map<Object, Object> output=new HashMap<>();
+
         try (Connection connection = ConnectionManager.getConnection()) {
-            return bigliettoDAO.search(connection, criteria);
+            List<Biglietto> list = bigliettoDAO.search(connection, (Biglietto)input.get("biglietto"));
+            output.put("SearchBiglietto", list);
+            return output;
         }catch (DAOException e) 
         {
             throw new ServiceException(e);
@@ -29,4 +37,6 @@ public class SearchBigliettoService {
             throw new ServiceException("Errore generico durante la execute di ",e);
         }
     }
+
+    
 }

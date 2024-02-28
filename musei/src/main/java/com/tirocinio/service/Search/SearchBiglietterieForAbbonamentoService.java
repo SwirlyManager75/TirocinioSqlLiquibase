@@ -4,17 +4,18 @@ import java.sql.Connection;
 import java.util.Map;
 
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.Abbonamento_BiglietteriaDAO;
+import com.tirocinio.dao.impl.Abbonamento_BiglietteriaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 
-public class SearchBiglietterieForAbbonamentoService {
+public class SearchBiglietterieForAbbonamentoService implements MuseoGenericService {
 
-     private final Abbonamento_BiglietteriaDAO abbonamento_BiglietteriaDAO;
+     private final Abbonamento_BiglietteriaDAOimpl abbonamento_BiglietteriaDAO;
 
     public SearchBiglietterieForAbbonamentoService()
     {
-        this.abbonamento_BiglietteriaDAO= new Abbonamento_BiglietteriaDAO();
+        this.abbonamento_BiglietteriaDAO= new Abbonamento_BiglietteriaDAOimpl();
     }
 
      public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
@@ -22,7 +23,7 @@ public class SearchBiglietterieForAbbonamentoService {
 
     	try {
             //TODO set the ints from the map
-			abbonamento_BiglietteriaDAO.leggiBiglietteriePerAbbonamento(connection, 0);
+			return abbonamento_BiglietteriaDAO.leggiBiglietteriePerAbbonamento(connection, (Integer)input.get("abbonamento"));
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		} catch (Exception e) {
@@ -30,7 +31,6 @@ public class SearchBiglietterieForAbbonamentoService {
 		}
     	
     	
-    	return null;
     }
 
 }

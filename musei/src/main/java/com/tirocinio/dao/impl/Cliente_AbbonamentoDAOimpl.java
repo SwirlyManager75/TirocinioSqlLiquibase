@@ -1,4 +1,4 @@
-package com.tirocinio.dao;
+package com.tirocinio.dao.impl;
 
 import java.sql.*;
 
@@ -9,15 +9,15 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.tirocinio.dao.Interfaces.Cliente_AbbonamentoDAO;
 import com.tirocinio.exceptions.DAOException;
+import com.tirocinio.model.Abbonamento;
+import com.tirocinio.model.Cliente;
 
-public class Cliente_AbbonamentoDAO {
+public class Cliente_AbbonamentoDAOimpl implements Cliente_AbbonamentoDAO{
     
-    private static final Logger logger= LogManager.getLogger(Cliente_AbbonamentoDAO.class);
-
-    public Cliente_AbbonamentoDAO() {
-
-    }
+    private static final Logger logger= LogManager.getLogger(Cliente_AbbonamentoDAOimpl.class);
+  
 
     public boolean addClienteAbbonamento(Connection connection,int codiceCliente, int codiceAbbonamento) throws SQLException, DAOException {
         String query = "INSERT INTO Cliente_Abbonamenti (Cod_Cli, Cod_Ab) VALUES (?, ?)";
@@ -66,15 +66,21 @@ public class Cliente_AbbonamentoDAO {
             }
     }
 
-    public Map<Integer, Integer> leggiAbbonamentiPerCliente(Connection connection,int codiceCliente) throws SQLException, DAOException {
-        Map<Integer, Integer> result = new HashMap<>();
+    public Map<Object, Object> leggiAbbonamentiPerCliente(Connection connection,int codiceCliente) throws SQLException, DAOException {
+        Map<Object, Object> result = new HashMap<>();
         String query = "SELECT Cod_Ab FROM Cliente_Abbonamenti WHERE Cod_Cli = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, codiceCliente);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
+                    Cliente cl= new Cliente();
+                    cl.setCodCli(codiceCliente);
+
                     int codiceAbbonamento = resultSet.getInt("Cod_Ab");
-                    result.put(codiceCliente, codiceAbbonamento);
+                    Abbonamento abbonamento= new Abbonamento();
+                    abbonamento.setCodAb(codiceAbbonamento);
+
+                    result.put(cl, abbonamento);
                 }
             }
         }
@@ -95,15 +101,23 @@ public class Cliente_AbbonamentoDAO {
         return result;
     }
     
-    public Map<Integer, Integer> leggiClientiPerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
-        Map<Integer, Integer> result = new HashMap<>();
+    public Map<Object, Object> leggiClientiPerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
+        Map<Object, Object> result = new HashMap<>();
         String query = "SELECT Cod_Cli FROM Cliente_Abbonamenti WHERE Cod_Ab = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, codiceAbbonamento);
+            
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int codiceCliente = resultSet.getInt("Cod_Cli");
-                    result.put(codiceCliente, codiceAbbonamento);
+
+                    Abbonamento abbonamento = new Abbonamento();
+                    abbonamento.setCodAb(codiceAbbonamento);
+
+                    Cliente cliente = new Cliente();
+                    cliente.setCodCli(codiceCliente);
+
+                    result.put(cliente, abbonamento);
                 }
             }
         }

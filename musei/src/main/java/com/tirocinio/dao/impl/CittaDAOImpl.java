@@ -1,6 +1,6 @@
 package com.tirocinio.dao.impl;
 
-import com.tirocinio.dao.CittaDAO;
+import com.tirocinio.dao.Interfaces.CittaDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 
@@ -14,9 +14,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class CittaDAOImpl implements CittaDAO {
+public class CittaDAOimpl implements CittaDAO {
 
-    private static final Logger logger= LogManager.getLogger(CittaDAOImpl.class);
+    private static final Logger logger= LogManager.getLogger(CittaDAOimpl.class);
 
     @Override
     public int getLastKey(Connection connection) throws DAOException{
@@ -96,7 +96,7 @@ public class CittaDAOImpl implements CittaDAO {
     }
 
     @Override
-    public int addCity(Connection connection,Citta city) throws DAOException {
+    public Citta addCity(Connection connection,Citta city) throws DAOException {
         try ( 
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CITY)) {
 
@@ -106,7 +106,8 @@ public class CittaDAOImpl implements CittaDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta città, rows:"+rowsAffected);
 
-            return getLastKey(connection);
+            city.setCodCi(getLastKey(connection));
+            return city;
         } catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante  l'aggiunta della città: "+city.getNome(), e);

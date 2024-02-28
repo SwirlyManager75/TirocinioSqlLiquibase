@@ -2,30 +2,37 @@ package com.tirocinio.service.Insert;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.AudioDAO;
+import com.tirocinio.dao.Interfaces.AudioDAO;
+import com.tirocinio.dao.impl.AudioDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Audio;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CreateAudioService {
+public class CreateAudioService implements MuseoGenericService {
 
     private final AudioDAO audioDAO;
 
     public CreateAudioService( ) 
     {
-        this.audioDAO = new AudioDAO();
+        this.audioDAO = new AudioDAOimpl();
     }
 
-    public int execute(Audio audio) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        int ret;
+        Audio ret;
+        Map<Object, Object> output=new HashMap<>();
+
         try 
         {
-            ret=audioDAO.addAudio(connection, audio);            
+            ret=audioDAO.addAudio(connection, (Audio)input.get("audio"));   
+            output.put("CreateAudio", ret);     
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -56,4 +63,6 @@ public class CreateAudioService {
         }
         
     }
+
+    
 }

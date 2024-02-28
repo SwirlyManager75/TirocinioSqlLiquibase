@@ -2,24 +2,32 @@ package com.tirocinio.service.Search;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.OperaDAO;
+import com.tirocinio.dao.Interfaces.OperaDAO;
+import com.tirocinio.dao.impl.OperaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Opera;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class SearchOperaService {
+public class SearchOperaService  implements MuseoGenericService{
 
     private final OperaDAO operaDAO;
 
     public SearchOperaService( ) {
-        this.operaDAO = new OperaDAO();
+        this.operaDAO = new OperaDAOimpl();
     }
 
-    public List<Opera> execute(Opera criteria) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
+                Map<Object, Object> output=new HashMap<>();
+
         try (Connection connection = ConnectionManager.getConnection()) {
-            return operaDAO.search(connection, criteria);
+            List<Opera> list = operaDAO.search(connection, (Opera)input.get("opera"));
+            output.put("SearchOpera", list);
+            return output;
         } catch (DAOException e) 
         {
             throw new ServiceException(e);
@@ -30,4 +38,6 @@ public class SearchOperaService {
         }
         
     }
+
+    
 }

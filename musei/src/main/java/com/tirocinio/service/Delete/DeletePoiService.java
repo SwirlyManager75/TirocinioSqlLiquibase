@@ -1,33 +1,42 @@
 package com.tirocinio.service.Delete;
 
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.PoiDAO;
+import com.tirocinio.dao.Interfaces.PoiDAO;
+import com.tirocinio.dao.impl.PoiDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeletePoiService {
+public class DeletePoiService  implements MuseoGenericService{
 
     private final PoiDAO poiDAO;
     
 
     public DeletePoiService( ) {
-        this.poiDAO = new PoiDAO();
+        this.poiDAO = new PoiDAOimpl();
        
     }
 
-    public boolean execute(int poiId) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
-            ret=poiDAO.deletePoi(connection, poiId);        
+            int poiId=(Integer)input.get("poi");
+            ret=poiDAO.deletePoi(connection, poiId); 
+            output.put("DeletePoi", ret);     
+       
             connection.commit();
-            return ret;
+            return output;
         } catch (DAOException e) 
         {
             
@@ -59,4 +68,5 @@ public class DeletePoiService {
         
          
     }
+
 }

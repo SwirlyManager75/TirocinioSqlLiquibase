@@ -2,33 +2,40 @@ package com.tirocinio.service.Insert;
 
 
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.OperaDAO;
+import com.tirocinio.dao.Interfaces.OperaDAO;
+import com.tirocinio.dao.impl.OperaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.model.Opera;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
  
 
-public class CreateOperaService {
+public class CreateOperaService implements MuseoGenericService {
 
     private final OperaDAO operaDAO;
     
 
     public CreateOperaService() {
-        this.operaDAO = new OperaDAO();
+        this.operaDAO = new OperaDAOimpl();
         
     }
 
-    public int execute(Opera opera) throws  ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws  ServiceException {
         Connection connection = ConnectionManager.getConnection();
-        int ret;
+        Opera ret;
+        Map<Object, Object> output=new HashMap<>();
+
         try 
         {
-            ret=operaDAO.addOpera(connection, opera);            
+            ret=operaDAO.addOpera(connection, (Opera)input.get("opera"));
+            output.put("CreateOpera", ret);            
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -60,4 +67,6 @@ public class CreateOperaService {
         
         
     }
+
+    
 }

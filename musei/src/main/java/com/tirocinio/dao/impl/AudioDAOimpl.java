@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.AudioDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Audio;
 import com.tirocinio.model.Poi;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AudioDAO {
+public class AudioDAOimpl implements AudioDAO {
 
     private static final String SELECT_ALL_AUDIOS = "SELECT * FROM Audio";
     private static final String SELECT_AUDIO_BY_ID = "SELECT * FROM Audio WHERE Cod_Au = ?";
@@ -25,7 +25,7 @@ public class AudioDAO {
     private static final String LASTKEY_AUDIO = "SELECT * FROM Audio WHERE Cod_Au = (SELECT MAX(Cod_Au) FROM Audio)";
 
 
-    private static final Logger logger= LogManager.getLogger(AudioDAO.class);
+    private static final Logger logger= LogManager.getLogger(AudioDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Audio aud=null;
@@ -101,7 +101,7 @@ public class AudioDAO {
         return null;
     }
 
-    public int addAudio(Connection connection, Audio audio) throws DAOException {
+    public Audio addAudio(Connection connection, Audio audio) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUDIO)) {
 
             preparedStatement.setString(1, audio.getUrl());
@@ -109,7 +109,8 @@ public class AudioDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: Aggiunta Audio rowsaffected:"+rowsAffected);
-            return getLastKey(connection);
+            audio.setCodAu(getLastKey(connection));
+            return audio;
             //return rowsAffected > 0;
         }catch (SQLException e) {
             logger.error("SQLError durante l'aggiunta dell'audio con url:"+audio.getUrl()+" ,"+e.getMessage());

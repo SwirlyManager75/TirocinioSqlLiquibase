@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.BiglietteriaDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
 import com.tirocinio.model.Museo;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class BiglietteriaDAO {
+public class BiglietteriaDAOimpl implements BiglietteriaDAO {
 
     private static final String SELECT_ALL_BIGLIETTERIE = "SELECT * FROM Biglietteria";
     private static final String SELECT_BIGLIETTERIA_BY_ID = "SELECT * FROM Biglietteria WHERE Cod_B = ?";
@@ -25,7 +25,7 @@ public class BiglietteriaDAO {
     private static final String LASTKEY_BIGLIETTERIA = "SELECT * FROM BIGLIETTERIA WHERE Cod_B = (SELECT MAX(Cod_B) FROM BIGLIETTEREIA)";
 
 
-    private static final Logger logger= LogManager.getLogger(BiglietteriaDAO.class);
+    private static final Logger logger= LogManager.getLogger(BiglietteriaDAOimpl.class);
 
     //TODO AGGIUNGERE LOGICA PER LEGARE BIGLIETTERIE AD ABBONAMENTI (SI USA LA TABELLA ABBONAMENTI_BIGLIETTERIE)
     
@@ -105,7 +105,7 @@ public class BiglietteriaDAO {
         return null;
     }
 
-    public int addBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
+    public Biglietteria addBiglietteria(Connection connection, Biglietteria biglietteria) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BIGLIETTERIA)) {
 
             preparedStatement.setTime(1, biglietteria.getOraApertura());
@@ -115,7 +115,8 @@ public class BiglietteriaDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta biglietteria , rows:"+rowsAffected);
-            return getLastKey(connection);
+            biglietteria.setCodB(getLastKey(connection));
+            return biglietteria;
             //return rowsAffected > 0;
         }catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());

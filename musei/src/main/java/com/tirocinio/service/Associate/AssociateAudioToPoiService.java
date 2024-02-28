@@ -2,48 +2,57 @@ package com.tirocinio.service.Associate;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.AudioDAO;
-import com.tirocinio.dao.PoiDAO;
+import com.tirocinio.dao.impl.AudioDAOimpl;
+import com.tirocinio.dao.impl.PoiDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Audio;
 import com.tirocinio.model.Poi;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AssociateAudioToPoiService {
+public class AssociateAudioToPoiService implements MuseoGenericService {
 
-    private final AudioDAO audioDAO;
-    private final PoiDAO poiDAO;
+    private final AudioDAOimpl audioDAO;
+    private final PoiDAOimpl poiDAO;
 
     public AssociateAudioToPoiService( ) {
-        this.audioDAO = new AudioDAO();
-        this.poiDAO = new PoiDAO();
+        this.audioDAO = new AudioDAOimpl();
+        this.poiDAO = new PoiDAOimpl();
     }
 
-    public boolean execute(int codAudio, int codPoi) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
         // Cerco il Poi con l'ID fornito
         Connection connection = ConnectionManager.getConnection();
+        Map<Object, Object> output = new HashMap<>();
         boolean ret;
 
         try  {
-
-            Poi poi = poiDAO.getPoiById(connection, codPoi);
-            Audio audio = audioDAO.getAudioById(connection, codAudio);
+            int codAudio=(Integer)input.get("audio");
+            int codPoi=(Integer)input.get("poi");
+            Poi poi = poiDAO.getPoiById(connection, codAudio);
+            Audio audio = audioDAO.getAudioById(connection, codPoi);
+            
 
             if (poi != null && audio != null) {
                
                 // Inserisco l'audio nel database
                  ret=audioDAO.associateWithPoi(connection, audio,poi);
+                 output.put("AssociateAudioToPoi", ret);
                  connection.commit();
-                 return ret;
+                 return output;
                  
             } 
             else 
             {
                 // Poi non trovato
                 System.out.println("Poi o Audio non trovato con ID: " + codPoi + " o "+ codAudio);
-                return false;
+                output.put("AssociateAudioToPoi", false);
+
+                return output;
             }
         }catch (DAOException e) 
         {

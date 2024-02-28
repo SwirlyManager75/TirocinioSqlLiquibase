@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.PoiDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Museo;
 import com.tirocinio.model.Poi;
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class PoiDAO {
+public class PoiDAOimpl implements PoiDAO{
 
     private static final String SELECT_ALL_POIS = "SELECT * FROM Poi";
     private static final String SELECT_POI_BY_ID = "SELECT * FROM Poi WHERE Cod_Poi = ?";
@@ -25,7 +25,7 @@ public class PoiDAO {
     private static final String ASSOC_MUSEO =  "UPDATE Poi SET Cod_E_M = ? WHERE Cod_Poi = ?";
     private static final String GETLAST_POI = "SELECT * FROM Poi WHERE Cod_Poi = (SELECT MAX(Cod_Poi) FROM Poi) ";
     
-    private static final Logger logger= LogManager.getLogger(PoiDAO.class);
+    private static final Logger logger= LogManager.getLogger(PoiDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Poi poi=null;
@@ -154,7 +154,7 @@ public class PoiDAO {
         }
     }
 
-    public int addPoi(Connection connection, Poi poi) throws DAOException {
+    public Poi addPoi(Connection connection, Poi poi) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_POI)) {
 
             preparedStatement.setString(1, poi.getDescrizione());
@@ -162,7 +162,8 @@ public class PoiDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunto poi , rows:"+rowsAffected);
 
-            return getLastKey(connection);
+            poi.setCodPoi(getLastKey(connection));
+            return poi;
         } catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());
             throw new DAOException("Errore durante l'aggiunta del POI", e);

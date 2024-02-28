@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.Abbonamento_BiglietteriaDAO;
+import com.tirocinio.dao.impl.Abbonamento_BiglietteriaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.service.MuseoGenericService;
@@ -22,7 +22,7 @@ public class CreateAbbonamentoToBiglietteriaService implements MuseoGenericServi
 
 //        int ret;
 		try {
-			Abbonamento_BiglietteriaDAO abbBigDAO = new Abbonamento_BiglietteriaDAO();
+			Abbonamento_BiglietteriaDAOimpl abbBigDAO = new Abbonamento_BiglietteriaDAOimpl();
 			// ret =
 			abbBigDAO.addAbbonamentoBiglietteria(connection, id1, id2);
 

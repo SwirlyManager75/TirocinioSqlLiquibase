@@ -1,4 +1,4 @@
-package com.tirocinio.dao;
+package com.tirocinio.dao.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,26 +10,19 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.tirocinio.dao.Interfaces.Abbonamento_BiglietteriaDAO;
 import com.tirocinio.exceptions.DAOException;
+import com.tirocinio.model.Abbonamento;
+import com.tirocinio.model.Biglietteria;
 
-public class Abbonamento_BiglietteriaDAO {
+public class Abbonamento_BiglietteriaDAOimpl implements Abbonamento_BiglietteriaDAO {
 
     Connection connection;
 
     private static final String INSERT_ABBONAMENTO_BIGLIETTERIA = "INSERT INTO Abbonamento_Biglietteria (Cod_E_A, Cod_E_B) VALUES (?, ?)";
     private static final String DELETE_ABBONAMENTO_BIGLIETTERIA = "DELETE FROM Abbonamento_Biglietteria WHERE Cod_AB = ?";
 
-        private static final Logger logger= LogManager.getLogger(Abbonamento_BiglietteriaDAO.class);
-
-    public Abbonamento_BiglietteriaDAO(Connection connection)
-    {
-            this.connection=connection;
-    }
-
-    public Abbonamento_BiglietteriaDAO()
-    {
-
-    }
+    private static final Logger logger= LogManager.getLogger(Abbonamento_BiglietteriaDAOimpl.class);
 
     public boolean addAbbonamentoBiglietteria(Connection connection, int Cod_Ab, int Cod_B) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO_BIGLIETTERIA)) {
@@ -100,8 +93,8 @@ public class Abbonamento_BiglietteriaDAO {
         }
     }
 
-    public Map<Integer, Integer> leggiBiglietteriePerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
-        Map<Integer, Integer> result = new HashMap<>();
+    public Map<Object, Object> leggiBiglietteriePerAbbonamento(Connection connection,int codiceAbbonamento) throws SQLException, DAOException {
+        Map<Object, Object> result = new HashMap<>();
         String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
                        "WHERE ab.Cod_E_A = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -109,9 +102,17 @@ public class Abbonamento_BiglietteriaDAO {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
+                    
                     int codAb = resultSet.getInt("Cod_Abbonamento");
                     int codBi = resultSet.getInt("Cod_Biglietteria");
-                    result.put(codAb, codBi);
+
+                    Biglietteria bigl= new Biglietteria();
+                    Abbonamento abb= new Abbonamento();
+
+                    bigl.setCodB(codBi);
+                    abb.setCodAb(codAb);
+
+                    result.put(abb, bigl);
                 }
             }
             catch (SQLException e) {
@@ -144,8 +145,8 @@ public class Abbonamento_BiglietteriaDAO {
         return result;
     }
 
-    public Map<Integer, Integer> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceBiglietteria) throws SQLException, DAOException {
-        Map<Integer, Integer> result = new HashMap<>();
+    public Map<Object, Object> leggiAbbonamentiPerBiglietteria(Connection connection,int codiceBiglietteria) throws SQLException, DAOException {
+        Map<Object, Object> result = new HashMap<>();
         String query = "SELECT ab.Cod_Abbonamento, ab.Cod_Biglietteria FROM Abbonamento_Biglietteria ab " +
                        "WHERE ab.Cod_E_B = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -155,7 +156,14 @@ public class Abbonamento_BiglietteriaDAO {
                 while (resultSet.next()) {
                     int codAb = resultSet.getInt("Cod_Abbonamento");
                     int codBi = resultSet.getInt("Cod_Biglietteria");
-                    result.put(codAb, codBi);
+
+                    Biglietteria bigl= new Biglietteria();
+                    Abbonamento abb= new Abbonamento();
+
+                    bigl.setCodB(codBi);
+                    abb.setCodAb(codAb);
+
+                    result.put(bigl, abb);
                 }
             }
             catch (SQLException e) {
@@ -189,15 +197,22 @@ public class Abbonamento_BiglietteriaDAO {
         return result;
     }
 
-    public Map<Integer, Integer> getAllAbbonementiBiglietterie(Connection connection) throws SQLException, DAOException {
-        Map<Integer, Integer> result = new HashMap<>();
+    public Map<Object, Object> getAllAbbonementiBiglietterie(Connection connection) throws SQLException, DAOException {
+        Map<Object, Object> result = new HashMap<>();
         String query = "SELECT Cod_Abbonamento, Cod_Biglietteria FROM Abbonamento_Biglietteria";
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 int codiceAbbonamento = resultSet.getInt("Cod_Abbonamento");
                 int codiceBiglietteria = resultSet.getInt("Cod_Biglietteria");
-                result.put(codiceAbbonamento, codiceBiglietteria);
+
+                Biglietteria bigl= new Biglietteria();
+                Abbonamento abb= new Abbonamento();
+
+                bigl.setCodB(codiceBiglietteria);
+                abb.setCodAb(codiceAbbonamento);
+
+                result.put(abb, bigl);
             }
         }
         catch (SQLException e) {

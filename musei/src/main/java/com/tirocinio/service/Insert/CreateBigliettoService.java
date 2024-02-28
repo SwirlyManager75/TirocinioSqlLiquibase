@@ -2,31 +2,38 @@ package com.tirocinio.service.Insert;
 
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.BigliettoDAO;
+import com.tirocinio.dao.Interfaces.BigliettoDAO;
+import com.tirocinio.dao.impl.BigliettoDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietto;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CreateBigliettoService {
+public class CreateBigliettoService implements MuseoGenericService {
 
     private final BigliettoDAO bigliettoDAO;
 
     public CreateBigliettoService( ) {
-        this.bigliettoDAO = new BigliettoDAO();
+        this.bigliettoDAO = new BigliettoDAOimpl();
         
     }
 
-    public int execute(Biglietto biglietto) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
-        int ret;
+        Biglietto ret;
+        Map<Object, Object> output=new HashMap<>();
+
         try 
         {
-            ret=bigliettoDAO.addBiglietto(connection, biglietto);            
+            ret=bigliettoDAO.addBiglietto(connection, (Biglietto)input.get("biglietto"));  
+            output.put("CreateBiglietto", ret);          
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -57,4 +64,6 @@ public class CreateBigliettoService {
         }
                 
     }
+
+    
 }

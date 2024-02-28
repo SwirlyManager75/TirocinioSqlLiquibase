@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.AbbonamentoDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Abbonamento;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AbbonamentoDAO {
+public class AbbonamentoDAOimpl implements AbbonamentoDAO {
 
     private static final String SELECT_ALL_ABBONAMENTI = "SELECT * FROM Abbonamento";
     private static final String SELECT_ABBONAMENTO_BY_ID = "SELECT * FROM Abbonamento WHERE Cod_Ab = ?";
@@ -22,7 +22,7 @@ public class AbbonamentoDAO {
     private static final String DELETE_ABBONAMENTO = "DELETE FROM Abbonamento WHERE Cod_Ab = ?";
     private static final String LASTKEY_ABBONAMENTO = "SELECT * FROM Abbonamento WHERE Cod_Ab = (SELECT MAX(Cod_Ab) FROM Abbonamento)";
 
-    private static final Logger logger= LogManager.getLogger(AbbonamentoDAO.class);
+    private static final Logger logger= LogManager.getLogger(AbbonamentoDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Abbonamento abb=null;
@@ -97,7 +97,7 @@ public class AbbonamentoDAO {
         return null;
     }
 
-    public int addAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
+    public Abbonamento addAbbonamento(Connection connection, Abbonamento abbonamento) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ABBONAMENTO)) {
 
             preparedStatement.setString(1, convertTipoToDatabase(abbonamento.getTipo()));
@@ -107,7 +107,8 @@ public class AbbonamentoDAO {
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: inserito abbonamento , rows:"+rowsAffected);
 
-            return getLastKey(connection);
+            abbonamento.setCodAb(getLastKey(connection));
+            return abbonamento;
             
         }catch (SQLException e) {
             logger.error("SqlError");

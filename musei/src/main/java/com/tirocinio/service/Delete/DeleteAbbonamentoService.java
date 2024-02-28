@@ -1,33 +1,39 @@
 package com.tirocinio.service.Delete;
 
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.AbbonamentoDAO;
+import com.tirocinio.dao.impl.AbbonamentoDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeleteAbbonamentoService {
+public class DeleteAbbonamentoService implements MuseoGenericService {
 
-    private final AbbonamentoDAO abbonamentoDAO;
+    private final AbbonamentoDAOimpl abbonamentoDAO;
     
 
     public DeleteAbbonamentoService( ) {
-        this.abbonamentoDAO = new AbbonamentoDAO();
+        this.abbonamentoDAO = new AbbonamentoDAOimpl();
         
     }
 
-    public boolean execute(int abbonamentoId) throws  ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws  ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
-            ret=abbonamentoDAO.deleteAbbonamento(connection, abbonamentoId);           
+            ret=abbonamentoDAO.deleteAbbonamento(connection, (Integer)input.get("abbonamento")); 
+            output.put("DeleteAbbonamento", ret);    
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             

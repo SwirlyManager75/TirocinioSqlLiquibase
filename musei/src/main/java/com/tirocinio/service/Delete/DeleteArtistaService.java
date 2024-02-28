@@ -1,31 +1,40 @@
 package com.tirocinio.service.Delete;
 
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.ArtistaDAO;
+import com.tirocinio.dao.Interfaces.ArtistaDAO;
+import com.tirocinio.dao.impl.ArtistaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeleteArtistaService {
+public class DeleteArtistaService implements MuseoGenericService {
 
     private final ArtistaDAO artistaDAO;
     
     public DeleteArtistaService( ) {
-        this.artistaDAO = new ArtistaDAO();
+        this.artistaDAO = new ArtistaDAOimpl();
     }
 
-    public boolean execute(int artistaId) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
-            ret=artistaDAO.deleteArtista(connection, artistaId);           
+            int codArtista= (Integer)input.get("artista");
+            ret=artistaDAO.deleteArtista(connection, codArtista); 
+            output.put("DeleteArtista", ret);          
             connection.commit();
-            return ret;
+
+            return output;
         }catch (DAOException e) 
         {
             
@@ -56,4 +65,6 @@ public class DeleteArtistaService {
         }
          
     }
+
+    
 }

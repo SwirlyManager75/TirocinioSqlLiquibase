@@ -1,33 +1,42 @@
 package com.tirocinio.service.Delete;
 
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.DipendenteDAO;
+import com.tirocinio.dao.Interfaces.DipendenteDAO;
+import com.tirocinio.dao.impl.DipendenteDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeleteDipendenteService {
+public class DeleteDipendenteService implements MuseoGenericService {
 
     private final DipendenteDAO dipendenteDAO;
     
 
     public DeleteDipendenteService() {
-        this.dipendenteDAO = new DipendenteDAO();
+        this.dipendenteDAO = new DipendenteDAOimpl();
         
     }
 
-    public boolean execute(int dipendenteId) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
-            ret=dipendenteDAO.deleteDipendente(connection, dipendenteId);           
+            int dipendenteId= (Integer)input.get("dipendente");
+            ret=dipendenteDAO.deleteDipendente(connection, dipendenteId);   
+            output.put("DeleteDipendente", ret);     
+        
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -59,4 +68,6 @@ public class DeleteDipendenteService {
         
          
     }
+
+   
 }

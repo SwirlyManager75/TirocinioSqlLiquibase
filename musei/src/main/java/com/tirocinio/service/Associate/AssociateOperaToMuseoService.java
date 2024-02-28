@@ -1,46 +1,57 @@
 package com.tirocinio.service.Associate;
 
-import com.tirocinio.dao.OperaDAO;
+import com.tirocinio.dao.impl.OperaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.exceptions.ServiceException;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.ArtistaDAO;
+import com.tirocinio.dao.impl.MuseoDAOimpl;
 import com.tirocinio.model.Opera;
-import com.tirocinio.model.Artista;
+import com.tirocinio.service.MuseoGenericService;
+import com.tirocinio.model.Museo;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AssociateOperaToMuseoService {
+public class AssociateOperaToMuseoService implements MuseoGenericService {
 
-    private final OperaDAO operaDAO;
-    private final ArtistaDAO artistaDAO;
+    private final OperaDAOimpl operaDAO;
+    private final MuseoDAOimpl museoDAO;
 
-    public AssociateOperaToMuseoService() {
-        this.operaDAO = new OperaDAO();
-        this.artistaDAO= new ArtistaDAO();
+    public AssociateOperaToMuseoService( ) {
+        this.operaDAO = new OperaDAOimpl();
+        this.museoDAO = new MuseoDAOimpl();
     }
 
-    public boolean execute(int codOp,int codAr) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try  {
 
-            Opera opera = operaDAO.getOperaById(connection, codOp);
-            Artista artista = artistaDAO.getArtistaById(connection, codAr);
+            int codMuseo=(Integer)input.get("museo");
+            int codOpera= (Integer)input.get("opera");
 
-            if (artista != null && opera != null) {
+            Museo museo = museoDAO.getMuseumById(connection, codMuseo);
+            Opera opera = operaDAO.getOperaById(connection, codOpera);
 
+            if (museo != null && opera !=null) {
+               
                 // Inserisci l'Opera nel database
-                ret=operaDAO.associateWithArtist(connection, opera,artista);
+                ret=operaDAO.associateWithMuseo(connection, opera,museo);
+                output.put("AssociateOperaToMuseo", ret);
                  connection.commit();
-                return ret;
+                return output;
 
             } else {
                 // Museo non trovato, gestisci la situazione di conseguenza
-                System.out.println("Artista o Opera non trovato con codice: " + codAr+" o "+codOp);
-                return false;
+                System.out.println("Museo non trovato con codice: " + codMuseo);
+                output.put("AssociateOperaToMuseo", false);
+
+                return output;
             }
         }catch (DAOException e) 
         {

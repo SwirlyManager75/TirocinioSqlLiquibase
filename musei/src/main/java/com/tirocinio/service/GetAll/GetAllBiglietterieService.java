@@ -1,25 +1,33 @@
 package com.tirocinio.service.GetAll;
 
 import com.tirocinio.exceptions.ServiceException;
-import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.BiglietteriaDAO;
-import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Biglietteria;
+import com.tirocinio.connection.ConnectionManager;
+import com.tirocinio.dao.Interfaces.BiglietteriaDAO;
+import com.tirocinio.dao.impl.BiglietteriaDAOimpl;
+import com.tirocinio.exceptions.DAOException;
+import com.tirocinio.service.MuseoGenericService;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class GetAllBiglietterieService {
+public class GetAllBiglietterieService implements MuseoGenericService {
 
     private final BiglietteriaDAO biglietteriaDAO;
 
     public GetAllBiglietterieService( ) {
-        this.biglietteriaDAO = new BiglietteriaDAO();
+        this.biglietteriaDAO = new BiglietteriaDAOimpl();
     }
 
-    public List<Biglietteria> execute() throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
+        Map<Object, Object> output = new HashMap<>();
+
         try (Connection connection = ConnectionManager.getConnection()) {
-            return biglietteriaDAO.getAllBiglietterie(connection);
+            List<Biglietteria> list = biglietteriaDAO.getAllBiglietterie(connection);
+            output.put("GetAllBiglietterie", list);
+            return output;
         }catch (DAOException e) 
         {
             throw new ServiceException(e);
@@ -29,4 +37,6 @@ public class GetAllBiglietterieService {
             throw new ServiceException("Errore generico durante la execute di ",e);
         }
     }
+
+    
 }

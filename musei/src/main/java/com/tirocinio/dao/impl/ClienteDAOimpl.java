@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.ClienteDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 import com.tirocinio.model.Cliente;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ClienteDAO {
+public class ClienteDAOimpl implements ClienteDAO {
 
     private static final String SELECT_ALL_CLIENTI = "SELECT * FROM Cliente";
     private static final String SELECT_CLIENTE_BY_ID = "SELECT * FROM Cliente WHERE Cod_Cli = ?";
@@ -25,7 +25,7 @@ public class ClienteDAO {
     private static final String LASTKEY_CLIENTE = "SELECT * FROM Abbonamento WHERE Cod_Cli = (SELECT MAX(Cod_Cli) FROM Abbonamento)";
 
 
-    private static final Logger logger= LogManager.getLogger(ClienteDAO.class);
+    private static final Logger logger= LogManager.getLogger(ClienteDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Cliente cli=null;
@@ -99,7 +99,7 @@ public class ClienteDAO {
         return null;
     }
 
-    public int addCliente(Connection connection, Cliente cliente) throws DAOException {
+    public Cliente addCliente(Connection connection, Cliente cliente) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CLIENTE)) {
             //TODO PRENDERE LA CHIAVE PRIMA DI INSERIRE CON MAX+1
             preparedStatement.setString(1, cliente.getNome());
@@ -110,7 +110,8 @@ public class ClienteDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta del cliente , rows:"+rowsAffected);
-            return getLastKey(connection);
+            cliente.setCodCli(getLastKey(connection));
+            return cliente;
             //return rowsAffected > 0;
         }  catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());

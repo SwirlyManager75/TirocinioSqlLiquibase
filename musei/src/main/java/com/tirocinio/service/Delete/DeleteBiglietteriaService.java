@@ -1,33 +1,42 @@
 package com.tirocinio.service.Delete;
 
 import com.tirocinio.exceptions.ServiceException;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.connection.ConnectionManager;
-import com.tirocinio.dao.BiglietteriaDAO;
+import com.tirocinio.dao.Interfaces.BiglietteriaDAO;
+import com.tirocinio.dao.impl.BiglietteriaDAOimpl;
 import com.tirocinio.exceptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeleteBiglietteriaService {
+public class DeleteBiglietteriaService implements MuseoGenericService {
 
     private final BiglietteriaDAO biglietteriaDAO;
     
 
     public DeleteBiglietteriaService( ) {
-        this.biglietteriaDAO = new BiglietteriaDAO();
+        this.biglietteriaDAO = new BiglietteriaDAOimpl();
        
     }
 
-    public boolean execute(int biglietteriaId) throws ServiceException {
+    public Map<Object, Object> execute(Map<Object, Object> input) throws ServiceException {
 
         Connection connection = ConnectionManager.getConnection();
         boolean ret;
+        Map<Object, Object> output = new HashMap<>();
+
 
         try 
         {
-            ret=biglietteriaDAO.deleteBiglietteria(connection, biglietteriaId);            
+            int biglietteriaId = (Integer)input.get("biglietteria");
+            ret=biglietteriaDAO.deleteBiglietteria(connection, biglietteriaId); 
+            output.put("DeleteBiglietteria", ret);     
+          
             connection.commit();
-            return ret;
+            return output;
         }catch (DAOException e) 
         {
             
@@ -59,4 +68,6 @@ public class DeleteBiglietteriaService {
         
          
     }
+
+    
 }

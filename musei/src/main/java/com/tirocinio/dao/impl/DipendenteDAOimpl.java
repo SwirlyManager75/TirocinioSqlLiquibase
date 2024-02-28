@@ -1,5 +1,5 @@
-package com.tirocinio.dao;
-
+package com.tirocinio.dao.impl;
+import com.tirocinio.dao.Interfaces.DipendenteDAO;
 import com.tirocinio.exceptions.DAOException;
 import com.tirocinio.model.Citta;
 import com.tirocinio.model.Dipendente;
@@ -15,7 +15,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DipendenteDAO {
+public class DipendenteDAOimpl implements DipendenteDAO {
 
     private static final String SELECT_ALL_DIPENDENTI = "SELECT * FROM Dipendente";
     private static final String SELECT_DIPENDENTE_BY_ID = "SELECT * FROM Dipendente WHERE Cod_D = ?";
@@ -27,7 +27,7 @@ public class DipendenteDAO {
     private static final String LASTKEY_DIPEDENTE = "SELECT * FROM Abbonamento WHERE Cod_D = (SELECT MAX(Cod_D) FROM Abbonamento)";
 
 
-    private static final Logger logger= LogManager.getLogger(DipendenteDAO.class);
+    private static final Logger logger= LogManager.getLogger(DipendenteDAOimpl.class);
 
     public int getLastKey(Connection connection) throws DAOException{
         Dipendente dip=null;
@@ -101,7 +101,7 @@ public class DipendenteDAO {
         return null;
     }
 
-    public int addDipendente(Connection connection, Dipendente dipendente) throws DAOException {
+    public Dipendente addDipendente(Connection connection, Dipendente dipendente) throws DAOException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DIPENDENTE)) {
 
             preparedStatement.setString(1, dipendente.getNome());
@@ -112,7 +112,8 @@ public class DipendenteDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             logger.info("SUCCESS: aggiunta dipendente , rows:"+rowsAffected);
-            return getLastKey(connection);
+            dipendente.setCodD(getLastKey(connection));
+            return dipendente;
             //return rowsAffected > 0;
         }  catch (SQLException e) {
             logger.error("SqlError "+e.getMessage());
