@@ -28,6 +28,7 @@ import com.tirocinio.model.Dipendente;
 import com.tirocinio.model.Museo;
 import com.tirocinio.model.Opera;
 import com.tirocinio.model.Poi;
+import com.tirocinio.service.MuseoGenericService;
 import com.tirocinio.service.Delete.DeleteAbbonamentoBiglietterieService;
 import com.tirocinio.service.Delete.DeleteAbbonamentoService;
 import com.tirocinio.service.Delete.DeleteArtistaService;
@@ -109,22 +110,108 @@ public class Main
 {
     private static Map<String,String> serviceMap = new HashMap<>();
 
+    private static Map<Object, Object> callService(String serviceName, Map<Object, Object> myInput) throws ServiceException 
+    {
+		Map<Object, Object> myOutput = new HashMap<>();
+		try {
+			Class clazz = Class.forName(serviceMap.get(serviceName));
+			MuseoGenericService myService = (MuseoGenericService) clazz.newInstance();
+			myOutput = myService.execute(myInput);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+        
+		return myOutput;
+	}
+
     private static void initServiceMap() {
 		serviceMap.put("DeleteAbbonamentoService","com.tirocinio.service.Delete.DeleteAbbonamentoService");
 		serviceMap.put("DeleteAbbonanentoBiglietterieService", "com.tirocinio.service.Delete.DeleteAbbonamentoBiglietterieService");
         serviceMap.put("DeleteArtistaService", "com.tirocinio.service.Delete.DeleteArtistaService");
-
-		// serviceMap.put("ABBONAMENTO_BIGLIETTERIA_SERVICE_DELETE",
-		// "com.tirocinio.service....");
-		// serviceMap.put("ABBONAMENTO_BIGLIETTERIA_SERVICE_SEARCH",
-		// "com.tirocinio.service....");
+        serviceMap.put("DeleteAudioService", "com.tirocinio.service.Delete.DeleteAudioService");
+        serviceMap.put("DeleteBiglietteriaService", "com.tirocinio.service.Delete.DeleteBiglietteriaService");
+        serviceMap.put("DeleteBigliettoService", "com.tirocinio.service.Delete.DeleteBigliettoService");
+        serviceMap.put("DeleteCityService", "com.tirocinio.service.Delete.DeleteCityService");
+        serviceMap.put("DeleteClienteAbbonamentoService", "com.tirocinio.service.Delete.DeleteClienteAbbonamentoService");
+        serviceMap.put("DeleteClienteService", "com.tirocinio.service.Delete.DeleteClienteService");
+        serviceMap.put("DeleteDipendenteService", "com.tirocinio.service.Delete.DeleteDipendenteService");
+        serviceMap.put("DeleteMuseumService", "com.tirocinio.service.Delete.DeleteMuseumService");
+        serviceMap.put("DeleteOperaService", "com.tirocinio.service.Delete.DeleteOperaService");
+        serviceMap.put("DeletePoiService", "com.tirocinio.service.Delete.DeletePoiService");
+        serviceMap.put("GetAllAbbonamentiService", "com.tirocinio.service.GetAll.GetAllAbbonamentiService");
+        serviceMap.put("GetAllArtistiService", "com.tirocinio.service.GetAll.GetAllArtistiService");
+        serviceMap.put("GetAllAudiosService", "com.tirocinio.service.GetAll.GetAllAudiosService");
+        serviceMap.put("GetAllBiglietterieService", "com.tirocinio.service.GetAll.GetAllBiglietterieService");
+        serviceMap.put("GetAllBigliettiService", "com.tirocinio.service.GetAll.GetAllBigliettiService");
+        serviceMap.put("GetAllCitiesService", "com.tirocinio.service.GetAll.GetAllCitiesService");
+        serviceMap.put("GetAllClientiService", "com.tirocinio.service.GetAll.GetAllClientiService");
+        serviceMap.put("GetAllDipendentiService", "com.tirocinio.service.GetAll.GetAllDipendentiService");
+        serviceMap.put("GetAllMuseumService", "com.tirocinio.service.GetAll.GetAllMuseumService");
+        serviceMap.put("GetAllOpereService", "com.tirocinio.service.GetAll.GetAllOpereService");
+        serviceMap.put("GetAllPoisService", "com.tirocinio.service.GetAll.GetAllPoisService");
+        serviceMap.put("GetByIdAbbonamentoService", "com.tirocinio.service.GetById.GetByIdAbbonamentoService");
+        serviceMap.put("GetByIdArtistiService", "com.tirocinio.service.GetById.GetByIdArtistiService");
+        serviceMap.put("GetByIdAudiosService", "com.tirocinio.service.GetById.GetByIdAudiosService");
+        serviceMap.put("GetByIdBiglietterieService", "com.tirocinio.service.GetById.GetByIdBiglietterieService");
+        serviceMap.put("GetByIdCityService", "com.tirocinio.service.GetById.GetByIdCityService");
+        serviceMap.put("GetByIdClienteService", "com.tirocinio.service.GetById.GetByIdClienteService");
+        serviceMap.put("GetByIdMuseoService", "com.tirocinio.service.GetById.GetByIdMuseoService");
+        serviceMap.put("GetByIdOperaService", "com.tirocinio.service.GetById.GetByIdOperaService");
+        serviceMap.put("GetByIdPoiService", "com.tirocinio.service.GetById.GetByIdPoiService");
+        serviceMap.put("CreateAbbonamentoService", "com.tirocinio.service.Create.CreateAbbonamentoService");
+        serviceMap.put("CreateAbbonamentoToBiglietteriaService", "com.tirocinio.service.Create.CreateAbbonamentoToBiglietteriaService");
+        serviceMap.put("CreateArtistaService", "com.tirocinio.service.Create.CreateArtistaService");
+        serviceMap.put("CreateAudioService", "com.tirocinio.service.Create.CreateAudioService");
+        serviceMap.put("CreateBiglietteriaService", "com.tirocinio.service.Create.CreateBiglietteriaService");
+        serviceMap.put("CreateBigliettoService", "com.tirocinio.service.Create.CreateBigliettoService");
+        serviceMap.put("CreateCityService", "com.tirocinio.service.Create.CreateCityService");
+        serviceMap.put("CreateClienteService", "com.tirocinio.service.Create.CreateClienteService");
+        serviceMap.put("CreateClienteToAbbonamentoService", "com.tirocinio.service.Create.CreateClienteToAbbonamentoService");
+        serviceMap.put("CreateMuseumService", "com.tirocinio.service.Create.CreateMuseumService");
+        serviceMap.put("CreateOperaService", "com.tirocinio.service.Create.CreateOperaService");
+        serviceMap.put("CreatePoiService", "com.tirocinio.service.Create.CreatePoiService");
+        serviceMap.put("SearchAbbonamentiForBiglietteriaService", "com.tirocinio.service.Search.SearchAbbonamentiForBiglietteriaService");
+        serviceMap.put("SearchAbbonamentiForClienteService", "com.tirocinio.service.Search.SearchAbbonamentiForClienteService");
+        serviceMap.put("SearchAbbonamentoService", "com.tirocinio.service.Search.SearchAbbonamentoService");
+        serviceMap.put("SearchArtistaService", "com.tirocinio.service.Search.SearchArtistaService");
+        serviceMap.put("SearchAudioService", "com.tirocinio.service.Search.SearchAudioService");
+        serviceMap.put("SearchBiglietteriaService", "com.tirocinio.service.Search.SearchBiglietteriaService");
+        serviceMap.put("SearchBiglietterieForAbbonamentoService", "com.tirocinio.service.Search.SearchBiglietterieForAbbonamentoService");
+        serviceMap.put("SearchBigliettoService", "com.tirocinio.service.Search.SearchBigliettoService");
+        serviceMap.put("SearchCityService", "com.tirocinio.service.Search.SearchCityService");
+        serviceMap.put("SearchClienteService", "com.tirocinio.service.Search.SearchClienteService");
+        serviceMap.put("SearchClienteForAbbonamentoService", "com.tirocinio.service.Search.SearchClienteForAbbonamentoService");
+        serviceMap.put("SearchDipendenteService", "com.tirocinio.service.Search.SearchDipendenteService");
+        serviceMap.put("SearchMuseumService", "com.tirocinio.service.Search.SearchMuseumService");
+        serviceMap.put("SearchOperaService", "com.tirocinio.service.Search.SearchOperaService");
+        serviceMap.put("SearchPoiService", "com.tirocinio.service.Search.SearchPoiService");
+        serviceMap.put("UpdateAbbonamentoBiglietterieService", "com.tirocinio.service.Update.UpdateAbbonamentoBiglietterieService");
+        serviceMap.put("UpdateAbbonamentoForClienteService", "com.tirocinio.service.Update.UpdateAbbonamentoForClienteService");
+        serviceMap.put("UpdateAbbonamentoService", "com.tirocinio.service.Update.UpdateAbbonamentoService");
+        serviceMap.put("UpdateArtistaService", "com.tirocinio.service.Update.UpdateArtistaService");
+        serviceMap.put("UpdateAudioService", "com.tirocinio.service.Update.UpdateAudioService");
+        serviceMap.put("UpdateBiglietteriaService", "com.tirocinio.service.Update.UpdateBiglietteriaService");
+        serviceMap.put("UpdateBigliettoService", "com.tirocinio.service.Update.UpdateBigliettoService");
+        serviceMap.put("UpdateCityService", "com.tirocinio.service.Update.UpdateCityService");
+        serviceMap.put("UpdateClienteService", "com.tirocinio.service.Update.UpdateClienteService");
+        serviceMap.put("UpdateDipendenteService", "com.tirocinio.service.Update.UpdateDipendenteService");
+        serviceMap.put("UpdateMuseoService", "com.tirocinio.service.Update.UpdateMuseoService");
+        serviceMap.put("UpdateDipendenteService", "com.tirocinio.service.Update.UpdateDipendenteService");
+        serviceMap.put("UpdateMuseumService", "com.tirocinio.service.Update.UpdateMuseumService");
+        serviceMap.put("UpdateOperaService", "com.tirocinio.service.Update.UpdateOperaService");
+        serviceMap.put("UpdatePoiService", "com.tirocinio.service.Update.UpdatePoiService");
 	}
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException 
     {
-        //TODO GESTIRE LE EXCEPTION, INTEGRARE GESTIONE LOG4J 
         //Inizializzo la connessione
         System.out.println(System.getProperty("user.dir"));
+
         Logger logger=LogManager.getLogger(Main.class);
+
         Connection connection=null;
         try
         {
