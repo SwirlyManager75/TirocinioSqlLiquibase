@@ -278,11 +278,9 @@ public class Main
                                         System.out.println("Inserisci la URL dell'audio");
                                         audio.setUrl(in.readLine());
 
-                                        CreateAudioService cr= new CreateAudioService();
-
                                         try {
-                                            cr.execute(audio);
-                                        } catch ( ServiceException e) {
+                                            myOutput=callService("CreateAudioService", myInput);
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
@@ -296,13 +294,13 @@ public class Main
                                         System.out.println("Inserisci il codice dell'audio per la ricerca");
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
-                                        UpdateAudioService up= new UpdateAudioService();
                                         try {
-                                            up.execute(audio);
-                                        } catch ( ServiceException e) {
+                                            myOutput=callService("UpdateAudioService", myInput);
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
+
 
                                     break;
 
@@ -311,54 +309,54 @@ public class Main
                                         System.out.println("Inserisci il codice dell'audio per la cancellazione");
                                         audio.setCodAu(Integer.parseInt(in.readLine()));
 
-                                        DeleteAudioService dl= new DeleteAudioService();
                                         try {
-                                            dl.execute(audio.getCodAu());
-                                        } catch ( ServiceException e) {
-                                            // TODO Auto-generated catch block
-                                            e.printStackTrace();
-                                        }
-
-                                    break;
-
-                                    case 4:
-                                        System.out.println("Inserisci il codice dell'audio per la ricerca");
-                                        audio.setCodAu(Integer.parseInt(in.readLine()));
-
-                                        try {
-                                            GetByIdAudiosService audiosService = new GetByIdAudiosService();
-                                            audiosService.execute(audio.getCodAu());
+                                            myOutput=callService("DeleteAudioService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
+
+
+                                    break;
+
+                                    case 4:
+
+                                        System.out.println("Inserisci il codice dell'audio per la ricerca");
+                                        audio.setCodAu(Integer.parseInt(in.readLine()));
+
+                                        try {
+                                            myOutput=callService("GetByIdAudioService", myInput);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+
 
                                         System.out.println("Audio.URL: " + audio.getUrl());
                                     break;
 
                                     case 5:
-                                        GetAllAudiosService allAudiosService = new GetAllAudiosService();
-                                        
+
                                         try {
-                                            audioList=allAudiosService.execute();
+                                            myOutput=callService("GetAllAudioService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
 
+
                                         for(Audio aud : audioList)
                                         {
                                             System.out.println("Audio.Cod_Au:"+aud.getCodAu()+"  Audio.Url:"+aud.getUrl());
                                         }
+
                                     break;
 
                                     case 6:
                                         SearchAudioService searchAudioService = new SearchAudioService();
                                         
-                                        System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la URL)");
-                                        audio.setUrl(in.readLine());
                                         try {
-                                            audioList= searchAudioService.execute(audio);
+                                            myOutput=callService("SearchAudioService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -400,14 +398,13 @@ public class Main
                                         System.out.println("Inserisci la descriozione dell'POI");
                                         poi.setDescrizione(in.readLine());
 
-                                        CreatePoiService createPoiService = new CreatePoiService();
-
                                         try {
-                                            createPoiService.execute(poi);
-                                        } catch ( ServiceException e) {
+                                            myOutput=callService("CreatePoiService", myInput);
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
+
                                     break;
 
                                     case 2:
@@ -416,10 +413,9 @@ public class Main
                                         System.out.println("Inserisci il codice del POI per la ricerca");
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
-                                        UpdatePoiService updatePoiService = new UpdatePoiService();
-                                        try {
-                                            updatePoiService.execute(poi);
-                                        } catch ( ServiceException e) {
+                                         try {
+                                            myOutput=callService("UpdatePoiService", myInput);
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
@@ -429,10 +425,9 @@ public class Main
                                         System.out.println("Inserisci il codice del POI per la cancellazione");
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
-                                        DeletePoiService deletePoiService = new DeletePoiService();
                                         try {
-                                            deletePoiService.execute(poi.getCodPoi());
-                                        } catch ( ServiceException e) {
+                                            myOutput=callService("DeletePoiService", myInput);
+                                        } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
@@ -443,8 +438,7 @@ public class Main
                                         poi.setCodPoi(Integer.parseInt(in.readLine()));
 
                                         try {
-                                            GetByIdPoiService getByIdPoiService= new GetByIdPoiService();
-                                            getByIdPoiService.execute(poi.getCodPoi());
+                                            myOutput=callService("GetByIdPoiService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -452,10 +446,8 @@ public class Main
                                     break;
 
                                     case 5:
-                                        GetAllPoisService getAllPoisService = new GetAllPoisService();
-
                                         try {
-                                            poiList = getAllPoisService.execute();
+                                            myOutput=callService("GetAllPoiService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -475,7 +467,7 @@ public class Main
                                         poi.setDescrizione(in.readLine());
 
                                         try {
-                                            poiList= searchPoiService.execute(poi);
+                                            myOutput=callService("SearchPoiService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -518,9 +510,8 @@ public class Main
                                         System.out.println("Inserisci la via del Museo se ne sei a conoscenza");
                                         museo.setVia(in.readLine());
 
-                                        CreateMuseumService createMuseumService = new CreateMuseumService();
                                         try {
-                                            createMuseumService.execute(museo);
+                                            myOutput=callService("CreateMuseumService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -533,9 +524,8 @@ public class Main
                                         System.out.println("Inserisci la via sostituitiva del Museo se ne sei a conoscenza");
                                         museo.setVia(in.readLine());
 
-                                        UpdateMuseumService updateMuseumService = new UpdateMuseumService();
                                         try {
-                                            updateMuseumService.execute(museo);
+                                            myOutput=callService("UpdateMuseumService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -546,9 +536,8 @@ public class Main
                                         System.out.println("Inserisci il codice del Museo per la cancellazione");
                                         museo.setCodM(Integer.parseInt(in.readLine()));
 
-                                        DeleteMuseumService deleteMuseumService = new DeleteMuseumService();
                                         try {
-                                            deleteMuseumService.execute(museo.getCodM());
+                                            myOutput=callService("DeleteMuseumService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -560,20 +549,18 @@ public class Main
                                         museo.setCodM(Integer.parseInt(in.readLine()));
 
                                         try {
-                                            GetByIdMuseoService getByIdMuseoService = new GetByIdMuseoService();
-                                            getByIdMuseoService.execute(museo.getCodM());
+                                            myOutput=callService("GetByIdMuseumService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
+                                        
                                         System.out.println("Museo.CodM:" + museo.getCodM()+"Museo.Nome:"+museo.getNome()+"Museo.Via:"+museo.getVia());
                                     break;
 
                                     case 5:
-                                        GetAllMuseumsService getAllMuseumsService = new GetAllMuseumsService();
-
                                         try {
-                                            museoList = getAllMuseumsService.execute();
+                                            myOutput=callService("GetAllMuseumService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -587,14 +574,8 @@ public class Main
                                     break;
 
                                     case 6:
-                                        SearchMuseumService searchMuseumService = new SearchMuseumService();
-                                        System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro il Nome)");
-                                        museo.setNome(in.readLine());
-                                        System.out.println("Inserisci la stringa che funge da criterio (si cerca l'occorrenza della stringa dentro la Via)");
-                                        museo.setVia(in.readLine());
-
                                         try {
-                                            museoList = searchMuseumService.execute(museo);
+                                            myOutput=callService("SearchMuseumService", myInput);
                                         } catch (ServiceException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
@@ -637,9 +618,8 @@ public class Main
                                             System.out.println("Inserisci true se la citta è una provincia");
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine())); //inserire true nella stringa
     
-                                            CreateCityService createCityService = new CreateCityService();
                                             try {
-                                                createCityService.execute(citta);
+                                                myOutput=callService("CreateCityService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -652,9 +632,8 @@ public class Main
                                             System.out.println("Inserisci true se la Città è una provincia");
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine())); //inserire true nella stringa
 
-                                            UpdateCityService updateCityService = new UpdateCityService();
                                             try {
-                                                updateCityService.execute(citta);
+                                                myOutput=callService("UpdateCityService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -665,9 +644,8 @@ public class Main
                                             System.out.println("Inserisci il codice della Città per la cancellazione");
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
-                                            DeleteCityService deleteCityService = new DeleteCityService();
                                             try {
-                                                deleteCityService.execute(citta.getCodCi());
+                                                myOutput=callService("DeleteCityService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -679,20 +657,17 @@ public class Main
                                             citta.setCodCi(Integer.parseInt(in.readLine()));
     
                                             try {
-                                                GetByIdCityService getByIdCityService = new GetByIdCityService();
-                                                getByIdCityService.execute(citta.getCodCi());
+                                                myOutput=callService("GetByIdCityService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
-                                            } //TODO CREARE SERVICE
+                                            }
                                             System.out.println("Citta.CodCi:" + citta.getCodCi()+"Citta.Nome:"+citta.getNome()+"Citta.Provincia:"+citta.isProvincia());
                                         break;
     
                                         case 5:
-                                            GetAllCitiesService getAllCitiesService = new GetAllCitiesService();
-    
                                             try {
-                                                cittaList = getAllCitiesService.execute();
+                                                myOutput=callService("GetAllCityService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -714,7 +689,7 @@ public class Main
                                             citta.setProvincia(Boolean.parseBoolean(in.readLine()));
     
                                             try {
-                                                cittaList = searchCityService.execute(citta);
+                                                myOutput=callService("SearchCityService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -761,9 +736,8 @@ public class Main
                                             System.out.println("Inserisci la mail del Cliente se pervenuta");
                                             cliente.setMail(in.readLine());
                                             
-                                            CreateClienteService createClienteService = new CreateClienteService();
                                             try {
-                                                createClienteService.execute(cliente);
+                                                myOutput=callService("CreateClienteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -780,9 +754,8 @@ public class Main
                                             System.out.println("Inserisci la mail sostituitiva del Cliente se pervenuta");
                                             cliente.setMail(in.readLine());
                                             
-                                            UpdateClienteService updateClienteService = new UpdateClienteService();
                                             try {
-                                                updateClienteService.execute(cliente);
+                                                myOutput=callService("UpdateClienteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -793,9 +766,8 @@ public class Main
                                             System.out.println("Inserisci il codice del Cliente per la cancellazione");
                                             cliente.setCodCli(Integer.parseInt(in.readLine()));
     
-                                            DeleteClienteService deleteClienteService = new DeleteClienteService();
                                             try {
-                                                deleteClienteService.execute(cliente.getCodCli());
+                                                myOutput=callService("DeleteClienteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -807,8 +779,7 @@ public class Main
                                             cliente.setCodCli(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdClienteService getByIdClienteService = new GetByIdClienteService();
-                                                getByIdClienteService.execute(cliente.getCodCli());
+                                                myOutput=callService("GetByIdClienteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -818,10 +789,8 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllClientiService getAllClientiService = new GetAllClientiService();
-    
                                             try {
-                                                clientList = getAllClientiService.execute();
+                                                myOutput=callService("GetAllClientiService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -848,7 +817,7 @@ public class Main
                                             cliente.setMail(in.readLine());
     
                                             try {
-                                                clientList = searchClienteService.execute(cliente);
+                                                myOutput=callService("SearchClienteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -895,13 +864,13 @@ public class Main
                                             System.out.println("Inserisci la data di nascita nel formato 'yyyy-MM-dd' del Dipendente");
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            CreateDipendenteService createDipendenteService = new CreateDipendenteService();
                                             try {
-                                                createDipendenteService.execute(dipendente);
+                                                myOutput=callService("CreateDipendenteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         break;
     
                                         case 2:
@@ -915,9 +884,8 @@ public class Main
                                             System.out.println("Inserisci la data di nascita sostituitiva nel formato 'yyyy-MM-dd' del Dipendente se pervenuta");
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            UpdateDipendenteService updetaDipendenteService = new UpdateDipendenteService();
-                                            try {
-                                                updetaDipendenteService.execute(dipendente);
+                                             try {
+                                                myOutput=callService("UpdateDipendenteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -928,9 +896,8 @@ public class Main
                                             System.out.println("Inserisci il codice del Dipendente per la cancellazione");
                                             dipendente.setCodD(Integer.parseInt(in.readLine()));
     
-                                            DeleteDipendenteService deleteDipendenteService = new DeleteDipendenteService();
                                             try {
-                                                deleteDipendenteService.execute(dipendente.getCodD());
+                                                myOutput=callService("DeleteDipendenteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -942,8 +909,7 @@ public class Main
                                             dipendente.setCodD(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdDipendenteService getByIdDipendenteService = new GetByIdDipendenteService();
-                                                getByIdDipendenteService.execute(dipendente.getCodD());
+                                                myOutput=callService("GetByIdDipendenteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -954,10 +920,8 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllDipendentiService getAllDipendentiService = new GetAllDipendentiService();
-    
                                             try {
-                                                dipList = getAllDipendentiService.execute();
+                                                myOutput=callService("GetAllDipendentiService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -971,7 +935,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchDipendenteService searchDipendenteService = new SearchDipendenteService();
+                                            
 
                                             System.out.println("Inserimento Criteri di ricerca");
                                             System.out.println("Inserisci il nome del Dipendente");
@@ -984,7 +948,7 @@ public class Main
                                             dipendente.setDataNascita(Date.valueOf(in.readLine()));
     
                                             try {
-                                                dipList = searchDipendenteService.execute(dipendente);
+                                                myOutput=callService("SearchDipendenteService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1032,9 +996,8 @@ public class Main
                                             System.out.println("Inserisci la data di nascita del Artista se pervenuta");
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            CreateArtistaService createArtistaService = new CreateArtistaService();
                                             try {
-                                                createArtistaService.execute(artista);
+                                                myOutput=callService("CreateArtistaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1051,9 +1014,8 @@ public class Main
                                             System.out.println("Inserisci la data di nascita sostituitiva del Artista se pervenuta");
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
                                             
-                                            UpdateArtistaService updateArtistaService = new UpdateArtistaService();
                                             try {
-                                                updateArtistaService.execute(artista);
+                                                myOutput=callService("UpdateArtistaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1064,9 +1026,8 @@ public class Main
                                             System.out.println("Inserisci il codice del Artista per la cancellazione");
                                             artista.setCodAr(Integer.parseInt(in.readLine()));
     
-                                            DeleteArtistaService deleteArtistaService = new DeleteArtistaService();
                                             try {
-                                                deleteArtistaService.execute(artista.getCodAr());
+                                                myOutput=callService("DeleteArtistaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1078,8 +1039,7 @@ public class Main
                                             artista.setCodAr(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdArtistiService getByIdArtistiService = new GetByIdArtistiService();
-                                                getByIdArtistiService.execute(artista.getCodAr());
+                                                myOutput=callService("GetByIdArtistaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1089,10 +1049,8 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllArtistiService getAllArtistiService = new GetAllArtistiService();
-    
                                             try {
-                                                artList = getAllArtistiService.execute();
+                                                myOutput=callService("GetAllArtistiService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1105,7 +1063,6 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchArtistaService searchArtistaService = new SearchArtistaService();
                                             System.out.println("Inserisci il nome del Artista");
                                             artista.setNome(in.readLine());
                                             System.out.println("Inserisci il cognome del Artista");
@@ -1116,7 +1073,7 @@ public class Main
                                             artista.setDataNascita(Date.valueOf(in.readLine()));
     
                                             try {
-                                                artList = searchArtistaService.execute(artista);
+                                                myOutput=callService("SearchArtistaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1161,10 +1118,9 @@ public class Main
                                             opera.setNome(in.readLine());
                                             System.out.println("Inserisci la descrizione dell'Opera");
                                             opera.setDescrizione(in.readLine());
-                                            
-                                            CreateOperaService createOperaService = new CreateOperaService();
+
                                             try {
-                                                createOperaService.execute(opera);
+                                                myOutput=callService("CreateOperaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1179,9 +1135,8 @@ public class Main
                                             System.out.println("Inserisci la descrizione sostituitiva dell'Opera");
                                             opera.setDescrizione(in.readLine());
                                             
-                                            UpdateOperaService updateOperaService = new UpdateOperaService();
                                             try {
-                                                updateOperaService.execute(opera);
+                                                myOutput=callService("UpdateOperaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1193,9 +1148,8 @@ public class Main
                                             System.out.println("Inserisci il codice dell'Opera  per la cancellazione");
                                             opera.setCodO(Integer.parseInt(in.readLine()));
     
-                                            DeleteOperaService deleteOperaService = new DeleteOperaService();
                                             try {
-                                                deleteOperaService.execute(opera.getCodO());
+                                                myOutput=callService("DeleteOperaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1207,8 +1161,7 @@ public class Main
                                             opera.setCodO(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdOperaService getByIdOperaService = new GetByIdOperaService();
-                                                getByIdOperaService.execute(opera.getCodO());
+                                                myOutput=callService("GetByIdOperaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1218,10 +1171,8 @@ public class Main
                                         break;
     
                                         case 5:
-                                            GetAllOpereService getAllOpereService = new GetAllOpereService();
-    
                                             try {
-                                                operList = getAllOpereService.execute();
+                                                myOutput=callService("GetAllOpereService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -1234,19 +1185,13 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchOperaService searchOperaService = new SearchOperaService();
-
-                                            System.out.println("Inserisci il nome dell'Opera");
-                                            opera.setNome(in.readLine());
-                                            System.out.println("Inserisci la descrizione dell'Opera");
-                                            opera.setDescrizione(in.readLine());
-    
                                             try {
-                                                operList = searchOperaService.execute(opera);
+                                                myOutput=callService("SearchOperaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
     
                                             for(Opera oper : operList)
                                             {
@@ -1289,13 +1234,13 @@ public class Main
                                             System.out.println("Inserisci l'orario di chiusura della Biglietteria in hh-mm-ss");
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
                                             
-                                            CreateBiglietteriaService createBiglietteriaService = new CreateBiglietteriaService();
                                             try {
-                                                createBiglietteriaService.execute(biglietteria);
+                                                myOutput=callService("CreateBiglietteriaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1308,13 +1253,13 @@ public class Main
                                             System.out.println("Inserisci l'orario di chiusura sostituitiva della Biglietteria in hh-mm-ss");
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
                                             
-                                            UpdateBiglietteriaService updateBiglietteriaService = new UpdateBiglietteriaService();
                                             try {
-                                                updateBiglietteriaService.execute(biglietteria);
+                                                myOutput=callService("UpdateBiglietteriaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1322,13 +1267,13 @@ public class Main
                                             System.out.println("Inserisci il codice della Biglietteria per la cancellazione");
                                             biglietteria.setCodB(Integer.parseInt(in.readLine()));
     
-                                            DeleteBiglietteriaService deleteBiglietteriaService = new DeleteBiglietteriaService();
                                             try {
-                                                deleteBiglietteriaService.execute(biglietteria.getCodB());
+                                                myOutput=callService("DeleteBiglietteriaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         break;
     
                                         case 4:
@@ -1336,25 +1281,24 @@ public class Main
                                             biglietteria.setCodB(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdBiglietterieService getByIdBiglietterieService = new GetByIdBiglietterieService();
-                                                getByIdBiglietterieService.execute(biglietteria.getCodB());
+                                                myOutput=callService("GetByIdBiglietteriaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         
                                             System.out.println("Biglietteria.CodB:" + biglietteria.getCodB()+" Biglietteria.Modalità_Pagamento:"+biglietteria.getModPag()+" Biglietteria.Ora_Apertura:"+biglietteria.getOraApertura()+" Biglietteria.Ora_Chiusura:"+biglietteria.getOraChiusura());
                                         break;
     
                                         case 5:
-                                            GetAllBiglietterieService getAllBiglietterieService = new GetAllBiglietterieService();
-    
                                             try {
-                                                biglietteriaList = getAllBiglietterieService.execute();
+                                                myOutput=callService("GetAllBiglietteriaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                             for(Biglietteria bigl : biglietteriaList)
                                             {
                                                 System.out.println("|Biglietteria.CodB:" + bigl.getCodB()+" |Biglietteria.Modalità_Pagamento:"+bigl.getModPag()+" |Biglietteria.Ora_Apertura:"+bigl.getOraApertura()+" |Biglietteria.Ora_Chiusura:"+bigl.getOraChiusura());
@@ -1363,7 +1307,7 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchBiglietteriaService searchBiglietteriaService = new SearchBiglietteriaService();
+                                            
 
                                             System.out.println("Inserisci la modalita di pagamento della Biglietteria");
                                             biglietteria.setModPag(Biglietteria.ModalitaPagamento.valueOf(in.readLine()));
@@ -1373,11 +1317,12 @@ public class Main
                                             biglietteria.setOraChiusura(Time.valueOf(in.readLine()));
 
                                             try {
-                                                biglietteriaList = searchBiglietteriaService.execute(biglietteria);
+                                                myOutput=callService("SearchBiglietteriaService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
     
                                             for(Biglietteria bigl : biglietteriaList)
                                             {
@@ -1421,13 +1366,13 @@ public class Main
                                             System.out.println("Inserisci il tipo del biglietto "); //inserire i tipi disponibili per ricordare
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
                                             
-                                            CreateBigliettoService createBigliettoService = new CreateBigliettoService();
                                             try {
-                                                createBigliettoService.execute(biglietto);
+                                                myOutput=callService("CreateBigliettoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1440,13 +1385,13 @@ public class Main
                                             System.out.println("Inserisci il tipo sostituitivo del biglietto "); //inserire i tipi disponibili per ricordare
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
                                             
-                                            UpdateBigliettoService updateBigliettoService = new UpdateBigliettoService();
                                             try {
-                                                updateBigliettoService.execute(biglietto);
+                                                myOutput=callService("UpdateBigliettoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1454,13 +1399,13 @@ public class Main
                                             System.out.println("Inserisci il codice del Biglietto ");
                                             biglietto.setCodBi(Integer.parseInt(in.readLine()));
     
-                                            DeleteBigliettoService deleteBigliettoService = new DeleteBigliettoService();
                                             try {
-                                                deleteBigliettoService.execute(biglietto.getCodBi());
+                                                myOutput=callService("DeleteBigliettoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         break;
     
                                         case 4:
@@ -1468,25 +1413,24 @@ public class Main
                                             biglietto.setCodBi(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdBigliettoService getByIdBigliettoService = new GetByIdBigliettoService();
-                                                getByIdBigliettoService.execute(biglietto.getCodBi());
+                                                myOutput=callService("GetByIdBigliettoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         
                                             System.out.println("Biglietto.CodBi:" + biglietto.getCodBi()+" Biglietto.Tipo_Biglietto:"+biglietto.getTipo()+" Biglietto.Prezzo:"+biglietto.getPrezzo()+" Biglietto.Data:"+biglietto.getData());
                                         break;
     
                                         case 5:
-                                            GetAllBigliettiService getAllBigliettiService = new GetAllBigliettiService();
-    
                                             try {
-                                                biglList = getAllBigliettiService.execute();
+                                                myOutput=callService("GetAllBigliettoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                             for(Biglietto bigl : biglList)
                                             {
                                                 System.out.println("|Biglietto.CodBi:" + bigl.getCodBi()+" |Biglietto.Tipo_Biglietto:"+bigl.getTipo()+" |Biglietto.Prezzo:"+bigl.getPrezzo()+" |Biglietto.Data:"+bigl.getData());
@@ -1505,11 +1449,12 @@ public class Main
                                             biglietto.setTipo(Biglietto.TipoBiglietto.valueOf(in.readLine()));
 
                                             try {
-                                                biglList = searchBigliettoService.execute(biglietto);
+                                                myOutput=callService("SearchBigliettoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
     
                                             for(Biglietto bigl : biglList)
                                             {
@@ -1553,13 +1498,13 @@ public class Main
                                             System.out.println("Inserisci il prezzo dell'Abbonamento "); //inserire i tipi disponibili per ricordare
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
                                             
-                                            CreateAbbonamentoService createAbbonamentoService = new CreateAbbonamentoService();
                                             try {
-                                                createAbbonamentoService.execute(abbonamento);
+                                                myOutput=callService("CreateAbbonamentoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1572,13 +1517,13 @@ public class Main
                                             System.out.println("Inserisci il prezzo sostituitivo dell'Abbonamento "); //inserire i tipi disponibili per ricordare
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
                                                 
-                                            UpdateAbbonamentoService updateAbbonamentoService = new UpdateAbbonamentoService();
                                             try {
-                                                updateAbbonamentoService.execute(abbonamento);
+                                                myOutput=callService("UpdateAbbonamentoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1586,13 +1531,13 @@ public class Main
                                             System.out.println("Inserisci il codice dell'Abbonamento per la cancellazione");
                                             abbonamento.setCodAb(Integer.parseInt(in.readLine()));
     
-                                            DeleteAbbonamentoService deleteAbbonamentoService = new DeleteAbbonamentoService();
                                             try {
-                                                deleteAbbonamentoService.execute(abbonamento.getCodAb());
+                                                myOutput=callService("DeleteAbbonamentoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         break;
     
                                         case 4:
@@ -1600,25 +1545,24 @@ public class Main
                                             abbonamento.setCodAb(Integer.parseInt(in.readLine()));
 
                                             try {
-                                                GetByIdAbbonamentoService getByIdAbbonamentoService = new GetByIdAbbonamentoService();
-                                                getByIdAbbonamentoService.execute(abbonamento.getCodAb());
+                                                myOutput=callService("GetByIdAbbonamentoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                         
                                             System.out.println("Abbonamento.CodAb:" + abbonamento.getCodAb()+" Abbonamento.Tipo_Biglietto:"+abbonamento.getTipo()+" Abbonamento.Prezzo:"+abbonamento.getPrezzo());
                                         break;
     
                                         case 5:
-                                            GetAllAbbonamentiService getAllAbbonamentiService = new GetAllAbbonamentiService();
-    
                                             try {
-                                                abbList = getAllAbbonamentiService.execute();
+                                                myOutput=callService("GetAllAbbonamentiService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                             for(Abbonamento abb : abbList)
                                             {
                                                 System.out.println("|Abbonamento.CodAb:" + abb.getCodAb()+" |Abbonamento.Tipo_Biglietto:"+abb.getTipo()+" |Abbonamento.Prezzo:"+abb.getPrezzo());
@@ -1627,7 +1571,6 @@ public class Main
                                         break;
     
                                         case 6:
-                                            SearchAbbonamentoService searchAbbonamentoService = new SearchAbbonamentoService();
 
                                             System.out.println("Inserisci il tipo dell'Abbonamento");
                                             abbonamento.setTipo(Abbonamento.TipoAbbonamento.valueOf(in.readLine()));
@@ -1637,11 +1580,12 @@ public class Main
                                             abbonamento.setPrezzo(Float.parseFloat(in.readLine()));
 
                                             try {
-                                                abbList = searchAbbonamentoService.execute(abbonamento);
+                                                myOutput=callService("SearchAbbonamentoService", myInput);
                                             } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
     
                                             for(Abbonamento abb : abbList)
                                             {
@@ -1683,17 +1627,13 @@ public class Main
                                             System.out.println("Inserisci il codice della biglietteria da associare");
                                             abb.setCodAb(Integer.parseInt(in.readLine()));
 
-                                            CreateAbbonamentoToBiglietteriaService createAbbonamentoToBigliettoService = new CreateAbbonamentoToBiglietteriaService();
-                                            
-                                            try 
-                                            {
-                                                createAbbonamentoToBigliettoService.execute(null);
-                                            } 
-                                            catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("CreateAbbonamentoService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1708,17 +1648,13 @@ public class Main
                                             System.out.println("Inserisci il codice della biglietteria di rimpiazzo");
                                             int Cod_Bimod = Integer.parseInt(in.readLine());
 
-                                            UpdateAbbonamentoBiglietterieService updateAbbonamentoBiglietterieService = new UpdateAbbonamentoBiglietterieService();
-                                            
-                                            try 
-                                            {
-                                                updateAbbonamentoBiglietterieService.execute(null);
-                                            } 
-                                            catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("UpdateAbbonamentoBiglietteriaService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1728,18 +1664,13 @@ public class Main
                                             Cod_Ab = Integer.parseInt(in.readLine());
                                             System.out.println("Inserisci il codice della biglietteria da cancellare");
                                             Cod_Bi = Integer.parseInt(in.readLine());
-
-                                            DeleteAbbonamentoBiglietterieService deleteAbbonamentoBiglietterieService = new DeleteAbbonamentoBiglietterieService();
-                                            
-                                            try 
-                                            {
-                                                deleteAbbonamentoBiglietterieService.execute(null);
-                                            } 
-                                            catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("DeleteAbbonamentoBiglietteriaService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                             
                                         break;
     
@@ -1749,17 +1680,13 @@ public class Main
                                         System.out.println("Inserisci il codice della biglietteria");
                                         Cod_Bi = Integer.parseInt(in.readLine());
 
-                                        SearchAbbonamentiForBiglietteriaService searchAbbonamentiForBiglietteriaService = new SearchAbbonamentiForBiglietteriaService();
-                                        
-                                        try 
-                                        {
-                                            searchAbbonamentiForBiglietteriaService.execute(null);
-                                        } 
-                                        catch (ServiceException e) 
-                                        {
-                                            // TODO Auto-generated catch block
-                                            e.printStackTrace();
-                                        }
+                                            try {
+                                                myOutput=callService("SearchAbbonamentiForBiglietteriaService", myInput);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
                                             
                                         break;
     
@@ -1768,17 +1695,13 @@ public class Main
                                         System.out.println("Inserisci il codice della biglietteria");
                                         Cod_Bi = Integer.parseInt(in.readLine());
 
-                                        SearchBiglietterieForAbbonamentoService searchBiglietterieForAbbonamentoService = new SearchBiglietterieForAbbonamentoService();
-                                        
-                                        try 
-                                        {
-                                            searchBiglietterieForAbbonamentoService.execute(null);
-                                        } 
-                                        catch (ServiceException e) 
-                                        {
-                                            // TODO Auto-generated catch block
-                                            e.printStackTrace();
-                                        }
+                                            try {
+                                                myOutput=callService("SearchBiglietterieForAbbonamentoService", myInput);
+                                            } catch (ServiceException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                            }
+
                                              
                                         break;
                                     
@@ -1814,16 +1737,13 @@ public class Main
                                         System.out.println("Inserisci il codice del cliente da associare");
                                         Cod_Cli = Integer.parseInt(in.readLine());
 
-                                        CreateClienteToAbbonamentoService cService = new CreateClienteToAbbonamentoService();
-
-                                            try 
-                                            {
-                                                cService.execute(null);
-                                            } catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("CreateAbbonamentoToBiglietteriaService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1836,16 +1756,13 @@ public class Main
                                         System.out.println("Inserisci il codice del cliente");
                                         Cod_Cli = Integer.parseInt(in.readLine());
 
-                                        UpdateAbbonamentoForClienteService cService2 = new UpdateAbbonamentoForClienteService();
-
-                                            try 
-                                            {
-                                                cService2.execute(null);
-                                            } catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("UpdateAbbonamentoForClienteService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1856,16 +1773,13 @@ public class Main
                                         System.out.println("Inserisci il codice del cliente da cancellare");
                                         Cod_Cli = Integer.parseInt(in.readLine());
 
-                                        DeleteClienteAbbonamentoService cService3 = new DeleteClienteAbbonamentoService();
-
-                                            try 
-                                            {
-                                                cService3.execute(null);
-                                            } catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("DeleteClienteAbbonamentoService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
 
                                         break;
     
@@ -1874,16 +1788,12 @@ public class Main
                                         System.out.println("Inserisci il codice abbonamento da cancellare");
                                         Cod_Ab = Integer.parseInt(in.readLine());
 
-                                        SearchAbbonamentiForClienteService cService4 = new SearchAbbonamentiForClienteService();
-
-                                            try 
-                                            {
-                                                cService4.execute(null);
-                                            } catch (ServiceException e) 
-                                            {
-                                                // TODO Auto-generated catch block
-                                                e.printStackTrace();
-                                            }
+                                        try {
+                                            myOutput=callService("SearchAbbonamentiForClienteService", myInput);
+                                        } catch (ServiceException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
                                             
                                         break;
     
@@ -1893,16 +1803,13 @@ public class Main
                                         System.out.println("Inserisci il codice del cliente da cancellare");
                                         Cod_Cli = Integer.parseInt(in.readLine());
 
-                                        SearchClientiForAbbonamento cService5 = new SearchClientiForAbbonamento();
-
-                                            try 
-                                            {
-                                                cService5.execute(null);
-                                            } catch (ServiceException e) 
-                                            {
+                                            try {
+                                                myOutput=callService("SearchClientiForAbbonamentoService", myInput);
+                                            } catch (ServiceException e) {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
+
                                              
                                         break;
                                     
